@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShoeDrop - My Profile</title>
+  <!-- Tailwind CSS Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white font-sans text-gray-900 antialiased flex flex-col min-h-screen relative">
+
+  <!-- 1. NAVIGATION BAR -->
+  <nav class="sticky top-0 z-40 bg-[#f3f3f3] border-t border-b border-gray-300">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
+      <!-- Logo -->
+      <div class="flex items-center">
+        <a href="#" class="text-xl font-black tracking-[0.15em] text-black sm:text-2xl uppercase">
+          SHOEDROP
+        </a>
+      </div>
+      <!-- Center Links -->
+      <div class="hidden space-x-8 text-[11px] font-bold tracking-wider text-gray-600 lg:flex">
+        <a href="#" class="hover:text-gray-950 transition">LADIES</a>
+        <a href="#" class="hover:text-gray-950 transition">KIDS</a>
+        <a href="#" class="hover:text-gray-950 transition">WESTERN WEAR</a>
+        <a href="#" class="hover:text-gray-950 transition">INDIAN WEAR</a>
+        <a href="#" class="hover:text-gray-950 transition">WINTER WEAR</a>
+      </div>
+      <!-- Icons Right -->
+      <div class="flex items-center space-x-5 text-black">
+        <button class="p-1 hover:opacity-70 transition">
+          <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </button>
+        <button class="p-1 hover:opacity-70 transition">
+          <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
+        </button>
+        <button class="p-1 hover:opacity-70 transition">
+          <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN WRAPPER -->
+  <div class="mx-auto max-w-7xl w-full md:flex md:px-6 lg:px-8 py-8 flex-grow">
+    
+    <!-- 2. SIDEBAR NAVIGATION MENU -->
+    <aside class="w-full md:w-64 flex-shrink-0 p-4 border-b border-gray-200 md:border-b-0 md:border-r md:p-6">
+      <div class="mb-5 hidden md:block">
+        <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 block">Welcome Back</span>
+        <span class="text-xs font-black uppercase tracking-wider text-black">Premium Member</span>
+      </div>
+      
+      <nav class="flex space-x-2 overflow-x-auto pb-2 scrollbar-none md:block md:space-x-0 md:space-y-1.5 md:pb-0">
+        <a href="#" class="flex items-center gap-3 rounded-full bg-gray-100 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-900 transition whitespace-nowrap md:w-full shadow-sm">
+          <svg class="h-4 w-4 text-gray-900" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
+          <span>Profile</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:bg-gray-50 transition whitespace-nowrap md:w-full">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>
+          <span>Address</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:bg-gray-50 transition whitespace-nowrap md:w-full">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
+          <span>My Orders</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:bg-gray-50 transition whitespace-nowrap md:w-full">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
+          <span>Wishlist</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:bg-gray-50 transition whitespace-nowrap md:w-full">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 0 0-2.25-2.25H15a3 3 0 1 1-6 0H5.25A2.25 2.25 0 0 0 3 12m18 0v6A2.25 2.25 0 0 1 18.75 20.25H5.25A2.25 2.25 0 0 1 3 18v-6m18 0V9A2.25 2.25 0 0 0 18.75 6.75H5.25A2.25 2.25 0 0 0 3 9v3M16.25 12.75h.008v.008h-.008v-.008Z" /></svg>
+          <span>Wallet</span>
+        </a>
+        <button onclick="toggleLogoutModal()" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-red-600 hover:bg-red-50 transition whitespace-nowrap text-left w-full md:mt-12">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" /></svg>
+          <span>Logout</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- 3. PROFILE CONTENT GRID AREA -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8 text-left">
+      
+      <!-- Left 2 Columns -->
+      <div class="lg:col-span-2 space-y-6">
+        <div>
+          <h1 class="text-2xl font-black uppercase tracking-wider text-black sm:text-3xl">My Profile</h1>
+          <p class="text-xs text-gray-400 font-medium mt-0.5">View and manage your personal details.</p>
+        </div>
+
+        <!-- User Info Avatar Card -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-xl border border-gray-200 bg-gray-50/80 p-5">
+          <div class="flex items-center gap-4">
+            <img 
+              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop" 
+              alt="Shifa Fervin Avatar" 
+              class="h-14 w-14 rounded-full object-cover border border-gray-300 shadow-sm"
+            >
+            <div>
+              <h2 class="text-base font-black text-gray-900 uppercase tracking-wide">Shifa Fervin</h2>
+              <p class="text-[10px] text-gray-400 font-bold tracking-wide">ID: #WF10234</p>
+              <p class="text-[10px] text-gray-400 font-medium">Joined Oct 2023</p>
+            </div>
+          </div>
+          <div>
+            <!-- Button changed to black -->
+            <button class="rounded-full bg-black px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-white shadow hover:bg-neutral-800 active:scale-[0.98] transition">
+              Change Password
+            </button>
+          </div>
+        </div>
+
+        <!-- Personal Details Fields Block -->
+        <div>
+          <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 border-b border-gray-200 pb-2">
+            Personal Details
+          </h3>
+          <div class="mt-5 space-y-4">
+            <div>
+              <span class="block text-[10px] font-bold uppercase tracking-wide text-gray-400 mb-1 pl-1">Full Name</span>
+              <div class="w-full rounded-full border border-gray-200 bg-white px-4 py-2.5 text-xs font-semibold text-gray-700 tracking-wide shadow-sm">
+                Shifa Fervin
+              </div>
+            </div>
+            <div>
+              <span class="block text-[10px] font-bold uppercase tracking-wide text-gray-400 mb-1 pl-1">Email Address</span>
+              <div class="w-full rounded-full border border-gray-200 bg-white px-4 py-2.5 text-xs font-semibold text-gray-700 tracking-wide shadow-sm">
+                shifa.fervin@example.com
+              </div>
+            </div>
+            <div>
+              <span class="block text-[10px] font-bold uppercase tracking-wide text-gray-400 mb-1 pl-1">Phone Number</span>
+              <div class="w-full rounded-full border border-gray-200 bg-white px-4 py-2.5 text-xs font-semibold text-gray-700 tracking-wide shadow-sm">
+                +91 98765 43210
+              </div>
+            </div>
+            <!-- Bottom Controls Actions -->
+            <div class="flex items-center justify-start gap-3 pt-4">
+              <!-- Button changed to black -->
+              <button type="button" class="rounded-full bg-black px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-neutral-800 active:scale-[0.98] transition">
+                Edit Profile
+              </button>
+              <button type="button" onclick="toggleLogoutModal()" class="rounded-full border border-gray-300 bg-white px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-600 hover:bg-gray-50 active:scale-[0.98] transition shadow-sm">
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right 1 Column: Account Security Sidebar Box -->
+      <div class="lg:col-span-1 space-y-4 pt-0 lg:pt-14">
+        <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 border-b border-gray-200 pb-2">
+          Account Security
+        </h3>
+        <div class="bg-gray-50/50 rounded-xl p-4 border border-gray-100 space-y-4">
+          <p class="text-xs text-gray-400 leading-relaxed font-medium">
+            To delete your account and all associated data, please contact our support team. Your information is protected under our global privacy policy.
+          </p>
+          <button type="button" class="text-xs font-extrabold text-red-600 hover:text-red-700 transition uppercase tracking-wider">
+            Deactivate Account
+          </button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- 4. PREMIUM BLACK LARGE FOOTER WITH NEWSLETTER -->
+  <footer class="bg-black text-white w-full mt-auto">
+    <div class="mx-auto max-w-7xl px-6 py-12 sm:px-8 lg:px-12">
+      
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 border-b border-white/10 pb-10 text-left items-start">
+        
+        <!-- Brand identity details -->
+        <div class="md:col-span-4 space-y-3">
+          <span class="text-2xl font-black tracking-tight text-white uppercase block">
+            Shoe<span class="text-gray-300">Drop</span>
+          </span>
+          <p class="text-xs text-gray-300 max-w-xs leading-relaxed font-medium">
+            Premium footwear and fashion at your fingertips. Discover the best styles curated for you.
+          </p>
+        </div>
+
+        <!-- Links Box Area 1 -->
+        <div class="md:col-span-2 space-y-3">
+          <h4 class="text-xs font-black uppercase tracking-widest text-white/90">Shop</h4>
+          <ul class="space-y-2 text-xs text-gray-300 font-medium">
+            <li><a href="#" class="hover:text-white transition">New Arrivals</a></li>
+            <li><a href="#" class="hover:text-white transition">Bestsellers</a></li>
+            <li><a href="#" class="hover:text-white transition">Sale</a></li>
+          </ul>
+        </div>
+
+        <!-- Links Box Area 2 -->
+        <div class="md:col-span-2 space-y-3">
+          <h4 class="text-xs font-black uppercase tracking-widest text-white/90">Support</h4>
+          <ul class="space-y-2 text-xs text-gray-300 font-medium">
+            <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+            <li><a href="#" class="hover:text-white transition">Returns</a></li>
+            <li><a href="#" class="hover:text-white transition">Shipping Info</a></li>
+          </ul>
+        </div>
+
+        <!-- Newsletter Section -->
+        <div class="md:col-span-4 space-y-3">
+          <h4 class="text-xs font-black uppercase tracking-widest text-white/90">Newsletter</h4>
+          <form class="flex w-full relative max-w-sm" action="#" method="POST">
+            <input 
+              type="email" 
+              placeholder="Email" 
+              required
+              class="w-full bg-transparent border-b border-white/20 pb-2 pt-1 text-xs text-white placeholder-white/40 focus:outline-none focus:border-white transition pr-16"
+            >
+            <button type="submit" class="absolute right-0 top-0 bottom-1 rounded-full bg-white px-4 text-[10px] font-black uppercase text-gray-900 tracking-wider shadow-md hover:bg-gray-100 transition">
+              Join
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- Bottom baseline link -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 text-[10px] text-white/40 tracking-wide uppercase font-bold">
+        <p>© 2026 SHOEDROP. ALL RIGHTS RESERVED.</p>
+        <div class="flex space-x-6">
+          <a href="#" class="hover:text-white/60 transition">Privacy Policy</a>
+          <a href="#" class="hover:text-white/60 transition">Terms of Service</a>
+          <a href="#" class="hover:text-white/60 transition">Store Locator</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- 5. LOGOUT CONFIRMATION POPUP MODAL (Pops up directly as visible 'flex') -->
+  <div id="logoutModal" class="flex fixed inset-0 z-50 items-center justify-center p-4">
+    <!-- Overlay background blur -->
+    <div class="absolute inset-0 bg-black/30 backdrop-blur-md transition-opacity"></div>
+
+    <!-- White Modal Container Window Box -->
+    <div class="relative w-full max-w-[340px] transform overflow-hidden rounded-[2rem] bg-white p-8 text-center shadow-2xl transition-all border border-gray-100">
+      
+      <!-- Top Logout Vector Arrow Icon -->
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 mb-5">
+        <svg class="h-5 w-5 text-black" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+        </svg>
+      </div>
+
+      <!-- Message Text -->
+      <div class="mb-6">
+        <h3 class="text-base font-bold text-gray-900 tracking-tight leading-snug">
+          Are you sure you want to log out?
+        </h3>
+      </div>
+
+      <!-- Action Confirmation Buttons (Changed Log Out color to Black) -->
+      <div class="grid grid-cols-2 gap-3">
+        <button 
+          type="button" 
+          onclick="toggleLogoutModal()"
+          class="rounded-full bg-[#f4f4f4] py-2.5 text-[10px] font-bold uppercase tracking-wider text-gray-600 hover:bg-gray-200 transition"
+        >
+          Cancel
+        </button>
+        <!-- Button background color updated to bg-black -->
+        <a 
+          href="#" 
+          class="rounded-full bg-black py-2.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-md hover:bg-neutral-800 transition text-center block"
+        >
+          Log Out
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Interactive JavaScript Toggle Script module -->
+  <script>
+    function toggleLogoutModal() {
+      const modal = document.getElementById('logoutModal');
+      modal.classList.toggle('hidden');
+    }
+  </script>
+
+</body>
+</html>

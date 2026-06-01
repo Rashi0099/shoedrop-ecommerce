@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShoeDrop - Step Into Excellence</title>
+  <!-- Tailwind CSS Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-white font-sans text-gray-900 antialiased">
+
+  <!-- 1. NAVIGATION BAR (Exactly like image_7d61e2.png) -->
+  <nav class="sticky top-0 z-50 bg-[#f3f3f3] border-t border-b border-gray-300">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
+
+      <!-- Logo (Exact Font Style and Dark Green Color from image_7d61e2.png) -->
+      <div class="flex items-center">
+        <a href="#" class="text-xl font-black tracking-[0.15em] text-[#0f3025] sm:text-2xl uppercase">
+          SHOEDROP
+        </a>
+      </div>
+
+      <!-- Center Links (Proper spacing & styling) -->
+      <div class="hidden space-x-12 text-xs font-semibold tracking-[0.15em] text-gray-600 md:flex">
+        <a href="#" class="hover:text-gray-950 transition">MEN</a>
+        <a href="#" class="hover:text-gray-950 transition">WOMEN</a>
+        <a href="#" class="hover:text-gray-950 transition">KIDS</a>
+      </div>
+
+      <!-- Icons Right (Heart, Shopping Bag, Profile User from image_7d61e2.png) -->
+      <div class="flex items-center space-x-6 text-[#0f3025]">
+        <!-- Wishlist (Heart Icon) -->
+        <button class="p-1 hover:opacity-70 transition">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+          </svg>
+        </button>
+        <!-- Cart (Shopping Bag Icon) -->
+        <button class="p-1 hover:opacity-70 transition">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+          </svg>
+        </button>
+        <!-- Profile (User Icon with bottom shelf line) -->
+        <a href="{% url 'profile' %}" class="p-1 hover:opacity-70 transition">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 2. HERO SECTION -->
+  <section class="relative bg-gray-50 overflow-hidden py-12 lg:py-20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 lg:grid lg:grid-cols-12 lg:gap-8 items-center">
+      <!-- Left Content -->
+      <div class="space-y-6 lg:col-span-5 text-center lg:text-left">
+        <span
+          class="inline-flex items-center rounded-md bg-gray-200/80 px-3 py-1 text-xs font-bold uppercase tracking-widest text-gray-700">
+          Performance Focus
+        </span>
+        <h1 class="text-4xl font-black tracking-tight text-gray-900 sm:text-5xl lg:text-6xl uppercase leading-none">
+          Step Into <br class="hidden lg:inline">Excellence
+        </h1>
+        <p class="text-sm sm:text-base text-gray-500 font-medium max-w-md mx-auto lg:mx-0">
+          The all-new Apex Elite series. Engineered for those who refuse to compromise on speed, comfort, or style.
+        </p>
+        <div class="pt-2">
+          <a href="#"
+            class="inline-flex items-center justify-center rounded-full bg-gray-800 px-8 py-3 text-sm font-bold uppercase tracking-wider text-white shadow-lg hover:bg-gray-900 transition duration-150">
+            Shop Now
+          </a>
+        </div>
+      </div>
+      <!-- Right Image Area -->
+      <div class="mt-10 lg:mt-0 lg:col-span-7 relative flex justify-center">
+        <div
+          class="absolute inset-0 bg-gradient-to-tr from-gray-200/50 to-transparent rounded-full filter blur-3xl w-72 h-72 mx-auto my-auto">
+        </div>
+        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1200&auto=format&fit=crop"
+          alt="Premium Running Shoe" class="relative z-10 w-full max-w-lg object-contain drop-shadow-2xl" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. THE ESSENTIALS SECTION -->
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-black uppercase tracking-wider text-gray-900 mb-8">
+      The Essentials
+    </h2>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+      <!-- Men's Card -->
+      <div class="group relative h-96 overflow-hidden rounded-2xl bg-gray-100">
+        <img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=600&auto=format&fit=crop"
+          alt="Men's Collection"
+          class="h-full w-full object-cover object-center group-hover:scale-105 transition duration-500 brightness-75" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+        <div class="absolute bottom-6 left-6 space-y-2">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-gray-300">Collection</span>
+          <h3 class="text-2xl font-extrabold uppercase text-white tracking-wide">Men's</h3>
+          <a href="#"
+            class="inline-block rounded-full bg-white px-5 py-2 text-xs font-bold uppercase text-gray-900 shadow hover:bg-gray-100 transition">Shop
+            Now</a>
+        </div>
+      </div>
+      <!-- Women's Card -->
+      <div class="group relative h-96 overflow-hidden rounded-2xl bg-gray-100">
+        <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=600&auto=format&fit=crop"
+          alt="Women's Collection"
+          class="h-full w-full object-cover object-center group-hover:scale-105 transition duration-500 brightness-75" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+        <div class="absolute bottom-6 left-6 space-y-2">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-gray-300">Collection</span>
+          <h3 class="text-2xl font-extrabold uppercase text-white tracking-wide">Women's</h3>
+          <a href="#"
+            class="inline-block rounded-full bg-white px-5 py-2 text-xs font-bold uppercase text-gray-900 shadow hover:bg-gray-100 transition">Shop
+            Now</a>
+        </div>
+      </div>
+      <!-- Kids' Card -->
+      <div class="group relative h-96 overflow-hidden rounded-2xl bg-gray-100">
+        <img src="https://images.unsplash.com/photo-1607522370275-f14206abe5d3?q=80&w=600&auto=format&fit=crop"
+          alt="Kids Collection"
+          class="h-full w-full object-cover object-center group-hover:scale-105 transition duration-500 brightness-75" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+        <div class="absolute bottom-6 left-6 space-y-2">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-gray-300">Collection</span>
+          <h3 class="text-2xl font-extrabold uppercase text-white tracking-wide">Kids'</h3>
+          <a href="#"
+            class="inline-block rounded-full bg-white px-5 py-2 text-xs font-bold uppercase text-gray-900 shadow hover:bg-gray-100 transition">Shop
+            Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. TRENDING NOW SECTION -->
+  <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 border-t border-gray-100">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h2 class="text-2xl font-black uppercase tracking-wider text-gray-900">Trending Now</h2>
+        <p class="text-xs text-gray-400 font-medium mt-0.5">The most sought-after drops this week.</p>
+      </div>
+      <div class="flex space-x-2">
+        <button class="rounded-full border border-gray-200 bg-white p-2 text-gray-600 hover:bg-gray-50 transition">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          </svg>
+        </button>
+        <button class="rounded-full border border-gray-200 bg-white p-2 text-gray-600 hover:bg-gray-50 transition">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- Product 1 -->
+      <div class="group relative flex flex-col">
+        <div class="relative w-full overflow-hidden rounded-xl bg-gray-50 p-4 flex items-center justify-center h-72">
+          <span
+            class="absolute top-3 left-3 rounded bg-gray-800 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">New
+            Drop</span>
+          <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=500&auto=format&fit=crop"
+            alt="Apex Air v1.0"
+            class="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-300">
+        </div>
+        <div class="mt-4 flex justify-between items-start">
+          <div>
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide">Apex Air v1.0</h3>
+            <p class="text-xs text-gray-400 mt-0.5">High-Performance Running</p>
+          </div>
+          <p class="text-sm font-black text-gray-900">$180.00</p>
+        </div>
+        <div class="mt-1 flex items-center gap-1 text-gray-400 text-xs">
+          <span class="text-gray-800 font-bold">★★★★★</span> <span class="text-[10px]">(124)</span>
+        </div>
+      </div>
+
+      <!-- Product 2 -->
+      <div class="group relative flex flex-col">
+        <div class="relative w-full overflow-hidden rounded-xl bg-gray-50 p-4 flex items-center justify-center h-72">
+          <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=500&auto=format&fit=crop"
+            alt="Volt Midnight"
+            class="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-300">
+        </div>
+        <div class="mt-4 flex justify-between items-start">
+          <div>
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide">Apex Volt Midnight</h3>
+            <p class="text-xs text-gray-400 mt-0.5">Core-Heavy Outdoor</p>
+          </div>
+          <p class="text-sm font-black text-gray-900">$165.00</p>
+        </div>
+        <div class="mt-1 flex items-center gap-1 text-gray-400 text-xs">
+          <span class="text-gray-800 font-bold">★★★★★</span> <span class="text-[10px]">(89)</span>
+        </div>
+      </div>
+
+      <!-- Product 3 -->
+      <div class="group relative flex flex-col">
+        <div class="relative w-full overflow-hidden rounded-xl bg-gray-50 p-4 flex items-center justify-center h-72">
+          <span
+            class="absolute top-3 left-3 rounded bg-red-600 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">Limited</span>
+          <img src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=500&auto=format&fit=crop"
+            alt="Swift Pro" class="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-300">
+        </div>
+        <div class="mt-4 flex justify-between items-start">
+          <div>
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide">Swift Pro Trainer</h3>
+            <p class="text-xs text-gray-400 mt-0.5">Everyday Sport Lifestyle</p>
+          </div>
+          <p class="text-sm font-black text-gray-900">$210.00</p>
+        </div>
+        <div class="mt-1 flex items-center gap-1 text-gray-400 text-xs">
+          <span class="text-gray-800 font-bold">★★★★☆</span> <span class="text-[10px]">(76)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. SLICK FOOTER -->
+  <footer class="bg-gray-950 text-white mt-16">
+    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 grid grid-cols-2 md:grid-cols-5 gap-8">
+      <div class="col-span-2 space-y-4">
+        <span class="text-xl font-black tracking-tight text-white sm:text-2xl">
+          SHOE<span class="text-gray-400">DROP</span>
+        </span>
+        <p class="text-xs text-gray-400 max-w-xs leading-relaxed">
+          Elevating your journey with engineered precision and minimalist sneaker design.
+        </p>
+      </div>
+      <div>
+        <h4 class="text-xs font-bold uppercase tracking-widest text-gray-300 mb-4">Shop</h4>
+        <ul class="space-y-2 text-xs text-gray-400">
+          <li><a href="#" class="hover:text-white transition">New Arrivals</a></li>
+          <li><a href="#" class="hover:text-white transition">Best Sellers</a></li>
+          <li><a href="#" class="hover:text-white transition">Sale</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-xs font-bold uppercase tracking-widest text-gray-300 mb-4">Support</h4>
+        <ul class="space-y-2 text-xs text-gray-400">
+          <li><a href="#" class="hover:text-white transition">Help Center</a></li>
+          <li><a href="#" class="hover:text-white transition">Shipping</a></li>
+          <li><a href="#" class="hover:text-white transition">Returns</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-xs font-bold uppercase tracking-widest text-gray-300 mb-4">Company</h4>
+        <ul class="space-y-2 text-xs text-gray-400">
+          <li><a href="#" class="hover:text-white transition">About</a></li>
+          <li><a href="#" class="hover:text-white transition">Sustainability</a></li>
+          <li><a href="#" class="hover:text-white transition">Careers</a></li>
+        </ul>
+      </div>
+    </div>
+    <div
+      class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 border-t border-gray-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] text-gray-500 tracking-wide">
+      <p>© 2026 ShoeDrop Archive. Performance Engineered.</p>
+      <div class="flex gap-4">
+        <a href="#" class="hover:text-gray-400 transition">Privacy Policy</a>
+        <a href="#" class="hover:text-gray-400 transition">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>
