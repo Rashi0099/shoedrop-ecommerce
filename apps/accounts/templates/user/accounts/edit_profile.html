@@ -150,14 +150,14 @@
 
             <div class="h-20 w-20 overflow-hidden rounded-full border border-gray-300">
 
-              {% if request.user.profile_image %}
-              <img id="preview-image" src="{{ request.user.profile_image.url }}" class="h-full w-full object-cover">
-              {% else %}
-              <div id="preview-image"
-                class="h-full w-full flex items-center justify-center bg-white font-black text-lg">
+              <img id="preview-image"
+                src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% endif %}"
+                class="h-full w-full object-cover {% if not request.user.profile_image %}hidden{% endif %}">
+
+              <div id="initial-avatar"
+                class="h-full w-full flex items-center justify-center bg-white font-black text-lg {% if request.user.profile_image %}hidden{% endif %}">
                 {{ request.user.username|first|upper }}
               </div>
-              {% endif %}
 
             </div>
 
@@ -166,12 +166,12 @@
               <div class="flex items-center gap-4">
 
                 <label for="profile_image" class="cursor-pointer text-sm font-bold text-[#0f3025] hover:underline">
-                  Change Photo
+                  add/edit photo
                 </label>
 
                 {% if request.user.profile_image %}
-                <button type="button" onclick="removeProfilePhoto()"
-                  class="text-sm font-medium text-red-500 hover:underline">
+                <button id="remove-photo-btn" type="button" onclick="removeProfilePhoto()"
+                  class="text-sm font-medium text-red-500 hover:underline {% if not request.user.profile_image %}hidden{% endif %}">
                   Remove Photo
                 </button>
                 {% endif %}
@@ -203,16 +203,31 @@
 
               if (file) {
 
+                document.getElementById(
+                  'remove_photo'
+                ).value = '0';
+
                 const preview =
                   document.getElementById(
                     'preview-image'
                   );
 
+                const avatar =
+                  document.getElementById(
+                    'initial-avatar'
+                  );
+
                 preview.src =
                   URL.createObjectURL(file);
 
-              }
+                preview.classList.remove(
+                  'hidden'
+                );
 
+                avatar.classList.add(
+                  'hidden'
+                );
+              }
             }
           );
 
@@ -228,12 +243,29 @@
                 'remove_photo'
               ).value = '1';
 
+              const preview =
+                document.getElementById(
+                  'preview-image'
+                );
+
+              const avatar =
+                document.getElementById(
+                  'initial-avatar'
+                );
+
+              preview.src = '';
+              preview.classList.add(
+                'hidden'
+              );
+
+              avatar.classList.remove(
+                'hidden'
+              );
+
               document.getElementById(
-                'preview-image'
-              ).src = '';
-
+                'profile_image'
+              ).value = '';
             }
-
           }
 
         </script>

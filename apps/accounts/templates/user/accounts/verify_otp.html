@@ -4,112 +4,123 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verify Your Identity - Shoedrop</title>
-  <!-- Tailwind CSS CDN -->
+  <title>Verify Your Identity - ShoeDrop</title>
+  <!-- Tailwind CSS Play CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body
-  class="min-h-screen relative flex flex-col justify-between items-center p-4 bg-[#111] overflow-hidden select-none">
+<body class="bg-gray-950 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-200 select-none">
 
-  <!-- Premium Dark Shoe Background Layer with Dark Overlay -->
-  <div class="absolute inset-0 z-0 bg-cover bg-center scale-105 brightness-[0.25] contrast-[1.1]"
-    style="background-image: url('https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=1925&auto=format&fit=crop');">
+  <div class="relative flex min-h-screen flex-col justify-between px-6 py-6 lg:px-8">
+    <!-- Background Image with Overlay -->
+    <div class="absolute inset-0 z-0">
+      <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070&auto=format&fit=crop"
+        alt="Performance Shoe Background" class="h-full w-full object-cover opacity-30 brightness-[0.35]" />
+      <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 backdrop-blur-[6px]"></div>
+    </div>
+
+    <!-- Header Logo -->
+    <header class="relative z-10 w-full max-w-7xl mx-auto">
+      <span class="text-lg font-black tracking-[0.2em] text-white uppercase">
+        SHOE<span class="text-emerald-400">DROP</span>
+      </span>
+    </header>
+
+    <!-- Verification Card Container -->
+    <main
+      class="relative z-10 my-auto w-full max-w-[400px] mx-auto transform rounded-2xl bg-black/40 p-6 md:p-8 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] backdrop-blur-xl border border-white/10 text-center transition-all duration-300">
+
+      <!-- Header -->
+      <div class="mb-6">
+        <h2 class="text-xl font-black uppercase tracking-widest text-white">
+          Verify Identity
+        </h2>
+        <p class="text-[11px] text-gray-400 mt-1 font-medium">
+          We've sent a 4-digit code to your email.
+        </p>
+      </div>
+
+      {% if messages %}
+      {% for message in messages %}
+      <div class="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-xs font-medium text-red-400">
+        {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
+
+      <!-- Form -->
+      <form method="POST" class="space-y-5" id="otp-form">
+        {% csrf_token %}
+        
+        <!-- OTP Input Fields Grid -->
+        <div class="grid grid-cols-4 gap-3 justify-center max-w-[280px] mx-auto mb-2">
+          <input type="text" name="otp1" maxlength="1" placeholder="•" autocomplete="off" inputmode="numeric" pattern="[0-9]*"
+            class="otp-field w-full aspect-square text-center text-white font-bold text-lg bg-white/5 border border-white/10 rounded-xl placeholder-gray-600 transition duration-200 focus:border-emerald-400/50 focus:bg-white/[0.08] focus:outline-none focus:ring-1 focus:ring-emerald-400/30">
+
+          <input type="text" name="otp2" maxlength="1" placeholder="•" autocomplete="off" inputmode="numeric" pattern="[0-9]*"
+            class="otp-field w-full aspect-square text-center text-white font-bold text-lg bg-white/5 border border-white/10 rounded-xl placeholder-gray-600 transition duration-200 focus:border-emerald-400/50 focus:bg-white/[0.08] focus:outline-none focus:ring-1 focus:ring-emerald-400/30">
+
+          <input type="text" name="otp3" maxlength="1" placeholder="•" autocomplete="off" inputmode="numeric" pattern="[0-9]*"
+            class="otp-field w-full aspect-square text-center text-white font-bold text-lg bg-white/5 border border-white/10 rounded-xl placeholder-gray-600 transition duration-200 focus:border-emerald-400/50 focus:bg-white/[0.08] focus:outline-none focus:ring-1 focus:ring-emerald-400/30">
+
+          <input type="text" name="otp4" maxlength="1" placeholder="•" autocomplete="off" inputmode="numeric" pattern="[0-9]*"
+            class="otp-field w-full aspect-square text-center text-white font-bold text-lg bg-white/5 border border-white/10 rounded-xl placeholder-gray-600 transition duration-200 focus:border-emerald-400/50 focus:bg-white/[0.08] focus:outline-none focus:ring-1 focus:ring-emerald-400/30">
+        </div>
+
+        <!-- Resend Code Section -->
+        <div class="space-y-1.5 py-1">
+          <a href="{% url 'resend_otp' %}"
+            class="text-[10px] font-bold text-gray-400 tracking-widest uppercase hover:text-white transition">
+            Resend Code
+          </a>
+          <p id="timer" class="text-xs font-bold tracking-wider text-emerald-400/80">
+            01:00
+          </p>
+          {{ remaining_time|json_script:"remaining-time" }}
+        </div>
+
+        <!-- Premium Submit Button -->
+        <div>
+          <button type="submit"
+            class="flex w-full justify-center rounded-xl bg-emerald-500 hover:bg-emerald-400 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-950 shadow-lg shadow-emerald-500/10 active:scale-[0.99] transition duration-150">
+            Verify & Proceed
+          </button>
+        </div>
+      </form>
+
+      <!-- Back to Login Navigation -->
+      <div class="mt-6 text-center border-t border-white/5 pt-4">
+        <a href="{% url 'login' %}"
+          class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-white transition">
+          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          <span>Back to Login</span>
+        </a>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer
+      class="relative z-10 w-full max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 text-[10px] text-gray-500 font-medium tracking-wide">
+      <p>© 2026 ShoeDrop Performance. All rights reserved.</p>
+      <div class="flex gap-5">
+        <a href="#" class="hover:text-gray-300 transition">Terms of Service</a>
+        <a href="#" class="hover:text-gray-300 transition">Help Center</a>
+      </div>
+    </footer>
+
   </div>
 
-  <!-- Top Header / Logo -->
-  <header class="w-full max-w-6xl mx-auto z-10 pt-4 md:pt-6 px-4">
-    <h1 class="text-white font-black tracking-[0.2em] text-sm md:text-base uppercase text-left opacity-90">
-      SHOEDROP
-    </h1>
-  </header>
-
-  <!-- Main Verification Card -->
-  <main
-    class="w-full max-w-[440px] bg-white rounded-[2.5rem] p-8 md:p-12 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.7)] text-center z-10 my-auto transition-all duration-300">
-
-    <!-- Heading -->
-    <h2 class="text-xl md:text-2xl font-black text-[#1a1a1a] tracking-tight uppercase mb-2">
-      Verify Your Identity
-    </h2>
-    <p class="text-xs md:text-sm text-gray-500 font-medium px-2 leading-relaxed mb-8">
-      We've sent a 4-digit code to your email.
-    </p>
-    {% if messages %}
-    {% for message in messages %}
-    <div class="mb-4 p-3 rounded-lg bg-red-100 text-red-700 text-sm">
-      {{ message }}
-    </div>
-    {% endfor %}
-    {% endif %}
-    <!-- OTP Input Fields Grid -->
-    <form method="POST" class="space-y-6">
-
-      {% csrf_token %}
-      <div class="grid grid-cols-4 gap-2 md:gap-3 justify-center mb-6">
-        <input type="text" name="otp1" maxlength="1" placeholder="•"
-          class="w-full aspect-square text-center text-gray-800 font-bold text-lg md:text-xl bg-[#f4f4f4] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111] focus:bg-white transition-all">
-
-        <input type="text" name="otp2" maxlength="1" placeholder="•"
-          class="w-full aspect-square text-center text-gray-800 font-bold text-lg md:text-xl bg-[#f4f4f4] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111] focus:bg-white transition-all">
-
-        <input type="text" name="otp3" maxlength="1" placeholder="•"
-          class="w-full aspect-square text-center text-gray-800 font-bold text-lg md:text-xl bg-[#f4f4f4] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111] focus:bg-white transition-all">
-
-        <input type="text" name="otp4" maxlength="1" placeholder="•"
-          class="w-full aspect-square text-center text-gray-800 font-bold text-lg md:text-xl bg-[#f4f4f4] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111] focus:bg-white transition-all">
-      </div>
-
-      <!-- Resend Code Section -->
-      <div class="space-y-1">
-        <a href="{% url 'resend_otp' %}"
-          class="text-[10px] md:text-xs font-bold text-gray-400 tracking-widest uppercase hover:text-black transition-colors">
-          Resend Code
-        </a>
-        <p id="timer" class="text-[11px] font-semibold text-gray-400">
-          01:00
-        </p>
-        {{ remaining_time|json_script:"remaining-time" }}
-
-      </div>
-
-      <!-- Submit Button (Dark Forest Green Accent) -->
-      <button type="submit"
-        class="w-full bg-[#143d30] text-white py-3.5 px-6 rounded-full font-bold text-xs md:text-sm tracking-widest uppercase shadow-[0_10px_20px_rgba(20,61,48,0.3)] hover:bg-[#0f3025] active:scale-[0.99] transition-all duration-200">
-        Verify & Proceed
-      </button>
-    </form>
-
-    <!-- Back to Login -->
-    <div class="mt-6">
-      <a href="{%url 'login'%}"
-        class="inline-flex items-center justify-center gap-2 text-[10px] md:text-xs font-bold text-gray-400 tracking-widest uppercase hover:text-black transition-colors">
-        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18">
-          </path>
-        </svg>
-        Back to Login
-      </a>
-    </div>
-
-  </main>
-
-  <!-- Bottom Footer -->
-  <footer class="w-full z-10 pb-4 text-center">
-    <p class="text-[10px] text-gray-600 font-bold tracking-[0.25em] uppercase">
-      © 2024 Shoedrop Archive.
-    </p>
-  </footer>
-
 </body>
-{{ remaining_time|json_script:"remaining-time" }}
-<script>
-  let timeLeft = 60;
 
+<script>
+  // Countdown Timer Script
+  let timeLeft = 60;
   const timer = document.getElementById("timer");
 
   const countdown = setInterval(() => {
-
     let minutes = Math.floor(timeLeft / 60);
     let seconds = timeLeft % 60;
 
@@ -119,11 +130,54 @@
     if (timeLeft <= 0) {
       clearInterval(countdown);
       timer.innerText = "Expired";
+      timer.classList.remove("text-emerald-400/80");
+      timer.classList.add("text-red-400");
     }
-
     timeLeft--;
-
   }, 1000);
+
+  // Advanced OTP Box Behavior (Auto-focus, Backspace, and Smart Paste)
+  const fields = document.querySelectorAll('.otp-field');
+  
+  fields.forEach((field, index) => {
+    // 1. ടൈപ്പിംഗ് കൈകാര്യം ചെയ്യാൻ
+    field.addEventListener('input', (e) => {
+      const val = e.target.value;
+      
+      // ഒരക്ക നമ്പറുകൾ മാത്രം അനുവദിക്കുന്നു
+      if (val && !/^[0-9]$/.test(val)) {
+        e.target.value = '';
+        return;
+      }
+      
+      // അടുത്ത ബോക്സിലേക്ക് ഫോക്കസ് മാറ്റുന്നു
+      if (val && index < fields.length - 1) {
+        fields[index + 1].focus();
+      }
+    });
+
+    // 2. ബാക്ക്സ്പേസ് കൈകാര്യം ചെയ്യാൻ
+    field.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !e.target.value && index > 0) {
+        fields[index - 1].focus();
+      }
+    });
+
+    // 3. സ്മാർട്ട് പേസ്റ്റിംഗ് (4 അക്ക കോഡ് നേരിട്ട് പേസ്റ്റ് ചെയ്യാൻ)
+    field.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
+      
+      // പേസ്റ്റ് ചെയ്ത ഡാറ്റ 4 അക്ക സംഖ്യയാണോ എന്ന് നോക്കുന്നു
+      if (/^[0-9]{4}$/.test(pasteData)) {
+        fields.forEach((input, i) => {
+          input.value = pasteData[i];
+        });
+        // അവസാന ഇൻപുട്ടിലേക്ക് ഫോക്കസ് നൽകുന്നു
+        fields[fields.length - 1].focus();
+      }
+    });
+  });
 </script>
 
 </html>

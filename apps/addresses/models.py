@@ -21,6 +21,7 @@ class Address(models.Model):
     postal_code = models.CharField(max_length=6)
 
     country = models.CharField(
+        
         max_length=100,
         default='India'
     )

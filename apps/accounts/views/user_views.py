@@ -505,6 +505,60 @@ def change_password(request):
             return redirect(
                 'change_password'
             )
+        if not re.search(
+            r'[A-Z]',
+            new_password
+        ):
+
+            messages.error(
+                request,
+                'Password must contain at least one uppercase letter'
+            )
+
+            return redirect(
+                'change_password'
+            )
+
+
+        if not re.search(
+            r'[a-z]',
+            new_password
+        ):
+
+            messages.error(
+                request,
+                'Password must contain at least one lowercase letter'
+            )
+
+            return redirect(
+                'change_password'
+            )
+
+
+        if not re.search(
+            r'[0-9]',
+            new_password
+        ):
+
+            messages.error(
+                request,
+                'Password must contain at least one number'
+            )
+
+            return redirect(
+                'change_password'
+            )
+
+
+        if current_password == new_password:
+            messages.error(request,'new pass must be different from current password')
+            redirect('change_password')
+        if len(new_password)<8:
+            messages.error(request,'new password must be at least 8 characters ')
+            redirect('chang_password')
+        
+
+        
 
         request.user.set_password(
             new_password
