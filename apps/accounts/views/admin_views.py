@@ -1,0 +1,178 @@
+from django.shortcuts import render, redirect
+
+from django.contrib import messages
+
+from django.contrib.auth import authenticate
+
+from django.contrib.auth import login
+
+from django.views.decorators.cache import never_cache
+
+from django.contrib.admin.views.decorators import staff_member_required
+
+from django.contrib.auth import logout
+
+from django.contrib.auth import update_session_auth_hash
+@never_cache
+def admin_login(request):
+
+    if request.user.is_authenticated and request.user.is_staff:
+
+        return redirect('admin_dashboard')
+
+    if request.method == 'POST':
+
+        email = request.POST.get('email').strip()
+
+        password = request.POST.get('password')
+
+        user = authenticate(
+            request,
+            email=email,
+            password=password
+        )
+
+        if user is not None and user.is_staff:
+
+            login(request,user)
+
+            return redirect('admin_dashboard')
+
+        messages.error(request,'Invalid admin credentials')
+
+    return render(request,'admin/accounts/login.html')
+
+
+
+@staff_member_required(
+    login_url='admin_login'
+)
+def admin_dashboard(request):
+
+    return render(
+        request,
+        'admin/accounts/dashboard.html'
+    )
+
+@staff_member_required(login_url='admin_login')
+def admin_profile(request):
+
+    return render(request, 'admin/accounts/admin_profile.html')
+
+
+@staff_member_required(login_url='admin_login')
+def admin_edit_profile(request):
+
+    if request.method == 'POST':
+        username = request.POST.get('username').strip()
+        email = request.POST.get('email').strip()
+        phone_number = request.POST.get('phone_number').strip()
+        
+        profile_picture = request.FILES.get('profile_picture')
+
+        request.user.username = username
+        request.user.email = email
+        
+        if hasattr(request.user, 'phone_number'):
+            request.user.phone_number = phone_number
+            
+        if profile_picture and hasattr(request.user, 'profile_picture'):
+            request.user.profile_picture = profile_picture
+
+        request.user.save()
+
+        messages.success(
+            request, 
+            'Profile updated successfully'
+        )
+        
+        return redirect('admin_profile')
+
+    return render(request, 'admin/accounts/edit_profile.html')
+
+@staff_member_required(login_url='admin_login')
+def admin_change_password(request):
+
+    if request.method == 'POST':
+
+        current_password = request.POST.get(
+            'current_password'
+        )
+
+        new_password = request.POST.get(
+            'new_password'
+        )
+
+        confirm_password = request.POST.get(
+            'confirm_password'
+        )
+
+        if not request.user.check_password(
+            current_password
+        ):
+            messages.error(
+                request,
+                'Current password is incorrect'
+            )
+
+            return redirect(
+                'admin_change_password'
+            )
+
+        if new_password != confirm_password:
+
+            messages.error(
+                request,
+                'Passwords do not match'
+            )
+
+            return redirect(
+                'admin_change_password'
+            )
+
+        request.user.set_password(
+            new_password
+        )
+
+        request.user.save()
+
+        update_session_auth_hash(
+            request,
+            request.user
+        )
+
+        messages.success(
+            request,
+            'Password changed successfully'
+        )
+
+        return redirect(
+            'admin_profile'
+        )
+
+    return render(
+        request,
+        'admin/accounts/change_password.html'
+    )
+
+
+
+
+
+
+@staff_member_required(
+    login_url='admin_login'
+)
+
+
+
+
+
+
+
+
+def admin_logout(request):
+
+    logout(request)
+
+    return redirect('admin_login')

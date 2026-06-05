@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shoedrop - Profile Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #111111; }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #333; }
+    </style>
+</head>
+
+<body class="bg-[#0b0b0b] text-[#ddd] font-sans flex min-h-screen">
+
+    <aside class="w-64 bg-[#111111] border-r border-[#1a1a1a] p-6 flex flex-col justify-between shrink-0">
+        <div>
+            <div class="mb-10 px-2">
+                <h2 class="text-white font-black tracking-[0.2em] text-lg uppercase">Shoedrop</h2>
+                <p class="text-[#555] text-[10px] font-bold uppercase tracking-[0.1em] mt-0.5">Admin Console</p>
+            </div>
+            
+            <nav class="space-y-1">
+                <a href="{% url 'admin_dashboard' %}" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Dashboard</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Products</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Categories</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Orders</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Returns</a>
+                <a href="{% url 'customer_list' %}" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Customers</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Reviews</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Analytics</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Coupons</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Banner</a>
+                <a href="{% url 'admin_profile' %}" class="flex items-center px-4 py-3 bg-[#1a1a1a] text-white text-xs font-semibold tracking-widest uppercase rounded-xl border border-[#222]">Settings</a>
+            </nav>
+        </div>
+
+        <div class="p-3.5 rounded-xl border border-[#1e1e1e] bg-[#141414] flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-[#192a20] text-[#4ea8de] border border-[#1e3328] flex items-center justify-center font-bold text-xs">AD</div>
+            <div>
+                <p class="text-white font-bold text-[11px] tracking-wider uppercase">{{ request.user.username }}</p>
+                <p class="text-[#555] text-[9px] uppercase tracking-wider font-semibold mt-0.5">Master Access</p>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-12 space-y-10">
+        <div class="flex items-center justify-between pb-4 border-b border-[#1a1a1a]">
+            <div>
+                <p class="text-[#555] text-[10px] font-bold uppercase tracking-widest">Admin Settings</p>
+                <h1 class="text-xl font-bold text-white tracking-wider uppercase mt-1">Profile Details</h1>
+            </div>
+            <a href="{% url 'admin_edit_profile' %}"
+                class="px-5 py-2.5 rounded-lg border border-[#333] bg-[#111111] text-[#aaa] text-xs font-bold uppercase tracking-widest hover:border-[#555] hover:text-white transition-all">
+                Edit Profile
+            </a>
+        </div>
+
+        <div class="max-w-4xl p-8 rounded-2xl bg-[#111111] border border-[#1a1a1a] space-y-8">
+            <div class="flex items-center gap-6 pb-6 border-b border-[#1a1a1a]">
+                <div class="w-16 h-16 bg-[#1a1a1a] rounded-full flex items-center justify-center text-white text-xl font-bold border border-[#222] overflow-hidden">
+                    {% if request.user.profile_picture %}
+                        <img src="{{ request.user.profile_picture.url }}" alt="Profile" class="w-full h-full object-cover">
+                    {% else %}
+                        {{ request.user.username|first|upper }}
+                    {% endif %}
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-white tracking-wide uppercase">{{ request.user.username }}</h2>
+                    <p class="text-[#555] text-xs mt-0.5">Role: <span class="text-[#888] font-medium">Administrator</span></p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <label class="block text-[#555] text-[10px] font-bold tracking-widest uppercase mb-2">Email Address</label>
+                    <p class="text-[#bbb] text-sm font-light bg-[#0b0b0b] p-3 rounded-lg border border-[#1a1a1a] font-mono">{{ request.user.email }}</p>
+                </div>
+                <div>
+                    <label class="block text-[#555] text-[10px] font-bold tracking-widest uppercase mb-2">Phone Number</label>
+                    <p class="text-[#bbb] text-sm font-light bg-[#0b0b0b] p-3 rounded-lg border border-[#1a1a1a] font-mono">{{ request.user.phone_number|default:'Not Provided' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-4">
+            <a href="{% url 'admin_logout' %}" class="text-xs font-bold uppercase tracking-widest text-red-500 hover:text-red-400 transition-colors">
+                Logout
+            </a>
+        </div>
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add New Address - ShoeDrop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-white text-gray-800 min-h-screen flex flex-col justify-between antialiased">
+
+  <!-- MAIN CENTERED CONTAINER -->
+  <div class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 w-full">
+    
+    <!-- Max width control for the form card -->
+    <main class="w-full max-w-3xl space-y-6 bg-white p-2 sm:p-6 rounded-2xl">
+
+      <!-- Breadcrumbs & Header -->
+      <div>
+        <nav class="text-[10px] font-bold text-gray-400 tracking-wider uppercase flex items-center gap-1">
+          <a href="#" class="hover:text-black">My Address</a>
+          <span>/</span>
+          <span class="text-gray-900">Add New Address</span>
+        </nav>
+        <h1 class="text-2xl font-black text-gray-900 tracking-tight uppercase mt-1">Add New Address</h1>
+      </div>
+
+      <!-- Django Messages System -->
+      {% if messages %}
+        {% for message in messages %}
+          <div class="mb-4 p-4 rounded-xl text-sm font-semibold {% if message.tags == 'error' %} bg-red-100 text-red-700 {% elif message.tags == 'success' %} bg-green-100 text-green-700 {% else %} bg-blue-100 text-blue-700 {% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <!-- Input Form for New Entry -->
+      <form method="POST" class="space-y-5">
+        {% csrf_token %}
+        
+        <!-- Full Name -->
+        <div>
+          <label class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">Full Name</label>
+          <input type="text" name="full_name" placeholder="Enter your full name" required
+            class="w-full px-4 py-3 bg-[#F4F5F6] border-0 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-black outline-none transition-all">
+        </div>
+
+        <!-- Mobile & City Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">Mobile Number</label>
+            <input type="text" name="phone_number" placeholder="Enter mobile number" required
+              class="w-full px-4 py-3 bg-[#F4F5F6] border-0 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-black outline-none transition-all">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">City</label>
+            <input type="text" name="city" placeholder="Enter city name" required
+              class="w-full px-4 py-3 bg-[#F4F5F6] border-0 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-black outline-none transition-all">
+          </div>
+        </div>
+
+        <!-- Pincode, State & Country Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">Pincode</label>
+            <input type="text" name="postal_code" placeholder="e.g. 682001" required
+              class="w-full px-4 py-3 bg-[#F4F5F6] border-0 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-black outline-none transition-all">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">State</label>
+            <input type="text" name="state" placeholder="Enter state" required
+              class="w-full px-4 py-3 bg-[#F4F5F6] border-0 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-black outline-none transition-all">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">Country</label>
+            <input type="text" name="country" placeholder="Enter country" required
+              class="w-full px-4 py-3 bg-[#F4F5F6] border-0 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-black outline-none transition-all">
+          </div>
+        </div>
+
+        <!-- Area Address TextArea -->
+        <div>
+          <label class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">Address (House No, Building, Street, Area)</label>
+          <textarea rows="3" name="address" placeholder="Write full address details here..." required
+            class="w-full px-4 py-3 bg-[#F4F5F6] border-0 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-black outline-none transition-all"></textarea>
+        </div>
+
+        <!-- Address Type Multi-Button Select Option -->
+        <div>
+          <label class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+            Address Type
+          </label>
+
+          <div class="grid grid-cols-3 gap-3">
+            <label class="cursor-pointer">
+              <input type="radio" name="address_type" value="HOME" checked class="hidden peer">
+              <div class="bg-white border border-gray-200 text-gray-800 py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 peer-checked:bg-[#111] peer-checked:text-white peer-checked:border-black transition-all">
+                <span>🏠</span> Home
+              </div>
+            </label>
+
+            <label class="cursor-pointer">
+              <input type="radio" name="address_type" value="WORK" class="hidden peer">
+              <div class="bg-white border border-gray-200 text-gray-800 py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 peer-checked:bg-[#111] peer-checked:text-white peer-checked:border-black transition-all">
+                <span>💼</span> Work
+              </div>
+            </label>
+
+            <label class="cursor-pointer">
+              <input type="radio" name="address_type" value="OTHER" class="hidden peer">
+              <div class="bg-white border border-gray-200 text-gray-800 py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 peer-checked:bg-[#111] peer-checked:text-white peer-checked:border-black transition-all">
+                <span>•••</span> Other
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Set as Default Address Checkbox -->
+        <div class="flex items-center pt-2">
+          <label class="inline-flex items-center cursor-pointer select-none">
+            <input type="checkbox" name="is_default"
+              class="rounded border-gray-300 text-black focus:ring-black w-4 h-4">
+            <span class="ml-2.5 text-[10px] font-bold uppercase tracking-wider text-gray-800">Set as default address</span>
+          </label>
+        </div>
+
+        <!-- Form Submissions Controls -->
+        <div class="flex items-center justify-between pt-6 border-t border-gray-100">
+          <button type="button"
+            class="text-[11px] font-bold uppercase tracking-widest text-gray-400 hover:text-black transition-colors">
+            Cancel
+          </button>
+          <button type="submit"
+            class="bg-[#111] hover:bg-black text-white text-xs font-bold tracking-widest uppercase px-8 py-3.5 rounded-xl shadow-md active:scale-[0.99] transition-all">
+            Save Address
+          </button>
+        </div>
+
+      </form>
+    </main>
+  </div>
+
+  <!-- MIDDLE SUB-FOOTER BRANDING -->
+  <div class="w-full bg-white py-12 border-t border-gray-100 text-center space-y-4">
+    <span class="text-xs font-black tracking-[0.3em] text-black uppercase block">SHOEDROP</span>
+    <div class="flex justify-center items-center gap-6 text-[10px] font-bold tracking-wider uppercase text-gray-400">
+      <a href="#" class="hover:text-black transition-colors">Privacy Policy</a>
+      <a href="#" class="hover:text-black transition-colors">Terms of Service</a>
+      <a href="#" class="hover:text-black transition-colors">Shipping Info</a>
+      <a href="#" class="hover:text-black transition-colors">Contact Us</a>
+    </div>
+    <p class="text-[9px] font-bold tracking-widest text-gray-300 uppercase">© 2024 SHOEDROP. CURATED EXCELLENCE.</p>
+  </div>
+
+  <!-- DEEP MAIN FOOTER (Pure Black Theme #111111) -->
+  <footer class="bg-[#111] text-gray-400 text-xs w-full pt-16 pb-6 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- Main Branding Block -->
+      <div class="pb-12 border-b border-white/5">
+        <h2 class="text-3xl font-black tracking-tight text-white mb-4">ShoeDrop</h2>
+        <p class="max-w-md text-sm text-gray-400 leading-relaxed font-medium">
+          Elevating your journey with engineered precision and minimalist design.
+        </p>
+
+        <!-- Utility Icons Graphics placeholder -->
+        <div class="flex items-center space-x-4 mt-6 text-gray-500">
+          <span class="w-5 h-5 block border border-gray-700 rounded-sm opacity-50"></span>
+          <span class="w-5 h-5 block border border-gray-700 rounded-sm opacity-50"></span>
+          <span class="w-5 h-5 block border border-gray-700 rounded-sm opacity-50"></span>
+        </div>
+      </div>
+
+      <!-- Footer Meta Links -->
+      <div class="pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] font-semibold tracking-wider uppercase text-gray-500">
+        <div>
+          © 2024 ShoeDrop. Performance Engineered.
+        </div>
+        <div class="flex items-center space-x-8">
+          <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+          <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+          <a href="#" class="hover:text-white transition-colors">Store Locator</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+</body>
+
+</html>

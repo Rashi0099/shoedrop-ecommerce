@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shoedrop - Edit Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #111111; }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #333; }
+    </style>
+</head>
+
+<body class="bg-[#0b0b0b] text-[#ddd] font-sans flex min-h-screen">
+
+    <aside class="w-64 bg-[#111111] border-r border-[#1a1a1a] p-6 flex flex-col justify-between shrink-0">
+        <div>
+            <div class="mb-10 px-2">
+                <h2 class="text-white font-black tracking-[0.2em] text-lg uppercase">Shoedrop</h2>
+                <p class="text-[#555] text-[10px] font-bold uppercase tracking-[0.1em] mt-0.5">Admin Console</p>
+            </div>
+            
+            <nav class="space-y-1">
+                <a href="{% url 'admin_dashboard' %}" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Dashboard</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Products</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Categories</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Orders</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Returns</a>
+                <a href="{% url 'customer_list' %}" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Customers</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Reviews</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Analytics</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Coupons</a>
+                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Banner</a>
+                <a href="{% url 'admin_profile' %}" class="flex items-center px-4 py-3 bg-[#1a1a1a] text-white text-xs font-semibold tracking-widest uppercase rounded-xl border border-[#222]">Settings</a>
+            </nav>
+        </div>
+
+        <div class="p-3.5 rounded-xl border border-[#1e1e1e] bg-[#141414] flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-[#192a20] text-[#4ea8de] border border-[#1e3328] flex items-center justify-center font-bold text-xs">AD</div>
+            <div>
+                <p class="text-white font-bold text-[11px] tracking-wider uppercase">{{ request.user.username }}</p>
+                <p class="text-[#555] text-[9px] uppercase tracking-wider font-semibold mt-0.5">Master Access</p>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-12 space-y-10">
+        <div class="flex items-center pb-4 border-b border-[#1a1a1a]">
+            <div>
+                <a href="{% url 'admin_profile' %}" class="text-[#777] text-[10px] font-bold uppercase tracking-widest hover:text-white transition-colors">← Back To Profile</a>
+                <h1 class="text-xl font-bold text-white tracking-wider uppercase mt-2">Modify Account</h1>
+            </div>
+        </div>
+
+        <div class="max-w-4xl p-8 rounded-2xl bg-[#111111] border border-[#1a1a1a]">
+            <form method="POST" action="{% url 'admin_edit_profile' %}" enctype="multipart/form-data" class="space-y-8">
+                {% csrf_token %}
+                
+                <div class="flex items-center gap-6 pb-6 border-b border-[#1a1a1a]">
+                    <div class="w-20 h-20 bg-[#0b0b0b] rounded-full flex items-center justify-center text-white text-2xl font-bold border border-[#222] overflow-hidden shrink-0">
+                        {% if request.user.profile_picture %}
+                            <img src="{{ request.user.profile_picture.url }}" alt="Profile" class="w-full h-full object-cover">
+                        {% else %}
+                            {{ request.user.username|first|upper }}
+                        {% endif %}
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[#777] text-[10px] font-bold tracking-[0.15em] uppercase">Profile Picture</label>
+                        <input type="file" name="profile_picture" accept="image/*"
+                               class="text-xs text-[#555] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border file:border-[#222] file:text-[10px] file:font-bold file:uppercase file:tracking-wider file:bg-[#141414] file:text-[#aaa] hover:file:bg-[#1a1a1a] file:cursor-pointer transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-[#555] text-[10px] font-bold tracking-widest uppercase mb-2">Full Name</label>
+                        <input type="text" name="username" value="{{ request.user.username }}" required
+                               class="w-full bg-[#0b0b0b] border border-[#1a1a1a] rounded-lg px-4 py-3 text-sm text-[#ccc] focus:outline-none focus:border-[#333] focus:ring-1 focus:ring-[#333] transition-all font-mono">
+                    </div>
+
+                    <div>
+                        <label class="block text-[#555] text-[10px] font-bold tracking-widest uppercase mb-2">Email Address</label>
+                        <input type="email" name="email" value="{{ request.user.email }}" required
+                               class="w-full bg-[#0b0b0b] border border-[#1a1a1a] rounded-lg px-4 py-3 text-sm text-[#ccc] focus:outline-none focus:border-[#333] focus:ring-1 focus:ring-[#333] transition-all font-mono">
+                    </div>
+
+                    <div>
+                        <label class="block text-[#555] text-[10px] font-bold tracking-widest uppercase mb-2">Phone Number</label>
+                        <input type="text" name="phone_number" value="{{ request.user.phone_number|default:'' }}"
+                               class="w-full bg-[#0b0b0b] border border-[#1a1a1a] rounded-lg px-4 py-3 text-sm text-[#ccc] focus:outline-none focus:border-[#333] focus:ring-1 focus:ring-[#333] transition-all font-mono">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 pt-4 border-t border-[#1a1a1a]">
+                    <button type="submit" class="px-6 py-3 bg-[#192a20] text-[#4ea8de] border border-[#1e3328] text-[11px] font-bold tracking-widest uppercase rounded-lg hover:bg-[#1f382a] transition-all">
+                        Save Changes
+                    </button>
+                    <a href="{% url 'admin_profile' %}" class="px-6 py-3 bg-transparent border border-[#222] text-[#555] text-[11px] font-bold tracking-widest uppercase rounded-lg hover:border-[#333] hover:text-[#888] transition-all">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+</body>
+
+</html>

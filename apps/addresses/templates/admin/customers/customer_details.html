@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Details - ShoeDrop Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-[#0B0B0C] text-gray-400 min-h-screen flex antialiased">
+
+    <!-- 1. LEFT SIDEBAR -->
+    <aside
+        class="w-64 bg-[#141416] border-r border-white/5 flex flex-col justify-between p-6 shrink-0 sticky top-0 h-screen">
+        <div class="space-y-8">
+            <!-- Branding Logo -->
+            <div>
+                <span class="text-lg font-black tracking-[0.25em] text-white uppercase block">SHOEDROP</span>
+                <span class="text-[9px] font-bold text-gray-500 tracking-widest uppercase mt-1 block">Admin Console</span>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-1.5">
+                <a href="#"
+                    class="flex items-center px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors">
+                    Dashboard
+                </a>
+                <a href="#"
+                    class="flex items-center px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors">
+                    Products
+                </a>
+                <a href="#"
+                    class="flex items-center px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors">
+                    Categories
+                </a>
+                <a href="#"
+                    class="flex items-center px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors">
+                    Orders
+                </a>
+                <a href="#"
+                    class="flex items-center px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors">
+                    Returns
+                </a>
+                <!-- Active Item (Customers) -->
+                <a href="#"
+                    class="flex items-center px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-white/5 rounded-xl transition-colors">
+                    Customers
+                </a>
+                <a href="#"
+                    class="flex items-center px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors">
+                    Reviews
+                </a>
+                <a href="#"
+                    class="flex items-center px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors">
+                    Analytics
+                </a>
+                <a href="#"
+                    class="flex items-center px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors">
+                    Coupons
+                </a>
+                <a href="#"
+                    class="flex items-center px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors">
+                    Banner
+                </a>
+                <a href="#"
+                    class="flex items-center px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors">
+                    Settings
+                </a>
+            </nav>
+        </div>
+
+        <!-- User Badge at bottom -->
+        <div class="bg-[#1C1C1E] p-3 rounded-xl flex items-center gap-3 border border-white/5">
+            <div
+                class="w-9 h-9 bg-emerald-500/10 text-emerald-400 font-bold text-xs rounded-lg flex items-center justify-center border border-emerald-500/20">
+                AD
+            </div>
+            <div>
+                <h4 class="text-xs font-bold text-white uppercase tracking-wider">Admin User</h4>
+                <p class="text-[9px] font-bold text-gray-500 tracking-widest uppercase">Master Access</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 2. MAIN CONTENT AREA -->
+    <main class="flex-grow p-8 lg:p-12 space-y-6 overflow-y-auto max-w-4xl">
+
+        <!-- Nice Back Button (Styled to match filter/card elements) -->
+        <div class="flex items-center">
+            <a href="{% url 'customer_list' %}" class="inline-flex items-center bg-[#141416] hover:bg-[#1C1C1E] text-white border border-white/5 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors">
+                &larr; Back to Customers
+            </a>
+        </div>
+
+        <!-- Header Block -->
+        <div>
+            <span class="text-[10px] font-bold text-gray-500 tracking-[0.2em] uppercase block">Customer Profile</span>
+            <h1 class="text-3xl font-black text-white tracking-tight uppercase mt-1">Details</h1>
+        </div>
+
+        <!-- Details Card -->
+        <div class="bg-[#141416] rounded-2xl border border-white/5 p-8 shadow-xl space-y-8">
+            
+            <!-- Profile Info Header Row -->
+            <div class="flex items-center gap-5 pb-6 border-b border-white/5">
+                <div class="w-16 h-16 rounded-full bg-gray-800 border border-white/10 overflow-hidden shrink-0">
+                    {% if customer.profile_image %}
+                    <img src="{{ customer.profile_image.url }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center bg-zinc-800 text-white font-bold text-xl">
+                        {{ customer.username|first|upper }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-white">{{ customer.username }}</h2>
+                    <span class="text-xs text-gray-500 font-semibold block mt-1">
+                        ID: #{{ customer.id }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Profile Info Grid Details -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 block mb-1">Email Address</span>
+                    <span class="text-white font-mono">{{ customer.email }}</span>
+                </div>
+
+                <!-- Phone Number Column Added -->
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 block mb-1">Phone Number</span>
+                    <span class="text-white font-mono">
+                        {% if customer.phone_number %}{{ customer.phone_number }}{% else %}Not Provided{% endif %}
+                    </span>
+                </div>
+
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 block mb-1">Role</span>
+                    {% if customer.is_superuser %}
+                    <span class="text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 bg-red-500/10 text-red-400 border border-red-500/20 rounded-full inline-block">
+                        Admin
+                    </span>
+                    {% else %}
+                    <span class="text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 bg-gray-500/10 text-gray-400 border border-white/5 rounded-full inline-block">
+                        Customer
+                    </span>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 block mb-1">Account Status</span>
+                    {% if customer.is_active %}
+                    <div class="flex items-center gap-1.5 text-white font-bold text-[10px] uppercase tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 block"></span> Active
+                    </div>
+                    {% else %}
+                    <div class="flex items-center gap-1.5 text-red-400 font-bold text-[10px] uppercase tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 block"></span> Blocked
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 block mb-1">Date Joined</span>
+                    <span class="text-gray-300 font-semibold">{{ customer.date_joined|date:"F d, Y - P" }}</span>
+                </div>
+            </div>
+
+            <!-- Action Controls Block at bottom -->
+            <div class="pt-6 border-t border-white/5 flex items-center justify-end">
+                {% if customer.is_active %}
+                <a href="{% url 'block_user' customer.id %}" 
+                    class="px-5 py-2.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors">
+                    Block User
+                </a>
+                {% else %}
+                <a href="{% url 'unblock_user' customer.id %}" 
+                    class="px-5 py-2.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors">
+                    Unblock User
+                </a>
+                {% endif %}
+            </div>
+
+        </div>
+    </main>
+
+</body>
+
+</html>

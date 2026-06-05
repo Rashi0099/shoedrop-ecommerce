@@ -106,7 +106,7 @@
 
       <!-- Google Button -->
       <div class="mt-4">
-        <button type="button"
+        <a href="{%url 'google_login'%}"
           class="flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:border-white/20 hover:bg-white/10 active:scale-[0.98] transition duration-150 sm:text-sm">
           <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" width="24" height="24">
             <path fill="#4285F4"
@@ -120,12 +120,12 @@
             <path fill="none" d="M1 1h22v22H1z" />
           </svg>
           <span>Google</span>
-        </button>
+          </a>
       </div>
 
       <!-- Links section (Forgot Password & Small Sign Up link added here) -->
       <div class="mt-5 flex flex-col items-center justify-center gap-2 text-center border-t border-white/5 pt-3">
-        <a href="#"
+        <a href="{%url 'forgot_password'%}"
           class="text-[11px] font-medium text-white/50 hover:text-white transition hover:underline hover:underline-offset-4">
           Forgot Password?
         </a>

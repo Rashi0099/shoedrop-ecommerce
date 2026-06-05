@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shoedrop Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+    </style>
+</head>
+<body class="bg-[#111111] text-white font-sans flex h-screen overflow-hidden">
+
+    <aside class="w-[240px] bg-[#171717] flex flex-col justify-between border-r border-[#2a2a2a] hidden md:flex shrink-0 z-10">
+        
+        <div>
+            <div class="px-8 py-10 mb-4">
+                <h2 class="text-white text-lg font-bold tracking-[0.2em] uppercase">Shoedrop</h2>
+                <p class="text-[#888] text-[9px] font-medium tracking-widest mt-1 uppercase">Admin Console</p>
+            </div>
+
+            <nav class="flex flex-col gap-1 px-4">
+                <a href="#" class="flex items-center gap-4 px-4 py-3 bg-[#222222] text-[#e5e5e5] rounded-lg text-xs font-semibold tracking-wider transition-colors">
+                    <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    DASHBOARD
+                </a>
+                <a href="#" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
+                    <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                    PRODUCTS
+                </a>
+                <a href="#" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
+                    <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    CATEGORIES
+                </a>
+                <a href="#" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
+                    <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    ORDERS
+                </a>
+                <a href="#" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
+                    <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                    RETURNS
+                </a>
+                <a href="{%url 'customer_list'%}" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
+                    <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    CUSTOMERS
+                </a>
+                <a href="#" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
+                    <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    ANALYTICS
+                </a>
+            </nav>
+        </div>
+
+        <div class="px-6 py-8">
+            <div class="flex items-center gap-3 bg-[#202020] p-3 rounded-xl border border-[#333]">
+                <div class="w-10 h-10 rounded-full bg-[#2c4c3b] text-[#5cb85c] flex items-center justify-center text-xs font-bold">AD</div>
+                <div>
+                    <a href="{%url 'admin_profile'%}">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-white">Admin User</p>
+                    <p class="text-[9px] text-[#777] uppercase tracking-wider">Master Access</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto bg-[#111111] p-6 md:p-10">
+        <div class="max-w-[1400px] mx-auto">
+            
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-white mb-2 uppercase tracking-wide">Dashboard</h1>
+                <p class="text-[#777] text-sm font-medium">Real-time stored order data</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="bg-[#1A1A1A] p-6 rounded-2xl border border-[#262626]">
+                    <h3 class="text-[#888] text-[10px] font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <span class="w-1 h-3 bg-yellow-500 block rounded-full"></span> Revenue Today
+                    </h3>
+                    <p class="text-2xl font-semibold mb-1">₹0</p>
+                    <p class="text-[#666] text-[10px] uppercase">Net after all discounts</p>
+                </div>
+                <div class="bg-[#1A1A1A] p-6 rounded-2xl border border-[#262626]">
+                    <h3 class="text-[#888] text-[10px] font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <span class="w-1 h-3 bg-green-500 block rounded-full"></span> Orders Today
+                    </h3>
+                    <p class="text-2xl font-semibold mb-1">0</p>
+                    <p class="text-[#666] text-[10px] uppercase">Confirmed & Paid</p>
+                </div>
+                <div class="bg-[#1A1A1A] p-6 rounded-2xl border border-[#262626]">
+                    <h3 class="text-[#888] text-[10px] font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <span class="w-1 h-3 bg-red-500 block rounded-full"></span> Refunds Today
+                    </h3>
+                    <p class="text-2xl font-semibold mb-1">₹0</p>
+                    <p class="text-[#666] text-[10px] uppercase">Returned / Refunded</p>
+                </div>
+                <div class="bg-[#1A1A1A] p-6 rounded-2xl border border-[#262626]">
+                    <h3 class="text-[#888] text-[10px] font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <span class="w-1 h-3 bg-blue-500 block rounded-full"></span> Avg Order Today
+                    </h3>
+                    <p class="text-2xl font-semibold mb-1">₹0</p>
+                    <p class="text-[#666] text-[10px] uppercase">Today's Average</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+                <div class="lg:col-span-2 bg-[#1A1A1A] p-6 rounded-3xl border border-[#262626] h-[320px] flex flex-col">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <p class="text-[#777] text-[10px] font-bold uppercase tracking-wider mb-1">Today's Performance</p>
+                            <h2 class="text-lg font-semibold text-white">Hour-by-Hour (0-23)</h2>
+                        </div>
+                        <div class="flex bg-[#222] rounded-full p-1 border border-[#333]">
+                            <button class="px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[#333] text-white rounded-full">Revenue</button>
+                            <button class="px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#888] hover:text-white rounded-full">Orders</button>
+                        </div>
+                    </div>
+                    <div class="flex-1 border-b border-[#2a2a2a] relative flex items-center justify-center">
+                        <div class="absolute inset-0 flex flex-col justify-between">
+                            <div class="w-full h-px bg-[#222]"></div>
+                            <div class="w-full h-px bg-[#222]"></div>
+                            <div class="w-full h-px bg-[#222]"></div>
+                            <div class="w-full h-px bg-[#222]"></div>
+                        </div>
+                        <p class="text-[#555] text-xs z-10 relative">Waiting for traffic...</p>
+                    </div>
+                    <div class="flex justify-between text-[#555] text-[9px] mt-3 px-2">
+                        <span>0:00</span><span>2:00</span><span>4:00</span><span>6:00</span><span>8:00</span>
+                        <span>10:00</span><span>12:00</span><span>14:00</span><span>16:00</span><span>18:00</span>
+                        <span>20:00</span><span>22:00</span>
+                    </div>
+                </div>
+
+                <div class="bg-[#1A1A1A] p-6 rounded-3xl border border-[#262626] flex flex-col">
+                    <h3 class="text-[#888] text-[10px] font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <span class="text-orange-500">★</span> Trending Today
+                    </h3>
+                    <h2 class="text-xl font-bold text-white mb-auto">Top Seller</h2>
+                    
+                    <div class="flex flex-col items-center justify-center flex-1 text-center opacity-60">
+                        <div class="w-16 h-16 bg-[#222] rounded-2xl flex items-center justify-center mb-4 border border-[#333]">
+                            <svg class="w-6 h-6 text-[#555]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                        </div>
+                        <p class="text-[#666] text-[10px] font-bold uppercase tracking-widest">No Sales Yet Today</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-10">
+                <h3 class="text-[#666] text-[11px] font-bold uppercase tracking-widest mb-4">All-Time Overview</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    
+                    <div class="bg-[#1A1A1A] p-5 rounded-2xl border border-[#262626]">
+                        <p class="text-[#888] text-[9px] font-bold uppercase tracking-wider mb-1">Gross Revenue</p>
+                        <p class="text-xl font-bold mb-1">₹2,12,848</p>
+                        <p class="text-[#555] text-[9px] uppercase">Before any deductions</p>
+                    </div>
+                    
+                    <div class="bg-[#1A1A1A] p-5 rounded-2xl border border-[#262626]">
+                        <p class="text-[#888] text-[9px] font-bold uppercase tracking-wider mb-1">Offer Discounts</p>
+                        <p class="text-xl font-bold mb-1">₹56,636</p>
+                        <p class="text-[#555] text-[9px] uppercase">Saved via offers</p>
+                    </div>
+                    
+                    <div class="bg-[#1A1A1A] p-5 rounded-2xl border border-[#262626]">
+                        <p class="text-[#888] text-[9px] font-bold uppercase tracking-wider mb-1">Coupon Discounts</p>
+                        <p class="text-xl font-bold mb-1">₹80,447</p>
+                        <p class="text-[#555] text-[9px] uppercase">Coupons redeemed</p>
+                    </div>
+                    
+                    <div class="bg-[#1A1A1A] p-5 rounded-2xl border border-[#262626]">
+                        <p class="text-[#2ecc71] text-[9px] font-bold uppercase tracking-wider mb-1">Net Revenue</p>
+                        <p class="text-xl font-bold mb-1">₹2,51,330</p>
+                        <p class="text-[#555] text-[9px] uppercase">Actual money received</p>
+                    </div>
+                    
+                    <div class="bg-[#1A1A1A] p-5 rounded-2xl border border-[#262626]">
+                        <p class="text-[#e74c3c] text-[9px] font-bold uppercase tracking-wider mb-1">Total Refunds</p>
+                        <p class="text-xl font-bold mb-1">₹26,716</p>
+                        <p class="text-[#555] text-[9px] uppercase">All-time refunded</p>
+                    </div>
+
+                    <div class="bg-[#1A1A1A] p-5 rounded-2xl border border-[#262626]">
+                        <p class="text-[#888] text-[9px] font-bold uppercase tracking-wider mb-1">Avg Order Value</p>
+                        <p class="text-xl font-bold mb-1">₹2,285</p>
+                        <p class="text-[#555] text-[9px] uppercase">Net + Paid orders</p>
+                    </div>
+
+                    <div class="bg-[#1A1A1A] p-5 rounded-2xl border border-[#262626]">
+                        <p class="text-[#888] text-[9px] font-bold uppercase tracking-wider mb-1">Total Orders</p>
+                        <p class="text-xl font-bold mb-1">110</p>
+                        <p class="text-[#555] text-[9px] uppercase">Paid & Confirmed</p>
+                    </div>
+
+                    <div class="bg-[#1A1A1A] p-5 rounded-2xl border border-[#262626]">
+                        <p class="text-[#888] text-[9px] font-bold uppercase tracking-wider mb-1">Customers</p>
+                        <p class="text-xl font-bold mb-1">49</p>
+                        <p class="text-[#555] text-[9px] uppercase">Unique Buyers</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+                
+                <div class="bg-[#1A1A1A] p-6 rounded-3xl border border-[#262626]">
+                    <div class="flex justify-between items-center border-b border-[#2a2a2a] pb-4 mb-4">
+                        <h3 class="text-[#777] text-[10px] font-bold uppercase tracking-wider">Top Products This Month</h3>
+                        <span class="text-[#555] text-[9px] uppercase">By Revenue</span>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between group">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-[#222] rounded-xl"></div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-white">Loose Black Straight Jeans</h4>
+                                    <p class="text-[#777] text-[10px]">43 sold</p>
+                                </div>
+                            </div>
+                            <span class="text-sm font-bold">₹86,120</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between group">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-[#222] rounded-xl"></div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-white">Relaxed Fit Linen-blue Shirt</h4>
+                                    <p class="text-[#777] text-[10px]">37 sold</p>
+                                </div>
+                            </div>
+                            <span class="text-sm font-bold">₹51,190</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between group">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-[#222] rounded-xl"></div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-white">Loose Fit Printed T-shirt</h4>
+                                    <p class="text-[#777] text-[10px]">32 sold</p>
+                                </div>
+                            </div>
+                            <span class="text-sm font-bold">₹42,168</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-[#1A1A1A] p-6 rounded-3xl border border-[#262626]">
+                    <div class="flex justify-between items-center border-b border-[#2a2a2a] pb-4 mb-4">
+                        <h3 class="text-[#e74c3c] text-[10px] font-bold uppercase tracking-wider flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-[#e74c3c]"></span> Low Stock Alert
+                        </h3>
+                        <span class="text-[#555] text-[9px] uppercase">Stock < 5</span>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-[#222] pb-3">
+                            <div>
+                                <h4 class="text-sm font-semibold text-[#ddd]">Relaxed Fit Linen Blend Shirt</h4>
+                                <p class="text-[#666] text-[10px] uppercase">XL / RUST</p>
+                            </div>
+                            <span class="text-xs text-[#e74c3c] bg-[#3a1a1a] px-3 py-1 rounded-full border border-[#e74c3c] opacity-80">1 left</span>
+                        </div>
+
+                        <div class="flex items-center justify-between border-b border-[#222] pb-3">
+                            <div>
+                                <h4 class="text-sm font-semibold text-[#ddd]">Loose Fit Printed T-shirt</h4>
+                                <p class="text-[#666] text-[10px] uppercase">S / BLACK</p>
+                            </div>
+                            <span class="text-xs text-[#e74c3c] bg-[#3a1a1a] px-3 py-1 rounded-full border border-[#e74c3c] opacity-80">1 left</span>
+                        </div>
+
+                        <div class="flex items-center justify-between pb-1">
+                            <div>
+                                <h4 class="text-sm font-semibold text-[#ddd]">Regular Fit Oxford Shirt</h4>
+                                <p class="text-[#666] text-[10px] uppercase">M / DARK GREEN</p>
+                            </div>
+                            <span class="text-xs text-yellow-500 bg-[#332b1a] px-3 py-1 rounded-full border border-yellow-700 opacity-80">3 left</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 pb-10">
+                <div class="bg-[#151515] p-5 rounded-2xl border border-[#222] text-center">
+                    <p class="text-[#777] text-[9px] font-bold uppercase tracking-widest mb-1">This Month Revenue</p>
+                    <p class="text-lg font-bold">₹2,18,460</p>
+                </div>
+                <div class="bg-[#151515] p-5 rounded-2xl border border-[#222] text-center">
+                    <p class="text-[#777] text-[9px] font-bold uppercase tracking-widest mb-1">Total Products</p>
+                    <p class="text-lg font-bold">21</p>
+                </div>
+                <div class="bg-[#151515] p-5 rounded-2xl border border-[#222] text-center">
+                    <p class="text-[#777] text-[9px] font-bold uppercase tracking-widest mb-1">Pending Orders</p>
+                    <p class="text-lg font-bold">57</p>
+                </div>
+                <div class="bg-[#151515] p-5 rounded-2xl border border-[#222] text-center">
+                    <p class="text-[#777] text-[9px] font-bold uppercase tracking-widest mb-1">Delivered</p>
+                    <p class="text-lg font-bold">18</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>
