@@ -54,6 +54,12 @@
     </div>
   </nav>
 
+  {% if messages %}
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 mt-4">
+      {% include 'user/_messages.html' %}
+  </div>
+  {% endif %}
+
   <!-- 2. HERO SLIDER SECTION -->
   <section class="mx-auto max-w-7xl px-6 lg:px-12 pt-8 pb-6">
     <div class="relative w-full overflow-hidden rounded-3xl bg-white border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] group">

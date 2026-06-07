@@ -31,6 +31,7 @@
 
                 <form method="POST">
                     {% csrf_token %}
+                    {% include 'admin/_messages.html' %}
                     <div class="mb-6">
                         <label class="block text-[#888] text-[9px] font-semibold tracking-[0.15em] uppercase mb-1">
                             Email Address
