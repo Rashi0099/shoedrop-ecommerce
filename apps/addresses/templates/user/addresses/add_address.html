@@ -1,3 +1,5 @@
+{% extends 'user/base.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,23 +28,17 @@
         <h1 class="text-2xl font-black text-gray-900 tracking-tight uppercase mt-1">Add New Address</h1>
       </div>
 
-      <!-- Django Messages System -->
-      {% if messages %}
-        {% for message in messages %}
-          <div class="mb-4 p-4 rounded-xl text-sm font-semibold {% if message.tags == 'error' %} bg-red-100 text-red-700 {% elif message.tags == 'success' %} bg-green-100 text-green-700 {% else %} bg-blue-100 text-blue-700 {% endif %}">
-            {{ message }}
-          </div>
-        {% endfor %}
-      {% endif %}
+
 
       <!-- Input Form for New Entry -->
       <form method="POST" class="space-y-5">
         {% csrf_token %}
+        {% include 'user/_messages.html' %}
         
         <!-- Full Name -->
         <div>
           <label class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">Full Name</label>
-          <input type="text" name="full_name" placeholder="Enter your full name" required
+          <input type="text" name="full_name" value="{{ full_name|default:'' }}" placeholder="Enter your full name" required
             class="w-full px-4 py-3 bg-[#F4F5F6] border-0 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-black outline-none transition-all">
         </div>
 
@@ -50,12 +46,12 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">Mobile Number</label>
-            <input type="text" name="phone_number" placeholder="Enter mobile number" required
+            <input type="text" name="phone_number" value="{{ phone_number|default:'' }}" placeholder="Enter mobile number" required
               class="w-full px-4 py-3 bg-[#F4F5F6] border-0 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-black outline-none transition-all">
           </div>
           <div>
             <label class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">City</label>
-            <input type="text" name="city" placeholder="Enter city name" required
+            <input type="text" name="city" value="{{ city|default:'' }}" placeholder="Enter city name" required
               class="w-full px-4 py-3 bg-[#F4F5F6] border-0 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-black outline-none transition-all">
           </div>
         </div>
@@ -64,17 +60,17 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">Pincode</label>
-            <input type="text" name="postal_code" placeholder="e.g. 682001" required
+            <input type="text" name="postal_code" value="{{ postal_code|default:'' }}" placeholder="e.g. 682001" required
               class="w-full px-4 py-3 bg-[#F4F5F6] border-0 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-black outline-none transition-all">
           </div>
           <div>
             <label class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">State</label>
-            <input type="text" name="state" placeholder="Enter state" required
+            <input type="text" name="state" value="{{ state|default:'' }}" placeholder="Enter state" required
               class="w-full px-4 py-3 bg-[#F4F5F6] border-0 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-black outline-none transition-all">
           </div>
           <div>
             <label class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">Country</label>
-            <input type="text" name="country" placeholder="Enter country" required
+            <input type="text" name="country" value="{{ country|default:'' }}" placeholder="Enter country" required
               class="w-full px-4 py-3 bg-[#F4F5F6] border-0 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-black outline-none transition-all">
           </div>
         </div>
@@ -83,7 +79,7 @@
         <div>
           <label class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">Address (House No, Building, Street, Area)</label>
           <textarea rows="3" name="address" placeholder="Write full address details here..." required
-            class="w-full px-4 py-3 bg-[#F4F5F6] border-0 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-black outline-none transition-all"></textarea>
+            class="w-full px-4 py-3 bg-[#F4F5F6] border-0 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-black outline-none transition-all">{{ address|default:'' }}</textarea>
         </div>
 
         <!-- Address Type Multi-Button Select Option -->
@@ -94,21 +90,21 @@
 
           <div class="grid grid-cols-3 gap-3">
             <label class="cursor-pointer">
-              <input type="radio" name="address_type" value="HOME" checked class="hidden peer">
+              <input type="radio" name="address_type" value="HOME" {% if address_type == 'HOME' or not address_type %}checked{% endif %} class="hidden peer">
               <div class="bg-white border border-gray-200 text-gray-800 py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 peer-checked:bg-[#111] peer-checked:text-white peer-checked:border-black transition-all">
                 <span>🏠</span> Home
               </div>
             </label>
 
             <label class="cursor-pointer">
-              <input type="radio" name="address_type" value="WORK" class="hidden peer">
+              <input type="radio" name="address_type" value="WORK" {% if address_type == 'WORK' %}checked{% endif %} class="hidden peer">
               <div class="bg-white border border-gray-200 text-gray-800 py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 peer-checked:bg-[#111] peer-checked:text-white peer-checked:border-black transition-all">
                 <span>💼</span> Work
               </div>
             </label>
 
             <label class="cursor-pointer">
-              <input type="radio" name="address_type" value="OTHER" class="hidden peer">
+              <input type="radio" name="address_type" value="OTHER" {% if address_type == 'OTHER' %}checked{% endif %} class="hidden peer">
               <div class="bg-white border border-gray-200 text-gray-800 py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 peer-checked:bg-[#111] peer-checked:text-white peer-checked:border-black transition-all">
                 <span>•••</span> Other
               </div>
@@ -119,7 +115,7 @@
         <!-- Set as Default Address Checkbox -->
         <div class="flex items-center pt-2">
           <label class="inline-flex items-center cursor-pointer select-none">
-            <input type="checkbox" name="is_default"
+            <input type="checkbox" name="is_default" {% if is_default %}checked{% endif %}
               class="rounded border-gray-300 text-black focus:ring-black w-4 h-4">
             <span class="ml-2.5 text-[10px] font-bold uppercase tracking-wider text-gray-800">Set as default address</span>
           </label>
@@ -127,10 +123,10 @@
 
         <!-- Form Submissions Controls -->
         <div class="flex items-center justify-between pt-6 border-t border-gray-100">
-          <button type="button"
+          <a href="{%url 'address_list'%}" type="button"
             class="text-[11px] font-bold uppercase tracking-widest text-gray-400 hover:text-black transition-colors">
             Cancel
-          </button>
+          </a>
           <button type="submit"
             class="bg-[#111] hover:bg-black text-white text-xs font-bold tracking-widest uppercase px-8 py-3.5 rounded-xl shadow-md active:scale-[0.99] transition-all">
             Save Address
@@ -190,3 +186,4 @@
 </body>
 
 </html>
+{% endblock %}

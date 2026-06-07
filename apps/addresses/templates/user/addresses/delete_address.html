@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Addresses - ShoeDrop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-[#1e293b] font-sans antialiased min-h-screen relative">
+
+  <div class="blur-sm pointer-events-none select-none min-h-screen flex flex-col justify-between">
+    
+    <header class="border-b border-gray-200 bg-white sticky top-0 z-10 px-4 md:px-8 py-4 flex items-center justify-between">
+      <div class="text-xl font-black tracking-wider text-[#0f342e]">SHOEDROP</div>
+      <nav class="hidden md:flex space-x-6 text-sm font-semibold uppercase text-gray-500">
+        <a href="#" class="hover:text-black">LADIES</a>
+        <a href="#" class="hover:text-black">MENS</a>
+        <a href="#" class="hover:text-black">WESTERN WEAR</a>
+        <a href="#" class="hover:text-black">INDIAN WEAR</a>
+        <a href="#" class="hover:text-black">WINTER WEAR</a>
+      </nav>
+      <div class="flex items-center space-x-4 text-gray-600">
+        <button>🔍</button>
+        <button>❤️</button>
+        <button>👜</button>
+        <button>👤</button>
+      </div>
+    </header>
+
+    <main class="max-w-7xl w-full mx-auto px-4 md:px-8 py-8 flex-grow grid grid-cols-1 lg:grid-cols-4 gap-8">
+      
+      <aside class="lg:col-span-1 space-y-6">
+        <div>
+          <h2 class="text-lg font-bold tracking-tight uppercase text-gray-900">My Account</h2>
+          <p class="text-xs text-gray-400 uppercase">Premium Account</p>
+        </div>
+        <nav class="flex flex-col space-y-1">
+          <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded-lg">👤 Profile</a>
+          <a href="#" class="flex items-center px-3 py-2 text-sm font-semibold text-[#0f342e] bg-gray-100 rounded-lg">📍 Address</a>
+          <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded-lg">📦 My Orders</a>
+          <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded-lg">❤️ Wishlist</a>
+          <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded-lg">💳 Wallet</a>
+          <hr class="my-4 border-gray-200" />
+          <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-50 rounded-lg">🚪 Logout</a>
+        </nav>
+      </aside>
+
+      <section class="lg:col-span-3 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <h1 class="text-2xl font-black uppercase tracking-tight text-gray-900">My Addresses</h1>
+          <button class="bg-[#0f342e] hover:bg-[#164d44] text-white text-sm font-bold tracking-wide uppercase px-5 py-2.5 rounded-full shadow-sm transition">
+            + Add New Address
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="border border-gray-200 bg-white p-6 rounded-2xl relative shadow-sm">
+            <span class="absolute top-4 right-4 text-xs font-bold uppercase text-gray-400 bg-gray-100 px-2 py-0.5 rounded">Home</span>
+            <h3 class="font-bold text-gray-900 mb-2">Olya Westral</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">203, Maple Avenue, Block C,<br>Luxury Residential Heights,<br>Mumbai, Maharashtra, 400001<br>India</p>
+            <p class="text-sm text-gray-700 font-medium mt-4">📞 +91 98765 43210</p>
+          </div>
+          <div class="border border-gray-200 bg-white p-6 rounded-2xl relative shadow-sm">
+            <span class="absolute top-4 right-4 text-xs font-bold uppercase text-gray-400 bg-gray-100 px-2 py-0.5 rounded">Work</span>
+            <h3 class="font-bold text-gray-900 mb-2">Olya Westral</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">Alliance Fashion Headquarters,<br>Design District, Unit 4B,<br>Mumbai, Maharashtra, 400013<br>India</p>
+            <p class="text-sm text-gray-700 font-medium mt-4">📞 +91 98765 55555</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-gray-200 bg-white py-8 text-center space-y-4">
+      <div class="text-lg font-black tracking-wider text-[#0f342e]">SHOEDROP</div>
+      <div class="flex justify-center space-x-6 text-xs font-semibold text-gray-500 uppercase">
+        <a href="#" class="hover:text-black">Privacy Policy</a>
+        <a href="#" class="hover:text-black">Terms of Service</a>
+        <a href="#" class="hover:text-black">Shipping Info</a>
+        <a href="#" class="hover:text-black">Contact Us</a>
+      </div>
+      <p class="text-xs text-gray-400">&copy; 2026 ShoeDrop. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-[2px]">
+    
+    <div class="bg-white rounded-[2.5rem] p-8 md:p-10 max-w-lg w-full text-center shadow-2xl transform transition-all border border-gray-100">
+      
+      <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-red-50 mb-6">
+        <svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-16v1a1 1 0 001 1h3m-10 0h3m0 0V4a1 1 0 011-1h4a1 1 0 011 1v1m-6 0h6" />
+        </svg>
+      </div>
+
+      <h3 class="text-base md:text-lg font-black text-gray-900 tracking-wide uppercase leading-tight max-w-xs mx-auto mb-2">
+        Are you sure you want to delete this address?
+      </h3>
+      
+      <p class="text-xs md:text-sm text-gray-400 font-medium mb-8">
+        This action cannot be undone.
+      </p>
+
+      <form method="POST" action="{% url 'delete_address' address.id %}">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <a href="{% url 'address_list' %}"
+             class="w-full inline-flex justify-center items-center rounded-xl border-2 border-gray-300 bg-white px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition shadow-sm">
+            Cancel
+          </a>
+          <button type="submit"
+                  class="w-full inline-flex justify-center items-center rounded-xl border-2 border-transparent bg-[#0f342e] px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#164d44] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0f342e] transition shadow-sm">
+            Delete
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+</body>
+</html>

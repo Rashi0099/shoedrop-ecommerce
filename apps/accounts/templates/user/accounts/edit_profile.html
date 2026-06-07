@@ -1,3 +1,5 @@
+{% extends 'user/base.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -127,22 +129,9 @@
 
 
       <!-- Form Inputs Area -->
-      {% if messages %}
-      {% for message in messages %}
-      <div class="mb-4 p-3 rounded-lg
-            {% if message.tags == 'success' %}
-                bg-green-100 text-green-700
-            {% else %}
-                bg-red-100 text-red-700
-            {% endif %}
-        ">
-        {{ message }}
-      </div>
-      {% endfor %}
-      {% endif %}
-
       <form method="POST" enctype="multipart/form-data" class="space-y-5">
         {% csrf_token %}
+        {% include 'user/_messages.html' %}
 
         <div class="rounded-xl border border-gray-200 bg-gray-50/80 p-5">
 
@@ -363,3 +352,4 @@
 </body>
 
 </html>
+{% endblock %}

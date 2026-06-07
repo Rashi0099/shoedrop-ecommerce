@@ -1,6 +1,7 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect, get_object_or_404
 from apps.accounts.models import User
+from django.core.paginator import Paginator
 
 
 @staff_member_required(login_url='admin_login')
@@ -28,8 +29,12 @@ def customer_list(request):
 
     users = users.order_by('-date_joined')
 
+    paginator = Paginator(users, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        'users': users,
+        'users': page_obj,
         'search': search,
         'status': status,
         'role': role

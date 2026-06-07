@@ -62,8 +62,8 @@
         <div class="max-w-4xl p-8 rounded-2xl bg-[#111111] border border-[#1a1a1a] space-y-8">
             <div class="flex items-center gap-6 pb-6 border-b border-[#1a1a1a]">
                 <div class="w-16 h-16 bg-[#1a1a1a] rounded-full flex items-center justify-center text-white text-xl font-bold border border-[#222] overflow-hidden">
-                    {% if request.user.profile_picture %}
-                        <img src="{{ request.user.profile_picture.url }}" alt="Profile" class="w-full h-full object-cover">
+                    {% if request.user.profile_image %}
+                        <img src="{{ request.user.profile_image.url }}" alt="Profile" class="w-full h-full object-cover">
                     {% else %}
                         {{ request.user.username|first|upper }}
                     {% endif %}

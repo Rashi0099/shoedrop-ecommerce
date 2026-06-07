@@ -167,13 +167,12 @@ def verify_otp(request):
 
         current_time = datetime.now().timestamp()
 
-        # ✅ Fix — clear the expired OTP so user sees clean resend state:
         if current_time - otp_created_at > 60:
             messages.error(request, 'OTP expired. Please resend OTP.')
             request.session.pop('otp', None)
             request.session.pop('otp_created_at', None)
             return redirect('verify_otp')
-
+                                            
 
 
         if entered_otp == session_otp:
@@ -190,10 +189,7 @@ def verify_otp(request):
             request.session.pop('password', None)
             request.session.pop('otp_created_at',None)
 
-            messages.success(
-                request,
-                'Account created successfully'
-            )
+            
 
             return redirect('login')
         messages.error(
@@ -231,11 +227,7 @@ def resend_otp(request):
     if not email:
         return redirect('signup')
 
-    otp_created_at = request.session.get('otp_created_at')
-    if otp_created_at and (datetime.now().timestamp() - otp_created_at) < 30:
-        messages.error(request, 'Please wait 30 seconds before requesting a new OTP.')
-        return redirect('verify_otp')
-
+    
     
     otp = str(random.randint(1000,9999))
 
@@ -280,7 +272,6 @@ def login_view(request):
 
             login(request, user)
 
-            messages.success(request,'Login successful')
             return redirect('landing_page')
 
         messages.error(request,'Invalid email or password')
@@ -344,7 +335,9 @@ def forgot_password(request):
         'user/accounts/forgot_password.html'
     )
 def forgot_password_verify_otp(request):
-    
+
+    if not request.session.get('reset_email'):
+        return redirect('forgot_password')
 
     if request.method == 'POST':
 
@@ -360,7 +353,9 @@ def forgot_password_verify_otp(request):
 
         if not otp_created_at or (datetime.now().timestamp() - otp_created_at) > 60:
             messages.error(request, 'OTP expired. Please request a new one.')
-            return redirect('forgot_password')
+            request.session.pop('reset_otp', None)
+            request.session.pop('reset_otp_created_at', None)
+            return redirect('forgot_password_verify_otp')
 
         if entered_otp == session_otp:
             request.session['otp_verified'] = True
@@ -368,20 +363,27 @@ def forgot_password_verify_otp(request):
 
         messages.error(request, 'Invalid OTP')
 
+    otp_created_at = request.session.get('reset_otp_created_at')
+    remaining_time = 60
+    if otp_created_at:
+        remaining_time = max(0, 60 - int(datetime.now().timestamp() - otp_created_at))
+
     return render(
         request,
-        'user/accounts/forgot_password_verify_otp.html'
+        'user/accounts/forgot_password_verify_otp.html',
+        {'remaining_time': remaining_time}
     )
 def resend_reset_otp(request):
     email = request.session.get('reset_email')
     if not email:
         return redirect('forgot_password')
-    otp_created_at = request.session.get('reset_otp_created_at')
-    if otp_created_at and (datetime.now().timestamp() - otp_created_at) < 30:
-        messages.error(request, 'Please wait 30 seconds before requesting a new OTP.')
-        return redirect('forgot_password_verify_otp')
-    import secrets
-    otp = str(secrets.randbelow(900000) + 100000)
+    
+    otp = str(
+                random.randint(
+                    1000,
+                    9999
+                )
+            )
     request.session['reset_otp'] = otp
     request.session['reset_otp_created_at'] = datetime.now().timestamp()
     send_mail(
@@ -552,10 +554,10 @@ def change_password(request):
 
         if current_password == new_password:
             messages.error(request,'new pass must be different from current password')
-            redirect('change_password')
+            return redirect('change_password')
         if len(new_password)<8:
             messages.error(request,'new password must be at least 8 characters ')
-            redirect('chang_password')
+            return redirect('change_password')
         
 
         
@@ -643,7 +645,10 @@ def edit_profile(request):
                 request,
                 'Username can contain only letters, numbers and underscore'
             )
+        if len(username)<3:
+            messages.error(request,'username must contain at least 3 caractors')
             return redirect('edit_profile')
+        
         if phone_number:
 
             if not re.match(
@@ -756,10 +761,7 @@ def edit_profile(request):
                 'verify_email_otp'
             )
 
-        messages.success(
-            request,
-            'Profile updated successfully'
-        )
+        
 
         return redirect(
             'profile'
@@ -856,10 +858,7 @@ def resend_email_otp(request):
     email = request.session.get('new_email')
     if not email:
         return redirect('edit_profile')
-    otp_created_at = request.session.get('email_otp_created_at')
-    if otp_created_at and (datetime.now().timestamp() - otp_created_at) < 30:
-        messages.error(request, 'Please wait 30 seconds before requesting a new OTP.')
-        return redirect('verify_email_otp')
+    
     import secrets
     otp = str(secrets.randbelow(900000) + 100000)
     request.session['email_otp'] = otp
@@ -879,3 +878,5 @@ def logout_view(request):
     logout(request)
 
     return redirect('landing_page')
+
+

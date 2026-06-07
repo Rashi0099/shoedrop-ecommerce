@@ -1,3 +1,5 @@
+{% extends 'user/base.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -40,30 +42,29 @@
         </p>
       </div>
 
-      {% if messages %}
-      {% for message in messages %}
-      <div class="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-xs font-medium text-red-400">
-        {{ message }}
-      </div>
-      {% endfor %}
-      {% endif %}
+
 
       <!-- Form -->
       <form method="POST" class="space-y-5" id="otp-form">
         {% csrf_token %}
-        
+        {% include 'user/_messages.html' %}
+
         <!-- OTP Input Fields Grid -->
         <div class="grid grid-cols-4 gap-3 justify-center max-w-[280px] mx-auto mb-2">
-          <input type="text" name="otp1" maxlength="1" placeholder="•" autocomplete="off" inputmode="numeric" pattern="[0-9]*"
+          <input type="text" name="otp1" maxlength="1" placeholder="•" autocomplete="off" inputmode="numeric"
+            pattern="[0-9]*"
             class="otp-field w-full aspect-square text-center text-white font-bold text-lg bg-white/5 border border-white/10 rounded-xl placeholder-gray-600 transition duration-200 focus:border-emerald-400/50 focus:bg-white/[0.08] focus:outline-none focus:ring-1 focus:ring-emerald-400/30">
 
-          <input type="text" name="otp2" maxlength="1" placeholder="•" autocomplete="off" inputmode="numeric" pattern="[0-9]*"
+          <input type="text" name="otp2" maxlength="1" placeholder="•" autocomplete="off" inputmode="numeric"
+            pattern="[0-9]*"
             class="otp-field w-full aspect-square text-center text-white font-bold text-lg bg-white/5 border border-white/10 rounded-xl placeholder-gray-600 transition duration-200 focus:border-emerald-400/50 focus:bg-white/[0.08] focus:outline-none focus:ring-1 focus:ring-emerald-400/30">
 
-          <input type="text" name="otp3" maxlength="1" placeholder="•" autocomplete="off" inputmode="numeric" pattern="[0-9]*"
+          <input type="text" name="otp3" maxlength="1" placeholder="•" autocomplete="off" inputmode="numeric"
+            pattern="[0-9]*"
             class="otp-field w-full aspect-square text-center text-white font-bold text-lg bg-white/5 border border-white/10 rounded-xl placeholder-gray-600 transition duration-200 focus:border-emerald-400/50 focus:bg-white/[0.08] focus:outline-none focus:ring-1 focus:ring-emerald-400/30">
 
-          <input type="text" name="otp4" maxlength="1" placeholder="•" autocomplete="off" inputmode="numeric" pattern="[0-9]*"
+          <input type="text" name="otp4" maxlength="1" placeholder="•" autocomplete="off" inputmode="numeric"
+            pattern="[0-9]*"
             class="otp-field w-full aspect-square text-center text-white font-bold text-lg bg-white/5 border border-white/10 rounded-xl placeholder-gray-600 transition duration-200 focus:border-emerald-400/50 focus:bg-white/[0.08] focus:outline-none focus:ring-1 focus:ring-emerald-400/30">
         </div>
 
@@ -93,7 +94,8 @@
         <a href="{% url 'login' %}"
           class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-white transition">
           <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+            </path>
           </svg>
           <span>Back to Login</span>
         </a>
@@ -114,13 +116,19 @@
   </div>
 
 </body>
-
 <script>
-  // Countdown Timer Script
-  let timeLeft = 60;
+  // =========================
+  // Countdown Timer
+  // =========================
+
+  const remainingTimeData = JSON.parse(
+    document.getElementById('remaining-time').textContent
+  );
+
+  let timeLeft = remainingTimeData;
   const timer = document.getElementById("timer");
 
-  const countdown = setInterval(() => {
+  function updateTimer() {
     let minutes = Math.floor(timeLeft / 60);
     let seconds = timeLeft % 60;
 
@@ -128,56 +136,82 @@
       `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
     if (timeLeft <= 0) {
-      clearInterval(countdown);
       timer.innerText = "Expired";
       timer.classList.remove("text-emerald-400/80");
       timer.classList.add("text-red-400");
     }
+  }
+
+  updateTimer();
+
+  const countdown = setInterval(() => {
+    if (timeLeft <= 0) {
+      clearInterval(countdown);
+      return;
+    }
+
     timeLeft--;
+    updateTimer();
   }, 1000);
 
-  // Advanced OTP Box Behavior (Auto-focus, Backspace, and Smart Paste)
+
+  // =========================
+  // OTP Input Behaviour
+  // =========================
+
   const fields = document.querySelectorAll('.otp-field');
-  
+
   fields.forEach((field, index) => {
-    // 1. ടൈപ്പിംഗ് കൈകാര്യം ചെയ്യാൻ
+
+    // Auto move to next box
     field.addEventListener('input', (e) => {
-      const val = e.target.value;
-      
-      // ഒരക്ക നമ്പറുകൾ മാത്രം അനുവദിക്കുന്നു
-      if (val && !/^[0-9]$/.test(val)) {
-        e.target.value = '';
-        return;
-      }
-      
-      // അടുത്ത ബോക്സിലേക്ക് ഫോക്കസ് മാറ്റുന്നു
-      if (val && index < fields.length - 1) {
+      let value = e.target.value;
+
+      value = value.replace(/\D/g, '');
+
+      e.target.value = value;
+
+      if (value && index < fields.length - 1) {
         fields[index + 1].focus();
       }
     });
 
-    // 2. ബാക്ക്സ്പേസ് കൈകാര്യം ചെയ്യാൻ
+    // Backspace move previous
     field.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace' && !e.target.value && index > 0) {
+      if (
+        e.key === 'Backspace' &&
+        !e.target.value &&
+        index > 0
+      ) {
         fields[index - 1].focus();
       }
     });
 
-    // 3. സ്മാർട്ട് പേസ്റ്റിംഗ് (4 അക്ക കോഡ് നേരിട്ട് പേസ്റ്റ് ചെയ്യാൻ)
+    // Smart paste OTP
     field.addEventListener('paste', (e) => {
       e.preventDefault();
-      const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
-      
-      // പേസ്റ്റ് ചെയ്ത ഡാറ്റ 4 അക്ക സംഖ്യയാണോ എന്ന് നോക്കുന്നു
-      if (/^[0-9]{4}$/.test(pasteData)) {
+
+      const pasteData =
+        (e.clipboardData || window.clipboardData)
+          .getData('text')
+          .replace(/\D/g, '');
+
+      if (pasteData.length === 4) {
+
         fields.forEach((input, i) => {
-          input.value = pasteData[i];
+          input.value = pasteData[i] || '';
         });
-        // അവസാന ഇൻപുട്ടിലേക്ക് ഫോക്കസ് നൽകുന്നു
-        fields[fields.length - 1].focus();
+
+        fields[3].focus();
       }
     });
   });
+
+  // Focus first OTP box on page load
+  if (fields.length > 0) {
+    fields[0].focus();
+  }
 </script>
 
 </html>
+{% endblock %}

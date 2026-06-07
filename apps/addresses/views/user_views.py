@@ -28,235 +28,100 @@ def address_list(request):
 
 
 @login_required(login_url='login')
-   
 def add_address(request):
     if request.method == 'POST':
         print("post hit")
-        full_name=request.POST.get('full_name','').strip()
-
-        phone_number=request.POST.get('phone_number','').strip()
-
-        city= request.POST.get('city','').strip()
-
-        state=request.POST.get('state','').strip()
-        
-        postal_code=request.POST.get('postal_code','').strip()
-
-        country=request.POST.get('country','').strip()
-
-
-        address = request.POST.get('address','').strip()
-
-        address_type = request.POST.get('address_type','HOME')
-
+        full_name = request.POST.get('full_name', '').strip()
+        phone_number = request.POST.get('phone_number', '').strip()
+        city = request.POST.get('city', '').strip()
+        state = request.POST.get('state', '').strip()
+        postal_code = request.POST.get('postal_code', '').strip()
+        country = request.POST.get('country', '').strip()
+        address = request.POST.get('address', '').strip()
+        address_type = request.POST.get('address_type', 'HOME')
         is_default = bool(request.POST.get('is_default'))
 
+        context = {
+            'full_name': full_name,
+            'phone_number': phone_number,
+            'city': city,
+            'state': state,
+            'postal_code': postal_code,
+            'country': country,
+            'address': address,
+            'address_type': address_type,
+            'is_default': is_default,
+        }
 
         if not full_name:
-            messages.error(request,'ful name is requierd')
-            return redirect('add_address')
-        if len(full_name)<3:
-            messages.error(request,'user name must be at least 3 leters')
-            return redirect('add_address')
+            messages.error(request, 'Full name is required')
+            return render(request, 'user/addresses/add_address.html', context)
+        if len(full_name) < 3:
+            messages.error(request, 'Full name must be at least 3 letters')
+            return render(request, 'user/addresses/add_address.html', context)
+        if not re.match(r'^[A-Za-z ]+$', full_name):
+            messages.error(request, 'Full name can contain only letters and spaces')
+            return render(request, 'user/addresses/add_address.html', context)
 
-        if not re.match(
-            r'^[A-Za-z ]+$',
-            full_name
-        ):
-            messages.error(request,'Full name can contain only letters and spaces')
+        if not re.match(r'^[6-9][0-9]{9}$', phone_number):
+            messages.error(request, 'Enter a valid phone number')
+            return render(request, 'user/addresses/add_address.html', context)
 
-            return redirect('add_address')
-        if not re.match(
-            r'^[6-9][0-9]{9}$',
-            phone_number
-        ):
-
-            messages.error(
-                request,
-                'Enter a valid phone number'
-            )
-
-            return redirect(
-                'add_address'
-            )
         if not city:
-
-            messages.error(
-                request,
-                'City is required'
-            )
-
-            return redirect(
-                'add_address'
-            )
-
-        if not re.match(
-            r'^[A-Za-z ]+$',
-            city
-        ):
-
-            messages.error(
-                request,
-                'Invalid city name'
-            )
-
-            return redirect(
-                'add_address'
-            )
-
-        # State
+            messages.error(request, 'City is required')
+            return render(request, 'user/addresses/add_address.html', context)
+        if not re.match(r'^[A-Za-z ]+$', city):
+            messages.error(request, 'Invalid city name')
+            return render(request, 'user/addresses/add_address.html', context)
 
         if not state:
+            messages.error(request, 'State is required')
+            return render(request, 'user/addresses/add_address.html', context)
+        if not re.match(r'^[A-Za-z ]+$', state):
+            messages.error(request, 'Invalid state name')
+            return render(request, 'user/addresses/add_address.html', context)
 
-            messages.error(
-                request,
-                'State is required'
-            )
-
-            return redirect(
-                'add_address'
-            )
-
-        if not re.match(
-            r'^[A-Za-z ]+$',
-            state
-        ):
-
-            messages.error(
-                request,
-                'Invalid state name'
-            )
-
-            return redirect(
-                'add_address'
-            )
-
-        # Postal Code
-
-        if not re.match(
-            r'^[1-9][0-9]{5}$',
-            postal_code
-        ):
-
-            messages.error(
-                request,
-                'Enter a valid PIN code'
-            )
-
-            return redirect(
-                'add_address'
-            )
-
-        # Address
+        if not re.match(r'^[1-9][0-9]{5}$', postal_code):
+            messages.error(request, 'Enter a valid PIN code')
+            return render(request, 'user/addresses/add_address.html', context)
 
         if not address:
-
-            messages.error(
-                request,
-                'Address is required'
-            )
-
-            return redirect(
-                'add_address'
-            )
-
+            messages.error(request, 'Address is required')
+            return render(request, 'user/addresses/add_address.html', context)
         if len(address) < 10:
+            messages.error(request, 'Address is too short')
+            return render(request, 'user/addresses/add_address.html', context)
 
-            messages.error(
-                request,
-                'Address is too short'
-            )
+        if address_type not in ['HOME', 'WORK', 'OTHER']:
+            messages.error(request, 'Invalid address type')
+            return render(request, 'user/addresses/add_address.html', context)
 
-            return redirect(
-                'add_address'
-            )
+        if Address.objects.filter(user=request.user).count() >= 10:
+            messages.error(request, 'Maximum 10 addresses allowed')
+            return redirect('address_list')
 
-        # Address Type
-
-        if address_type not in [
-            'HOME',
-            'WORK',
-            'OTHER'
-        ]:
-
-            messages.error(
-                request,
-                'Invalid address type'
-            )
-
-            return redirect(
-                'add_address'
-            )
-
-        # Limit Addresses
-
-        if Address.objects.filter(
-            user=request.user
-        ).count() >= 10:
-
-            messages.error(
-                request,
-                'Maximum 10 addresses allowed'
-            )
-
-            return redirect(
-                'address_list'
-            )
-
-        # First Address Auto Default
-
-        if not Address.objects.filter(
-            user=request.user
-        ).exists():
-
+        if not Address.objects.filter(user=request.user).exists():
             is_default = True
 
-        # One Default Address Only
-
         if is_default:
-
-            Address.objects.filter(
-                user=request.user
-            ).update(
-                is_default=False
-            )
+            Address.objects.filter(user=request.user).update(is_default=False)
 
         Address.objects.create(
-
             user=request.user,
-
             full_name=full_name,
-
             phone_number=phone_number,
-
             city=city,
-
             state=state,
-
             postal_code=postal_code,
-
             country=country,
-
             address=address,
-
             address_type=address_type,
-
             is_default=is_default
         )
 
-        messages.success(
-            request,
-            'Address added successfully'
-        )
+        return redirect('address_list')
 
-        return redirect(
-            'address_list'
-        )
-
-    return render(
-        request,
-        'user/addresses/add_address.html'
-    )
+    return render(request, 'user/addresses/add_address.html')
     
 
 @login_required(login_url='login')
@@ -315,25 +180,6 @@ def edit_address(request, id):
             )
         )
 
-        # validations
-        if not full_name:
-            messages.error(
-                request,
-                'Full name is required'
-            )
-            return redirect(
-                'edit_address',
-                id=id
-            )
-
-        if is_default:
-
-            Address.objects.filter(
-                user=request.user
-            ).update(
-                is_default=False
-            )
-
         address.full_name = full_name
         address.phone_number = phone_number
         address.city = city
@@ -344,16 +190,59 @@ def edit_address(request, id):
         address.address_type = address_type
         address.is_default = is_default
 
+        context = {
+            'address': address
+        }
+
+        # validations
+        if not full_name:
+            messages.error(request, 'Full name is required')
+            return render(request, 'user/addresses/edit_address.html', context)
+        if len(full_name) < 3:
+            messages.error(request, 'Full name must be at least 3 letters')
+            return render(request, 'user/addresses/edit_address.html', context)
+        if not re.match(r'^[A-Za-z ]+$', full_name):
+            messages.error(request, 'Full name can contain only letters and spaces')
+            return render(request, 'user/addresses/edit_address.html', context)
+
+        if not re.match(r'^[6-9][0-9]{9}$', phone_number):
+            messages.error(request, 'Enter a valid phone number')
+            return render(request, 'user/addresses/edit_address.html', context)
+
+        if not city:
+            messages.error(request, 'City is required')
+            return render(request, 'user/addresses/edit_address.html', context)
+        if not re.match(r'^[A-Za-z ]+$', city):
+            messages.error(request, 'Invalid city name')
+            return render(request, 'user/addresses/edit_address.html', context)
+
+        if not state:
+            messages.error(request, 'State is required')
+            return render(request, 'user/addresses/edit_address.html', context)
+        if not re.match(r'^[A-Za-z ]+$', state):
+            messages.error(request, 'Invalid state name')
+            return render(request, 'user/addresses/edit_address.html', context)
+
+        if not re.match(r'^[1-9][0-9]{5}$', postal_code):
+            messages.error(request, 'Enter a valid PIN code')
+            return render(request, 'user/addresses/edit_address.html', context)
+
+        if not address_text:
+            messages.error(request, 'Address is required')
+            return render(request, 'user/addresses/edit_address.html', context)
+        if len(address_text) < 10:
+            messages.error(request, 'Address is too short')
+            return render(request, 'user/addresses/edit_address.html', context)
+
+        if address_type not in ['HOME', 'WORK', 'OTHER']:
+            messages.error(request, 'Invalid address type')
+            return render(request, 'user/addresses/edit_address.html', context)
+
+        if is_default:
+            Address.objects.filter(user=request.user).update(is_default=False)
+
         address.save()
-
-        messages.success(
-            request,
-            'Address updated successfully'
-        )
-
-        return redirect(
-            'address_list'
-        )
+        return redirect('address_list')
 
     context = {
         'address': address
@@ -365,22 +254,29 @@ def edit_address(request, id):
         context
     )
 
+
+
 @login_required(login_url='login')
 def delete_address(request, id):
+    try:
+        address = Address.objects.get(
+            id=id,
+            user=request.user
+        )
+    except Address.DoesNotExist:
+        messages.error(request, "Address not found.")
+        return redirect('address_list')
 
-    address = Address.objects.get(
-        id=id,
-        user=request.user
-    )
+    if request.method == 'POST':
+        address.delete()
+        
+        return redirect('address_list')
 
-    address.delete()
-
-    messages.success(
+    context = {
+        'address': address
+    }
+    return render(
         request,
-        'Address deleted successfully'
+        'user/addresses/delete_address.html',
+        context
     )
-
-    return redirect(
-        'address_list'
-    )
-

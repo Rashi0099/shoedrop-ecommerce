@@ -76,16 +76,11 @@ def admin_edit_profile(request):
         if hasattr(request.user, 'phone_number'):
             request.user.phone_number = phone_number
             
-        if profile_picture and hasattr(request.user, 'profile_picture'):
-            request.user.profile_picture = profile_picture
+        if profile_picture and hasattr(request.user, 'profile_image'):
+            request.user.profile_image = profile_picture
 
         request.user.save()
 
-        messages.success(
-            request, 
-            'Profile updated successfully'
-        )
-        
         return redirect('admin_profile')
 
     return render(request, 'admin/accounts/edit_profile.html')

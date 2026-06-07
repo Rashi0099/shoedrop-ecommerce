@@ -1,3 +1,5 @@
+{% extends 'user/base.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -70,6 +72,7 @@
             <!-- Address Edit Input Form -->
             <form method="POST" class="space-y-5">
                 {% csrf_token %}
+                {% include 'user/_messages.html' %}
                 
                 <!-- Full Name -->
                 <div>
@@ -223,3 +226,4 @@
 </body>
 
 </html>
+{% endblock %}

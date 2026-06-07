@@ -1,3 +1,5 @@
+{% extends 'user/base.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -40,17 +42,12 @@
         </p>
       </div>
 
-      {% if messages %}
-      {% for message in messages %}
-      <div class="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-xs font-medium text-red-400">
-        {{ message }}
-      </div>
-      {% endfor %}
-      {% endif %}
+
 
       <!-- Form -->
       <form method="POST" class="space-y-5" id="otp-form">
         {% csrf_token %}
+        {% include 'user/_messages.html' %}
         
         <!-- Hidden Input to send full OTP to Django backend -->
         <input type="hidden" name="otp" id="full-otp">
@@ -121,84 +118,100 @@
 </body>
 
 <script>
-  // Django-ൽ നിന്നുള്ള ബാക്കി സമയം കൃത്യമായി എടുക്കാൻ
-  let timeLeft = 60;
-  try {
-    const timeData = JSON.parse(document.getElementById('remaining-time').textContent);
-    if (timeData !== null && !isNaN(timeData)) {
-      timeLeft = parseInt(timeData);
-    }
-  } catch (e) {
-    timeLeft = 60; // എന്തെങ്കിലും കാരണത്താൽ കിട്ടിയില്ലെങ്കിൽ ഡിഫോൾട്ട് 60 സെക്കൻഡ്സ്
-  }
+  // =========================
+  // Countdown Timer
+  // =========================
 
+  const remainingTimeData = JSON.parse(
+    document.getElementById('remaining-time').textContent
+  );
+
+  let timeLeft = remainingTimeData;
   const timer = document.getElementById("timer");
 
-  function updateTimerDisplay() {
+  function updateTimer() {
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+
+    timer.innerText =
+      `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
     if (timeLeft <= 0) {
-      clearInterval(countdown);
       timer.innerText = "Expired";
       timer.classList.remove("text-emerald-400/80");
       timer.classList.add("text-red-400");
-    } else {
-      let minutes = Math.floor(timeLeft / 60);
-      let seconds = timeLeft % 60;
-      timer.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
   }
 
-  updateTimerDisplay();
+  updateTimer();
+
   const countdown = setInterval(() => {
+    if (timeLeft <= 0) {
+      clearInterval(countdown);
+      return;
+    }
+
     timeLeft--;
-    updateTimerDisplay();
+    updateTimer();
   }, 1000);
 
-  // Advanced OTP Box Behavior
+
+  // =========================
+  // OTP Input Behaviour
+  // =========================
+
   const fields = document.querySelectorAll('.otp-field');
-  const form = document.getElementById('otp-form');
-  const fullOtpInput = document.getElementById('full-otp');
-  
+
   fields.forEach((field, index) => {
-    // 1. ടൈപ്പിംഗ് ഇൻപുട്ട് ആനിമേഷൻ & ഓട്ടോ ടാബ്
+
+    // Auto move to next box
     field.addEventListener('input', (e) => {
-      const val = e.target.value;
-      if (val && !/^[0-9]$/.test(val)) {
-        e.target.value = '';
-        return;
-      }
-      if (val && index < fields.length - 1) {
+      let value = e.target.value;
+
+      value = value.replace(/\D/g, '');
+
+      e.target.value = value;
+
+      if (value && index < fields.length - 1) {
         fields[index + 1].focus();
       }
     });
 
-    // 2. ബാക്ക്സ്പേസ് അടിച്ചാൽ പുറകോട്ട് പോകാൻ
+    // Backspace move previous
     field.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace' && !e.target.value && index > 0) {
+      if (
+        e.key === 'Backspace' &&
+        !e.target.value &&
+        index > 0
+      ) {
         fields[index - 1].focus();
       }
     });
 
-    // 3. 4 അക്ക നമ്പറുകൾ ഒരുമിച്ച് കോപ്പി പേസ്റ്റ് ചെയ്യാൻ
+    // Smart paste OTP
     field.addEventListener('paste', (e) => {
       e.preventDefault();
-      const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
-      if (/^[0-9]{4}$/.test(pasteData)) {
+
+      const pasteData =
+        (e.clipboardData || window.clipboardData)
+          .getData('text')
+          .replace(/\D/g, '');
+
+      if (pasteData.length === 4) {
+
         fields.forEach((input, i) => {
-          input.value = pasteData[i];
+          input.value = pasteData[i] || '';
         });
-        fields[fields.length - 1].focus();
+
+        fields[3].focus();
       }
     });
   });
 
-  // ഫോം സബ്മിറ്റ് ചെയ്യുമ്പോൾ 4 ബോക്സിലെയും വാല്യൂസ് ഒന്നിച്ച് ചേർക്കുന്നു
-  form.addEventListener('submit', (e) => {
-    let combinedOtp = "";
-    fields.forEach(field => {
-      combinedOtp += field.value;
-    });
-    fullOtpInput.value = combinedOtp;
-  });
+  // Focus first OTP box on page load
+  if (fields.length > 0) {
+    fields[0].focus();
+  }
 </script>
-
 </html>
+{% endblock %}

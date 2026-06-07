@@ -232,21 +232,38 @@
                 </table>
             </div> <!-- table overflow div ended properly -->
 
-            <!-- Pagination Footer (Moved outside table but inside card container) -->
+            {% if users.has_other_pages or users.paginator.count > 0 %}
             <div class="p-4 bg-[#1A1A1C]/40 border-t border-white/5 flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-gray-500">
                 <div>
-                    Showing 1 to 3 of 12,490 results
+                    Showing {{ users.start_index }} to {{ users.end_index }} of {{ users.paginator.count }} results
                 </div>
-                <div class="flex items-center gap-3">
-                    <button class="w-8 h-8 rounded-lg bg-[#1C1C1E] border border-white/5 text-white flex items-center justify-center disabled:opacity-30 hover:bg-[#252528] transition-colors" disabled>
+                <div class="flex items-center gap-3 flex-wrap">
+                    {% if users.has_previous %}
+                    <a href="?page={{ users.previous_page_number }}&search={{ search }}&status={{ status }}&role={{ role }}"
+                       class="w-8 h-8 rounded-lg bg-[#1C1C1E] border border-white/5 text-white flex items-center justify-center hover:bg-[#252528] transition-colors">
+                        &lt;
+                    </a>
+                    {% else %}
+                    <button class="w-8 h-8 rounded-lg bg-[#1C1C1E] border border-white/5 text-white flex items-center justify-center disabled:opacity-30" disabled>
                         &lt;
                     </button>
-                    <span class="text-white">Page 1 of 416</span>
-                    <button class="w-8 h-8 rounded-lg bg-[#1C1C1E] border border-white/5 text-white flex items-center justify-center hover:bg-[#252528] transition-colors">
+                    {% endif %}
+
+                    <span class="text-white">Page {{ users.number }} of {{ users.paginator.num_pages }}</span>
+
+                    {% if users.has_next %}
+                    <a href="?page={{ users.next_page_number }}&search={{ search }}&status={{ status }}&role={{ role }}"
+                       class="w-8 h-8 rounded-lg bg-[#1C1C1E] border border-white/5 text-white flex items-center justify-center hover:bg-[#252528] transition-colors">
+                        &gt;
+                    </a>
+                    {% else %}
+                    <button class="w-8 h-8 rounded-lg bg-[#1C1C1E] border border-white/5 text-white flex items-center justify-center disabled:opacity-30" disabled>
                         &gt;
                     </button>
+                    {% endif %}
                 </div>
             </div>
+            {% endif %}
         </div> <!-- Card container ended properly -->
     </main>
 </body>
