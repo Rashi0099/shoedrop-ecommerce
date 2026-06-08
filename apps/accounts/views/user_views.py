@@ -38,7 +38,6 @@ def landing_page(request):
     return render(
         request,'user/accounts/landing_page.html')
 def signup(request):
-    print("SIGNUP VIEW HIT")
 
     if request.user.is_authenticated:
 
@@ -272,7 +271,12 @@ def login_view(request):
 
             login(request, user)
 
+            messages.success(request,'user successfuly loggedin')
+
+
             return redirect('landing_page')
+        
+        
 
         messages.error(request,'Invalid email or password')
 
@@ -762,7 +766,6 @@ def edit_profile(request):
             )
 
         
-
         return redirect(
             'profile'
 )

@@ -2,6 +2,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect, get_object_or_404
 from apps.accounts.models import User
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 
 @staff_member_required(login_url='admin_login')
@@ -14,7 +15,10 @@ def customer_list(request):
     users = User.objects.filter(is_superuser=False)
 
     if search:
-        users = users.filter(username__icontains=search)
+        users = users.filter(
+            Q(username__icontains=search) |
+            Q(email__icontains=search)
+        )
          
 
     if status == 'active':

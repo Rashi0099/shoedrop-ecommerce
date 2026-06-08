@@ -118,6 +118,7 @@ def add_address(request):
             address_type=address_type,
             is_default=is_default
         )
+        messages.success(request,'new address added')
 
         return redirect('address_list')
 

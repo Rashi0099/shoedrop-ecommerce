@@ -13,7 +13,6 @@ urlpatterns = [
 
     path('edit-profile/', admin_edit_profile, name='admin_edit_profile'),
 
-    path('change-password/', admin_change_password, name='admin_change_password'),
 
     path('admin_logout/', admin_logout, name='admin_logout'),
    
