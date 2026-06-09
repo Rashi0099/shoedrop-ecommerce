@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShoeDrop - Performance Engineered</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom accent color setup matching the image */
+        .bg-brand-dark { background-color: #032b1d; }
+        .text-brand-dark { color: #032b1d; }
+        .border-brand-dark { border-color: #032b1d; }
+        .accent-brand { accent-color: #032b1d; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 antialiased">
+
+    <header class="sticky top-0 z-50 bg-[#fafafa]/90 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center">
+                <span class="text-xl font-black tracking-widest text-brand-dark">SHOEDROP</span>
+            </div>
+            
+           
+
+            <div class="flex items-center space-x-4 text-gray-700">
+                <button class="hover:text-brand-dark p-1"><i class="fa-regular fa-heart text-lg"></i></button>
+                <button class="hover:text-brand-dark p-1 relative">
+                    <i class="fa-solid fa-bag-shopping text-lg"></i>
+                </button>
+                <button class="hover:text-brand-dark p-1"><i class="fa-regular fa-user text-lg"></i></button>
+                <button class="md:hidden p-1 text-gray-700" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-gray-200 px-4 py-3 space-y-2">
+            <a href="#" class="block text-sm font-medium py-1">Men</a>
+            <a href="#" class="block text-sm font-medium py-1">Women</a>
+            <a href="#" class="block text-sm font-medium py-1">Kids</a>
+        </div>
+    </header>
+
+    <section class="relative h-[40vh] sm:h-[50vh] md:h-[65vh] bg-gradient-to-r from-teal-900 to-emerald-950 overflow-hidden">
+        <div class="absolute inset-0 opacity-40 mix-blend-overlay bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=1200');"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+        
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <h1 class="text-white/10 text-[10vw] font-black tracking-widest select-none uppercase">APEX ELITE</h1>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <div class="flex flex-col items-center justify-center border-b border-gray-200 pb-5 gap-4 relative">
+            <div class="flex flex-wrap gap-2 justify-center w-full">
+                <button class="px-5 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-500 hover:bg-gray-100 transition">All</button>
+                <button class="px-5 py-1.5 text-xs font-semibold rounded-full bg-brand-dark text-white shadow-sm">Men</button>
+                <button class="px-5 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-500 hover:bg-gray-100 transition">Women</button>
+                <button class="px-5 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-500 hover:bg-gray-100 transition">Kids</button>
+            </div>
+            <button class="sm:absolute sm:right-0 text-xs font-medium text-gray-400 hover:text-brand-dark uppercase tracking-wider transition">Clear All</button>
+        </div>
+
+        <div class="flex items-center justify-between my-6">
+            <div class="text-sm text-gray-600 font-medium">
+                <span class="text-gray-900 font-bold">12</span> Products Found
+            </div>
+            <div class="flex items-center space-x-2">
+                <label for="sort" class="text-xs text-gray-400 font-medium whitespace-nowrap">Sort by:</label>
+                <select id="sort" class="bg-transparent text-sm font-semibold text-gray-800 focus:outline-none cursor-pointer">
+                    <option>Newest Arrivals</option>
+                    <option>Price: Low to High</option>
+                    <option>Price: High to Low</option>
+                    <option>Top Rated</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+            
+            <aside class="space-y-8 lg:col-span-1 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                <div>
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Category</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center text-sm font-medium text-gray-600 cursor-pointer">
+                            <input type="radio" name="category" class="accent-brand h-4 w-4 mr-3">
+                            Running
+                        </label>
+                        <label class="flex items-center text-sm font-medium text-gray-900 cursor-pointer">
+                            <input type="radio" name="category" checked class="accent-brand h-4 w-4 mr-3">
+                            Training
+                        </label>
+                        <label class="flex items-center text-sm font-medium text-gray-600 cursor-pointer">
+                            <input type="radio" name="category" class="accent-brand h-4 w-4 mr-3">
+                            Lifestyle
+                        </label>
+                    </div>
+                </div>
+
+                <hr class="border-gray-100">
+
+                <div>
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Size</h3>
+                    <div class="grid grid-cols-4 gap-2 text-center text-xs font-semibold">
+                        <button class="py-2.5 rounded-lg border border-gray-200 text-gray-400 hover:border-brand-dark transition">8</button>
+                        <button class="py-2.5 rounded-lg border border-gray-200 text-gray-400 hover:border-brand-dark transition">8.5</button>
+                        <button class="py-2.5 rounded-lg border-2 border-brand-dark bg-teal-50/40 text-brand-dark font-bold">9</button>
+                        <button class="py-2.5 rounded-lg border border-gray-200 text-gray-400 hover:border-brand-dark transition">9.5</button>
+                        <button class="py-2.5 rounded-lg border border-gray-200 text-gray-400 hover:border-brand-dark transition">10</button>
+                        <button class="py-2.5 rounded-lg border border-gray-200 text-gray-400 hover:border-brand-dark transition">10.5</button>
+                        <button class="py-2.5 rounded-lg border border-gray-200 text-gray-400 hover:border-brand-dark transition">11</button>
+                        <button class="py-2.5 rounded-lg border border-gray-200 text-gray-400 hover:border-brand-dark transition">12</button>
+                    </div>
+                </div>
+
+                <hr class="border-gray-100">
+
+                <div>
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Color</h3>
+                    <div class="flex space-x-3">
+                        <button class="w-6 h-6 rounded-full bg-black ring-2 ring-offset-2 ring-black focus:outline-none"></button>
+                        <button class="w-6 h-6 rounded-full bg-slate-500 hover:scale-110 transition"></button>
+                        <button class="w-6 h-6 rounded-full bg-white border border-gray-300 hover:scale-110 transition"></button>
+                    </div>
+                </div>
+
+                <hr class="border-gray-100">
+
+                <div>
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">Price</h3>
+                    <div class="px-1 py-2">
+                        <input type="range" min="100" max="300" value="220" class="w-full accent-brand cursor-pointer bg-gray-200 rounded-lg h-1.5">
+                        <div class="flex justify-between items-center mt-3 text-xs font-bold text-gray-400">
+                            <span>$100</span>
+                            <span>$300</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <div class="bg-white rounded-3xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col justify-between group relative">
+                    <div>
+                        <div class="relative bg-gray-100 rounded-2xl overflow-hidden aspect-[4/3] mb-4">
+                            <span class="absolute top-3 left-3 bg-brand-dark text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md z-10">Limited Edition</span>
+                            <button class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm shadow-sm flex items-center justify-center text-gray-600 hover:text-red-500 transition">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                            <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&q=80&w=600" alt="Apex Volt" class="object-cover w-full h-full group-hover:scale-105 transition duration-300">
+                        </div>
+                        <div class="flex justify-between items-start mb-1">
+                            <h4 class="font-bold text-base text-gray-900 leading-tight">Apex Volt Midnight</h4>
+                            <div class="flex items-center text-xs font-bold shrink-0 ml-2"><i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.9</div>
+                        </div>
+                        <p class="text-xs text-gray-400 font-medium mb-4">Professional Marathon Runner</p>
+                    </div>
+                    <div class="flex items-center justify-between mt-auto pt-2">
+                        <span class="text-lg font-extrabold text-gray-900">$210</span>
+                        <button class="w-9 h-9 rounded-full border border-gray-200 text-brand-dark flex items-center justify-center hover:bg-brand-dark hover:text-white transition shadow-sm"><i class="fa-solid fa-cart-shopping text-sm"></i></button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col justify-between group relative">
+                    <div>
+                        <div class="relative bg-gray-100 rounded-2xl overflow-hidden aspect-[4/3] mb-4">
+                            <span class="absolute top-3 left-3 bg-teal-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md z-10">New Drop</span>
+                            <button class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm shadow-sm flex items-center justify-center text-gray-600 hover:text-red-500 transition">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=600" alt="Apex Elite 4.0" class="object-cover w-full h-full group-hover:scale-105 transition duration-300">
+                        </div>
+                        <div class="flex justify-between items-start mb-1">
+                            <h4 class="font-bold text-base text-gray-900 leading-tight">Apex Elite 4.0</h4>
+                            <div class="flex items-center text-xs font-bold shrink-0 ml-2"><i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.8</div>
+                        </div>
+                        <p class="text-xs text-gray-400 font-medium mb-4">Industrial Cross Trainer</p>
+                    </div>
+                    <div class="flex items-center justify-between mt-auto pt-2">
+                        <span class="text-lg font-extrabold text-gray-900">$185</span>
+                        <button class="w-9 h-9 rounded-full border border-gray-200 text-brand-dark flex items-center justify-center hover:bg-brand-dark hover:text-white transition shadow-sm"><i class="fa-solid fa-cart-shopping text-sm"></i></button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col justify-between group relative">
+                    <div>
+                        <div class="relative bg-gray-100 rounded-2xl overflow-hidden aspect-[4/3] mb-4">
+                            <button class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm shadow-sm flex items-center justify-center text-gray-600 hover:text-red-500 transition">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                            <img src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&q=80&w=600" alt="Zenith Pro" class="object-cover w-full h-full group-hover:scale-105 transition duration-300">
+                        </div>
+                        <div class="flex justify-between items-start mb-1">
+                            <h4 class="font-bold text-base text-gray-900 leading-tight">Zenith Pro Trainer</h4>
+                            <div class="flex items-center text-xs font-bold shrink-0 ml-2"><i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.7</div>
+                        </div>
+                        <p class="text-xs text-gray-400 font-medium mb-4">Versatile Performance Gear</p>
+                    </div>
+                    <div class="flex items-center justify-between mt-auto pt-2">
+                        <span class="text-lg font-extrabold text-gray-900">$160</span>
+                        <button class="w-9 h-9 rounded-full border border-gray-200 text-brand-dark flex items-center justify-center hover:bg-brand-dark hover:text-white transition shadow-sm"><i class="fa-solid fa-cart-shopping text-sm"></i></button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col justify-between group relative">
+                    <div>
+                        <div class="relative bg-gray-100 rounded-2xl overflow-hidden aspect-[4/3] mb-4">
+                            <button class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm shadow-sm flex items-center justify-center text-gray-600 hover:text-red-500 transition">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                            <img src="https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&q=80&w=600" alt="Velocity Strike" class="object-cover w-full h-full group-hover:scale-105 transition duration-300">
+                        </div>
+                        <div class="flex justify-between items-start mb-1">
+                            <h4 class="font-bold text-base text-gray-900 leading-tight">Velocity Strike</h4>
+                            <div class="flex items-center text-xs font-bold shrink-0 ml-2"><i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.8</div>
+                        </div>
+                        <p class="text-xs text-gray-400 font-medium mb-4">Explosive Agility Shoe</p>
+                    </div>
+                    <div class="flex items-center justify-between mt-auto pt-2">
+                        <span class="text-lg font-extrabold text-gray-900">$175</span>
+                        <button class="w-9 h-9 rounded-full border border-gray-200 text-brand-dark flex items-center justify-center hover:bg-brand-dark hover:text-white transition shadow-sm"><i class="fa-solid fa-cart-shopping text-sm"></i></button>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+
+        <div class="flex items-center justify-center space-x-2 mt-12 pt-6 border-t border-gray-100">
+            <button class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-brand-dark hover:text-brand-dark transition"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+            <button class="w-8 h-8 flex items-center justify-center rounded-full bg-brand-dark text-white text-xs font-bold">1</button>
+            <button class="w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold text-gray-400 hover:bg-gray-100 transition">2</button>
+            <button class="w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold text-gray-400 hover:bg-gray-100 transition">3</button>
+            <button class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-brand-dark hover:text-brand-dark transition"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+        </div>
+
+    </main>
+
+    <footer class="bg-brand-dark text-white mt-20 pt-16 pb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 border-b border-emerald-900 pb-12">
+                
+                <div class="lg:col-span-2 space-y-4">
+                    <span class="text-2xl font-black tracking-widest text-white">ShoeDrop</span>
+                    <p class="text-gray-400 text-sm max-w-sm leading-relaxed">Elevating your journey with engineered precision and minimalist design.</p>
+                    <div class="flex space-x-4 pt-2 text-gray-400">
+                        <a href="#" class="hover:text-white transition text-lg"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="hover:text-white transition text-lg"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="hover:text-white transition text-lg"><i class="fa-brands fa-twitter"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-widest mb-4 text-emerald-400">Shop</h4>
+                    <ul class="space-y-2.5 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">New Arrivals</a></li>
+                        <li><a href="#" class="hover:text-white transition">Best Sellers</a></li>
+                        <li><a href="#" class="hover:text-white transition">Men</a></li>
+                        <li><a href="#" class="hover:text-white transition">Women</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-xs
