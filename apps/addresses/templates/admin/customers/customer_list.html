@@ -39,7 +39,7 @@
                     class="flex items-center px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors">
                     Products
                 </a>
-                <a href="#"
+                <a href="{% url 'category_list' %}"
                     class="flex items-center px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors">
                     Categories
                 </a>
@@ -209,17 +209,25 @@
                             </td>
 
                             <td class="py-4 px-6 text-right">
-                                {% if user.is_active %}
-                                <a href="{% url 'block_user' user.id %}"
-                                    class="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-red-400 transition-colors">
-                                    Block
-                                </a>
-                                {% else %}
-                                <a href="{% url 'unblock_user' user.id %}"
-                                    class="text-[10px] font-bold uppercase tracking-widest text-emerald-400 hover:text-emerald-300 transition-colors">
-                                    Unblock
-                                </a>
-                                {% endif %}
+                                <div class="flex items-center justify-end gap-3">
+                                    {% if user.is_active %}
+                                    <a href="{% url 'block_user' user.id %}"
+                                        class="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-red-400 transition-colors">
+                                        Block
+                                    </a>
+                                    {% else %}
+                                    <a href="{% url 'unblock_user' user.id %}"
+                                        class="text-[10px] font-bold uppercase tracking-widest text-emerald-400 hover:text-emerald-300 transition-colors">
+                                        Unblock
+                                    </a>
+                                    {% endif %}
+                                    <button data-url="{% url 'delete_user' user.id %}"
+                                        data-name="{{ user.username }}"
+                                        onclick="openDeleteModal(this.dataset.url, this.dataset.name)"
+                                        class="text-[10px] font-bold uppercase tracking-widest text-red-400 hover:text-red-300 transition-colors">
+                                        Delete
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         {% empty %}
@@ -267,6 +275,42 @@
             {% endif %}
         </div> <!-- Card container ended properly -->
     </main>
+
+    <!-- Delete Confirm Modal -->
+    <div id="delete_modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80">
+        <div class="w-full max-w-sm bg-[#141416] border border-white/10 rounded-2xl p-6 shadow-2xl">
+            <h3 class="text-sm font-bold text-red-400 uppercase tracking-widest mb-3">Delete Customer</h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-6">
+                Are you sure you want to delete <span id="delete_item_name" class="text-white font-bold"></span>? This action cannot be undone.
+            </p>
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="closeDeleteModal()"
+                    class="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 bg-[#1C1C1E] rounded-xl border border-white/5 hover:bg-zinc-700 transition-colors cursor-pointer">
+                    Cancel
+                </button>
+                <a id="delete_confirm_link" href="#"
+                    class="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl hover:bg-red-500/20 transition-colors text-center cursor-pointer">
+                    Confirm Delete
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openDeleteModal(url, name) {
+            document.getElementById('delete_modal').classList.remove('hidden');
+            document.getElementById('delete_confirm_link').href = url;
+            document.getElementById('delete_item_name').textContent = name;
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete_modal').classList.add('hidden');
+        }
+
+        document.getElementById('delete_modal').addEventListener('click', function (e) {
+            if (e.target === this) closeDeleteModal();
+        });
+    </script>
 </body>
 
 </html>

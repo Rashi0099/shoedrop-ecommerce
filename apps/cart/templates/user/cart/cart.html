@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - ShoeDrop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .bg-brand { background-color: #032b1d; }
+        .text-brand { color: #032b1d; }
+        .border-brand { border-color: #032b1d; }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-800 antialiased">
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-50 bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+
+            <span class="text-xl font-black tracking-widest text-brand">SHOEDROP</span>
+
+            <div class="hidden space-x-12 text-[11px] font-bold tracking-[0.2em] text-gray-900 md:flex items-center">
+                <a href="{% url 'shop' %}?category=Men" class="hover:opacity-70 transition">MEN</a>
+                <a href="{% url 'shop' %}?category=Woman" class="hover:opacity-70 transition">WOMEN</a>
+                <a href="{% url 'shop' %}?category=Kids" class="hover:opacity-70 transition">KIDS</a>
+            </div>
+
+            <div class="flex items-center space-x-4 text-gray-700">
+                <a href="#" class="hover:text-brand p-1"><i class="fa-regular fa-heart text-lg"></i></a>
+                <a href="{% url 'cart' %}" class="hover:text-brand p-1 relative">
+                    <i class="fa-solid fa-bag-shopping text-lg"></i>
+                    {% if cart_items %}
+                    <span class="absolute -top-1 -right-1 bg-brand text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                        {{ cart_items|length }}
+                    </span>
+                    {% endif %}
+                </a>
+                <a href="#" class="hover:text-brand p-1"><i class="fa-regular fa-user text-lg"></i></a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        {% include 'user/_messages.html' %}
+
+        <!-- Page Title -->
+        <div class="mb-8">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Cart</span>
+            <h1 class="text-3xl font-black text-gray-900 mt-1">Review your picks</h1>
+            <p class="text-sm text-gray-400 mt-1">Make sure the sizing and delivery look good before checkout.</p>
+        </div>
+
+        {% if cart_items %}
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+            <!-- Cart Items -->
+            <div class="lg:col-span-2 space-y-4">
+
+                {% for item in cart_items %}
+
+                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-5">
+
+                    <!-- Product Image -->
+                    <div class="w-24 h-24 bg-gray-100 rounded-xl overflow-hidden shrink-0">
+                        {% if item.variant.images.first %}
+                        <img src="{{ item.variant.images.first.image.url }}"
+                            alt="{{ item.variant.product.product_name }}"
+                            class="w-full h-full object-cover">
+                        {% endif %}
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="flex-1">
+
+                        <div class="flex items-start justify-between">
+
+                            <div>
+                                <h3 class="font-bold text-gray-900 text-sm">
+                                    {{ item.variant.product.product_name }}
+                                </h3>
+                                <p class="text-xs text-gray-400 uppercase tracking-wider mt-0.5">
+                                    {{ item.variant.product.category.name }} &bull; {{ item.variant.product.subcategory.name }}
+                                </p>
+                            </div>
+
+                            <!-- Delete -->
+                            <a href="{% url 'remove_from_cart' item.id %}"
+                                class="text-gray-300 hover:text-red-400 transition text-sm">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </a>
+
+                        </div>
+
+                        <div class="flex items-center justify-between mt-4">
+
+                            <!-- Size & Quantity -->
+                            <div class="flex items-center gap-4">
+
+                                <span class="text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg">
+                                    Size {{ item.variant.size }}
+                                </span>
+
+                                <!-- Quantity Controls -->
+                                <div class="flex items-center gap-2">
+
+                                    <form method="POST" action="{% url 'update_cart_quantity' item.id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="decrease">
+                                        <button type="submit"
+                                            class="w-7 h-7 rounded-full border border-gray-200 text-gray-500 hover:border-brand hover:text-brand transition text-sm font-bold">
+                                            -
+                                        </button>
+                                    </form>
+
+                                    <span class="text-sm font-bold text-gray-900 w-5 text-center">
+                                        {{ item.quantity }}
+                                    </span>
+
+                                    <form method="POST" action="{% url 'update_cart_quantity' item.id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="increase">
+                                        <button type="submit"
+                                            class="w-7 h-7 rounded-full border border-gray-200 text-gray-500 hover:border-brand hover:text-brand transition text-sm font-bold">
+                                            +
+                                        </button>
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Price -->
+                            <span class="text-base font-extrabold text-gray-900">
+                                ₹{{ item.get_total_price }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            <!-- Order Summary -->
+            <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm sticky top-24">
+
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="font-black text-gray-900 text-base">Order Summary</h2>
+                    <span class="text-xs text-gray-400 font-bold">{{ cart_items|length }} item{{ cart_items|length|pluralize }}</span>
+                </div>
+
+                <div class="space-y-3 text-sm">
+
+                    <div class="flex justify-between text-gray-600">
+                        <span>Subtotal</span>
+                        <span class="font-bold text-gray-900">₹{{ subtotal }}</span>
+                    </div>
+
+                    <div class="flex justify-between text-gray-600">
+                        <span>Estimated Tax (10%)</span>
+                        <span class="font-bold text-gray-900">₹{{ tax }}</span>
+                    </div>
+
+                    <div class="flex justify-between text-gray-600">
+                        <span>Delivery Charges</span>
+                        <span class="font-bold text-green-600">Free</span>
+                    </div>
+
+                </div>
+
+                <div class="border-t border-gray-100 mt-4 pt-4 flex justify-between items-center">
+                    <span class="font-black text-gray-900 text-base">Total</span>
+                    <span class="text-2xl font-black text-brand">₹{{ total }}</span>
+                </div>
+
+                <a href="#"
+                    class="mt-6 w-full bg-brand text-white text-xs font-black uppercase tracking-widest py-4 rounded-xl hover:opacity-90 transition flex items-center justify-center gap-2">
+                    Proceed to Checkout
+                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <!-- Empty Cart -->
+        <div class="text-center py-20">
+            <i class="fa-solid fa-bag-shopping text-5xl text-gray-200 mb-4"></i>
+            <h2 class="text-xl font-black text-gray-900">Your cart is empty</h2>
+            <p class="text-sm text-gray-400 mt-2">Add some products to get started.</p>
+            <a href="{% url 'shop' %}"
+                class="mt-6 inline-block bg-brand text-white text-xs font-black uppercase tracking-widest px-8 py-3 rounded-xl hover:opacity-90 transition">
+                Shop Now
+            </a>
+        </div>
+
+        {% endif %}
+
+        <!-- Suggested Products -->
+        {% if suggested_products %}
+
+        <div class="mt-16">
+
+            <h2 class="text-xl font-black text-gray-900 mb-6">Products You May Like</h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+                {% for product in suggested_products %}
+
+                {% with first_variant=product.variants.first %}
+
+                <a href="{% url 'product_detail' product.id %}"
+                    class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition group block">
+
+                    <div class="bg-gray-100 rounded-xl overflow-hidden aspect-square mb-3">
+                        {% if first_variant and first_variant.images.first %}
+                        <img src="{{ first_variant.images.first.image.url }}"
+                            alt="{{ product.product_name }}"
+                            class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        {% endif %}
+                    </div>
+
+                    <h4 class="font-bold text-sm text-gray-900 truncate">{{ product.product_name }}</h4>
+                    <p class="text-xs text-gray-400 uppercase tracking-wider mt-0.5">
+                        {{ product.subcategory.name }}
+                    </p>
+                    <p class="text-sm font-extrabold text-gray-900 mt-2">
+                        {% if first_variant %}₹{{ first_variant.price }}{% endif %}
+                    </p>
+
+                </a>
+
+                {% endwith %}
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-brand text-white mt-20 pt-16 pb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 border-b border-emerald-900 pb-12">
+
+                <div class="lg:col-span-2 space-y-4">
+                    <span class="text-2xl font-black tracking-widest text-white">ShoeDrop</span>
+                    <p class="text-gray-400 text-sm max-w-sm leading-relaxed">Elevating your journey with engineered precision and minimalist design.</p>
+                    <div class="flex space-x-4 pt-2 text-gray-400">
+                        <a href="#" class="hover:text-white transition text-lg"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="hover:text-white transition text-lg"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="hover:text-white transition text-lg"><i class="fa-brands fa-twitter"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-widest mb-4 text-emerald-400">Shop</h4>
+                    <ul class="space-y-2.5 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">New Arrivals</a></li>
+                        <li><a href="#" class="hover:text-white transition">Best Sellers</a></li>
+                        <li><a href="{% url 'shop' %}?category=Men" class="hover:text-white transition">Men</a></li>
+                        <li><a href="{% url 'shop' %}?category=Woman" class="hover:text-white transition">Women</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-widest mb-4 text-emerald-400">Support</h4>
+                    <ul class="space-y-2.5 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">Help Center</a></li>
+                        <li><a href="#" class="hover:text-white transition">Returns</a></li>
+                        <li><a href="#" class="hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-widest mb-4 text-emerald-400">Company</h4>
+                    <ul class="space-y-2.5 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">About</a></li>
+                        <li><a href="#" class="hover:text-white transition">Careers</a></li>
+                        <li><a href="#" class="hover:text-white transition">Stores</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                <p>© 2024 ShoeDrop. Performance Engineered.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition">Terms of Service</a>
+                    <a href="#" class="hover:text-white transition">Store Locator</a>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
+</body>
+
+</html>

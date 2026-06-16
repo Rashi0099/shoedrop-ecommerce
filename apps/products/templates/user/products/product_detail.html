@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShoeDrop - {{ product.product_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50 text-gray-900 font-sans antialiased selection:bg-emerald-800 selection:text-white">
+
+    <header
+        class="border-b border-gray-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+            <div
+                class="text-xl font-black tracking-wider text-emerald-950 uppercase cursor-pointer hover:opacity-80 transition">
+                ShoeDrop
+            </div>
+
+            <nav class="hidden md:flex space-x-8 text-xs font-semibold tracking-widest uppercase text-gray-500">
+                <a href="{% url 'shop' %}?category=Men"
+                    class="hover:text-emerald-900 transition relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-emerald-900 hover:after:w-full after:transition-all">Men</a>
+                <a href="{% url 'shop' %}?category=Woman"
+                    class="hover:text-emerald-900 transition relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-emerald-900 hover:after:w-full after:transition-all">Women</a>
+                <a href="{% url 'shop' %}?category=Kids"
+                    class="hover:text-emerald-900 transition relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-emerald-900 hover:after:w-full after:transition-all">Kids</a>
+            </nav>
+
+            <div class="flex items-center space-x-6 text-gray-600 text-lg">
+                <button class="hover:text-emerald-900 transition duration-200 relative"><i
+                        class="fa-regular fa-heart"></i></button>
+                <button class="hover:text-emerald-900 transition duration-200 relative">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span
+                        class="absolute -top-1.5 -right-2 bg-emerald-950 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center scale-90">1</span>
+                </button>
+                <button class="hover:text-emerald-900 transition duration-200"><i
+                        class="fa-regular fa-user"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+
+
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 mb-12">
+
+            <div class="lg:col-span-7 space-y-4">
+                <div
+                    class="bg-white rounded-2xl overflow-hidden aspect-[16/10] max-h-[420px] w-full flex items-center justify-center relative p-4 group border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
+                    {% if selected_variant and selected_variant.images.first %}
+                    <img src="{{ selected_variant.images.first.image.url }}" alt="{{ product.product_name }}"
+                        class="object-contain w-full h-full group-hover:scale-[1.01] transition-transform duration-500 ease-out" />
+                    {% else %}
+                    <div
+                        class="text-xs text-gray-400 font-bold uppercase tracking-widest bg-gray-50 px-4 py-2 rounded-lg">
+                        No Image Available</div>
+                    {% endif %}
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    {% if selected_variant %}
+                    {% for img in selected_variant.images.all|slice:"1:3" %}
+                    <div
+                        class="bg-white rounded-2xl overflow-hidden aspect-square max-h-[260px] flex items-center justify-center p-3 cursor-pointer border border-transparent hover:border-gray-200 transition-all duration-200 shadow-[0_4px_15px_-3px_rgba(0,0,0,0.04)]">
+                        <img src="{{ img.image.url }}" alt="{{ product.product_name }} angle"
+                            class="object-contain w-full h-full" />
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="pt-6 hidden lg:block">
+                    <h3 class="text-xs font-black text-emerald-950 uppercase tracking-widest mb-3">Product Features</h3>
+                    <div class="flex flex-wrap gap-2.5">
+                        {% if product.product_features %}
+                        <span
+                            class="bg-gray-100 text-gray-800 text-[11px] font-bold px-4 py-2.5 rounded-xl uppercase tracking-wider shadow-sm">
+                            {{ product.product_features }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 flex flex-col justify-start space-y-4">
+                <div class="space-y-1">
+                    <span class="inline-block bg-emerald-100 text-emerald-900 text-[9px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full">New Release</span>
+                    <h1 class="text-2xl xl:text-3xl font-black text-emerald-950 tracking-tight leading-tight">{{ product.product_name }}</h1>
+                    <p class="text-xl font-black text-emerald-900 tracking-tight">
+                        {% if selected_variant %}₹{{ selected_variant.price }}{% else %}Price Unavailable{% endif %}
+                    </p>
+                </div>
+
+                <div class="bg-gray-100/60 rounded-xl p-3 border border-gray-200/40">
+                    <p class="text-xs text-gray-600 leading-relaxed font-medium">
+                        {{ product.description }}
+                    </p>
+                </div>
+
+                {% if colors %}
+                <div class="space-y-2 mb-4">
+                    <h4 class="text-xs font-black text-emerald-950 uppercase tracking-widest">Select Color</h4>
+                    <div class="flex items-center gap-3">
+                        {% for color in colors %}
+                        <a href="?color={{ color|urlencode }}{% if current_size %}&size={{ current_size|urlencode }}{% endif %}" 
+                           class="block w-8 h-8 rounded-full border-2 transition-all {% if current_color == color %}border-emerald-950 ring-2 ring-emerald-950/50{% else %}border-gray-300 hover:scale-110{% endif %}"
+                           style="background-color: {{ color|lower }};"
+                           title="{{ color }}">
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                {% if sizes %}
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs font-black text-emerald-950 uppercase tracking-widest">Select Size</h4>
+                        <button class="text-xs font-bold text-emerald-800 underline hover:text-emerald-950 transition">Size Guide</button>
+                    </div>
+                    <div class="grid grid-cols-5 gap-2">
+                        {% for size in sizes %}
+                        <a href="?size={{ size|urlencode }}{% if current_color %}&color={{ current_color|urlencode }}{% endif %}" 
+                           class="border text-center rounded-lg py-2 text-xs font-bold tracking-wider transition-all duration-200 block shadow-sm {% if current_size == size %}bg-emerald-950 text-white border-emerald-950 shadow-sm{% else %}bg-white border-gray-200 text-gray-700 hover:border-emerald-800 hover:text-emerald-950{% endif %}">
+                            {{ size }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="space-y-3 pt-1">
+                    <div class="space-y-2">
+
+                        <a href="#"
+                            class="w-full bg-emerald-950 text-white text-xs font-black uppercase tracking-widest py-3.5 px-6 rounded-xl hover:bg-emerald-900 transition-all duration-300 shadow-md flex items-center justify-center gap-2">
+                            Buy Now <i class="fa-solid fa-bolt text-[10px] text-yellow-400"></i>
+                        </a>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="{% if selected_variant %}{% url 'add_to_cart' selected_variant.id %}{% else %}#{% endif %}"
+                                class="border-2 border-emerald-950 bg-white text-emerald-950 text-xs font-black uppercase tracking-widest py-2.5 px-4 rounded-xl hover:bg-emerald-50/50 transition flex items-center justify-center gap-2 shadow-sm">
+                                <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                            </a>
+                            <button
+                                class="border border-gray-200 bg-white text-gray-500 hover:text-emerald-950 text-xs font-black uppercase tracking-widest py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-sm">
+                                <i class="fa-regular fa-heart"></i> Wishlist
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-2 pb-6 lg:hidden border-t border-gray-200">
+            <h3 class="text-xs font-black text-emerald-950 uppercase tracking-widest mb-2">Product Features</h3>
+            <div class="flex flex-wrap gap-2">
+                {% if product.product_features %}
+                <span
+                    class="bg-gray-100 text-gray-800 text-[11px] font-bold px-3 py-2 rounded-xl uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                    {{ product.product_features }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <section class="border-t border-gray-200/80 pt-10 pb-12">
+            <div class="flex justify-between items-end mb-6">
+                <h2 class="text-lg font-black text-emerald-950 tracking-tight uppercase">Complete Your Kit</h2>
+                <a href="#" class="text-xs font-bold text-emerald-800 underline hover:text-emerald-950 transition">View
+                    Apparel</a>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="group cursor-pointer">
+                    <div
+                        class="bg-white rounded-2xl overflow-hidden aspect-square flex items-center justify-center p-4 mb-2 shadow-[0_4px_15px_-3px_rgba(0,0,0,0.04)] border border-gray-100 group-hover:border-gray-200 transition-all duration-300">
+                        {% if selected_variant and selected_variant.images.first %}
+                        <img src="{{ selected_variant.images.first.image.url }}" alt="Kit Companion"
+                            class="object-contain max-h-full mix-blend-multiply group-hover:scale-105 transition-transform duration-500 ease-out" />
+                        {% endif %}
+                    </div>
+                    <h3
+                        class="text-xs font-bold text-emerald-950 group-hover:text-emerald-800 transition tracking-wide">
+                        Pro Performance Compression Core</h3>
+                    <p class="text-xs text-emerald-900 font-black mt-0.5">₹2,500</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="border-t border-gray-200/80 pt-10 pb-12">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-lg font-black text-emerald-950 tracking-tight uppercase">Customer Reviews</h2>
+                <div class="flex items-center gap-4 text-xs font-bold text-gray-500">
+                    <span>Sort By: <button class="text-emerald-950 underline font-black">Most Relevant</button></span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-4xl font-black text-emerald-950 tracking-tight">4.9</span>
+                        <div class="flex flex-col">
+                            <div class="flex text-amber-400 text-xs gap-0.5">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                    class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                    class="fa-solid fa-star"></i>
+                            </div>
+                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">Based on
+                                1,240 Reviews</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 text-xs font-bold text-gray-600">
+                        <div class="flex items-center gap-3">
+                            <span class="w-3">5</span>
+                            <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-950 w-[90%] rounded-full"></div>
+                            </div>
+                            <span class="w-8 text-right text-gray-400">1,120</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-3">4</span>
+                            <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-950 w-[8%] rounded-full"></div>
+                            </div>
+                            <span class="w-8 text-right text-gray-400">102</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-3">3</span>
+                            <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-950 w-[1%] rounded-full"></div>
+                            </div>
+                            <span class="w-8 text-right text-gray-400">12</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-3">2</span>
+                            <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-950 w-[0.5%] rounded-full"></div>
+                            </div>
+                            <span class="w-8 text-right text-gray-400">4</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-3">1</span>
+                            <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-950 w-[0.5%] rounded-full"></div>
+                            </div>
+                            <span class="w-8 text-right text-gray-400">2</span>
+                        </div>
+                    </div>
+
+                    <button
+                        class="w-full bg-transparent border-2 border-emerald-950 text-emerald-950 text-xs font-black uppercase tracking-widest py-3 px-4 rounded-xl hover:bg-gray-50 transition text-center block">
+                        Write a Review
+                    </button>
+                </div>
+
+                <div class="lg:col-span-8 space-y-4">
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div
+                                    class="w-7 h-7 bg-emerald-950 rounded-full text-white text-[10px] font-bold flex items-center justify-center uppercase">
+                                    A</div>
+                                <div>
+                                    <h4 class="text-xs font-black text-emerald-950">Amal K.</h4>
+                                    <p class="text-[9px] text-gray-400 font-bold uppercase">2 days ago</p>
+                                </div>
+                            </div>
+                            <span
+                                class="bg-emerald-50 text-emerald-800 text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider"><i
+                                    class="fa-solid fa-circle-check"></i> Verified</span>
+                        </div>
+                        <div class="flex text-amber-400 text-[10px]"><i class="fa-solid fa-star"></i><i
+                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <h5 class="text-sm font-bold text-emerald-950">Perfect for Marathon Training</h5>
+                        <p class="text-xs text-gray-600 leading-relaxed font-medium">
+                            The energy return remains consistent even after 20 miles, and the upper mesh feels like a
+                            second skin. Best investment this year!
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div
+                                    class="w-7 h-7 bg-emerald-950 rounded-full text-white text-[10px] font-bold flex items-center justify-center uppercase">
+                                    R</div>
+                                <div>
+                                    <h4 class="text-xs font-black text-emerald-950">Reshma S.</h4>
+                                    <p class="text-[9px] text-gray-400 font-bold uppercase">1 week ago</p>
+                                </div>
+                            </div>
+                            <span
+                                class="bg-emerald-50 text-emerald-800 text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider"><i
+                                    class="fa-solid fa-circle-check"></i> Verified</span>
+                        </div>
+                        <div class="flex text-amber-400 text-[10px]"><i class="fa-solid fa-star"></i><i
+                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <h5 class="text-sm font-bold text-emerald-950">Incredible Cushioning</h5>
+                        <p class="text-xs text-gray-600 leading-relaxed font-medium">
+                            Finally a shoe that supports high arches without looking clunky! The traction on wet
+                            pavements is also top-notch.
+                        </p>
+                    </div>
+
+                    <div class="text-center pt-2">
+                        <button
+                            class="inline-flex items-center gap-1.5 text-xs font-black text-emerald-950 hover:text-emerald-800 transition uppercase tracking-wider border border-gray-200 px-4 py-2 rounded-xl bg-white shadow-sm">
+                            Load More Reviews <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-emerald-950 text-gray-300 pt-12 pb-6 border-t border-emerald-900/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-5 gap-8 text-xs mb-8">
+            <div class="col-span-2 space-y-3">
+                <h3 class="text-white text-base font-black tracking-widest uppercase">ShoeDrop</h3>
+                <p class="text-gray-400 leading-relaxed max-w-xs font-medium">Elevating daily movement with engineered
+                    performance and minimalist footwear aesthetics.</p>
+                <div class="flex gap-4 text-sm text-gray-400 pt-2">
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <h4 class="text-white font-black uppercase tracking-wider">Shop</h4>
+                <ul class="space-y-1.5 font-medium text-gray-400">
+                    <li><a href="#" class="hover:text-white transition">All Shoes</a></li>
+                    <li><a href="#" class="hover:text-white transition">New Arrivals</a></li>
+                    <li><a href="#" class="hover:text-white transition">Running Gear</a></li>
+                </ul>
+            </div>
+            <div class="space-y-2">
+                <h4 class="text-white font-black uppercase tracking-wider">Support</h4>
+                <ul class="space-y-1.5 font-medium text-gray-400">
+                    <li><a href="#" class="hover:text-white transition">Help Center</a></li>
+                    <li><a href="#" class="hover:text-white transition">Returns & Exchanges</a></li>
+                    <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="space-y-2">
+                <h4 class="text-white font-black uppercase tracking-wider">Company</h4>
+                <ul class="space-y-1.5 font-medium text-gray-400">
+                    <li><a href="#" class="hover:text-white transition">Our Story</a></li>
+                    <li><a href="#" class="hover:text-white transition">Sustainability</a></li>
+                    <li><a href="#" class="hover:text-white transition">Careers</a></li>
+                </ul>
+            </div>
+        </div>
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 border-t border-emerald-900/40 flex flex-col sm:flex-row justify-between items-center gap-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+            <p>© 2026 ShoeDrop Inc. All Rights Reserved.</p>
+            <div class="flex gap-4">
+                <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

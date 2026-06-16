@@ -45,7 +45,7 @@ urlpatterns = [
     path('payments/',include('apps.payments.urls.user_urls')),
     path('payments-managment/',include('apps.payments.urls.admin_urls')),
 
-    path('products/',include('apps.products.urls.user_urls')),
+    path('shop/',include('apps.products.urls.user_urls')),
     path('products-managment/',include('apps.products.urls.admin_urls')),
 
     path('reviews/',include('apps.reviews.urls.user_urls')),

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Category - ShoeDrop Admin</title>
+    <title>Add Subcategory - ShoeDrop Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -104,9 +104,9 @@
                 <span>/</span>
                 <a href="{% url 'category_list' %}" class="hover:text-white transition-colors">Categories</a>
                 <span>/</span>
-                <span class="text-white">Edit Category</span>
+                <span class="text-white">Add Subcategory</span>
             </div>
-            <h1 class="text-3xl font-black text-white tracking-tight uppercase">Edit Category</h1>
+            <h1 class="text-3xl font-black text-white tracking-tight uppercase">Add Subcategory</h1>
         </div>
 
         <!-- Form Card -->
@@ -115,13 +115,31 @@
                 {% csrf_token %}
                 
                 <div class="space-y-2">
-                    <label for="category_name" class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Category Name</label>
+                    <label for="parent_category" class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Parent Category</label>
+                    <div class="relative">
+                        <select 
+                            id="parent_category" 
+                            name="parent_id" 
+                            required
+                            class="w-full bg-[#1C1C1E] border border-white/5 text-white text-xs px-4 py-3 rounded-xl outline-none focus:border-white/20 transition-colors cursor-pointer appearance-none">
+                            <option value="" disabled selected class="text-gray-550">Select parent category</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" class="bg-[#141416] text-white">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="subcategory_name" class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Subcategory Name</label>
                     <input 
                         type="text" 
-                        id="category_name" 
+                        id="subcategory_name" 
                         name="name" 
-                        value="{{ category.name }}"
-                        placeholder="e.g., Sneakers, Boots, Accessories"
+                        placeholder="e.g., Running Shoes, Sneakers, Formal"
                         required
                         class="w-full bg-[#1C1C1E] border border-white/5 text-white text-xs px-4 py-3 rounded-xl outline-none focus:border-white/20 transition-colors placeholder-gray-650">
                 </div>
@@ -131,16 +149,16 @@
                         type="button"
                         id="toggle_btn"
                         onclick="toggleStatus()"
-                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none {% if category.is_active %}bg-emerald-500{% else %}bg-zinc-800{% endif %}">
+                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-emerald-500">
                         <span
                             id="toggle_knob"
-                            class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {% if category.is_active %}translate-x-5{% else %}translate-x-0{% endif %}">
+                            class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-5">
                         </span>
                     </button>
-                    <input type="hidden" name="is_active" id="is_active_input" value="{% if category.is_active %}True{% else %}False{% endif %}">
+                    <input type="hidden" name="is_active" id="is_active_input" value="True">
                     <div>
                         <span class="block text-xs font-bold text-white uppercase tracking-wider">Active Status</span>
-                        <span class="text-[10px] text-gray-500 mt-0.5 block">Toggling off removes this category and its subcategories from user view</span>
+                        <span class="text-[10px] text-gray-500 mt-0.5 block">This subcategory will be visible to users</span>
                     </div>
                 </div>
 
@@ -166,7 +184,7 @@
                     <button 
                         type="submit" 
                         class="px-6 py-3 bg-white text-black rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors cursor-pointer">
-                        Update Category
+                        Create Subcategory
                     </button>
                     <a 
                         href="{% url 'category_list' %}" 

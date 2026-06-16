@@ -22,4 +22,9 @@ urlpatterns = [
         unblock_user,
         name='unblock_user'
     ),
+    path(
+        'customers/delete/<int:id>/',
+        delete_user,
+        name='delete_user'
+    ),
 ]

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShoeDrop - Performance Engineered</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom accent color setup matching the image */
+        .bg-brand-dark {
+            background-color: #032b1d;
+        }
+
+        .text-brand-dark {
+            color: #032b1d;
+        }
+
+        .border-brand-dark {
+            border-color: #032b1d;
+        }
+
+        .accent-brand {
+            accent-color: #032b1d;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-800 antialiased">
+
+    <header class="sticky top-0 z-50 bg-[#fafafa]/90 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center">
+                <span class="text-xl font-black tracking-widest text-brand-dark">SHOEDROP</span>
+            </div>
+            <div
+                class="hidden space-x-12 text-[11px] font-bold tracking-[0.2em] text-gray-900 md:flex items-center pl-10">
+                <a href="{%url 'shop'%}?category=Men" class="hover:opacity-70 transition-opacity duration-200">MEN</a>
+                <a href="{%url 'shop'%}?category=Woman" class="hover:opacity-70 transition-opacity duration-200">WOMEN</a>
+                <a href="{%url 'shop'%}?category=Kids" class="hover:opacity-70 transition-opacity duration-200">KIDS</a>
+            </div>
+
+
+
+            <div class="flex items-center space-x-4 text-gray-700">
+                <button class="hover:text-brand-dark p-1"><i class="fa-regular fa-heart text-lg"></i></button>
+                <button class="hover:text-brand-dark p-1 relative">
+                    <i class="fa-solid fa-bag-shopping text-lg"></i>
+                </button>
+                <button class="hover:text-brand-dark p-1"><i class="fa-regular fa-user text-lg"></i></button>
+                <button class="md:hidden p-1 text-gray-700"
+                    onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+    </header>
+
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+
+        <div class="flex items-center justify-between my-6">
+            <div class="text-sm text-gray-600 font-medium">
+                <span class="text-gray-900 font-bold">
+                    {{ products|length }}
+                </span>
+                Products Found
+            </div>
+
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+
+            <aside class="space-y-8 lg:col-span-1 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+
+                <form method="GET">
+
+                    {% if request.GET.category %}
+                    <input type="hidden" name="category" value="{{ request.GET.category }}">
+                    {% endif %}
+
+                    <!-- Search -->
+
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
+                            Search
+                        </h3>
+
+                        <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search products..."
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none">
+                    </div>
+
+                    <hr class="border-gray-100 my-6">
+
+                    <!-- Subcategory -->
+
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
+                            Subcategory
+                        </h3>
+
+                        <div class="space-y-3">
+
+                            {% for subcategory in subcategories %}
+
+                            <label class="flex items-center text-sm font-medium text-gray-600 cursor-pointer">
+
+                                <input type="radio" name="subcategory" value="{{ subcategory.id }}"
+                                    class="accent-brand h-4 w-4 mr-3" {% if request.GET.subcategory == subcategory.id|stringformat:"s" %}checked{% endif %}>
+
+                                {{ subcategory.name }}
+
+                            </label>
+
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+                    <hr class="border-gray-100 my-6">
+
+                    <!-- Size -->
+
+                    <div class="grid grid-cols-4 gap-2 text-center text-xs font-semibold">
+                        {% for size in sizes %}
+                        <label class="cursor-pointer">
+                            <input type="radio" name="size" value="{{ size }}" class="peer sr-only" {% if request.GET.size == size %}checked{% endif %}>
+                            <div class="py-2.5 rounded-lg border text-center text-xs font-semibold transition-colors peer-checked:bg-brand-dark peer-checked:text-white peer-checked:border-brand-dark border-gray-200 text-gray-400 hover:border-brand-dark">
+                                {{ size }}
+                            </div>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    
+                    <hr class="border-gray-100 my-6">
+
+                    <!-- Color -->
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Color</h3>
+                        <div class="flex space-x-3">
+                            {% for color in colors %}
+                            <label class="cursor-pointer">
+                                <input type="radio" name="color" value="{{ color }}" class="peer sr-only" {% if request.GET.color == color %}checked{% endif %}>
+                                <div class="w-6 h-6 rounded-full border-2 transition-all peer-checked:border-brand-dark peer-checked:ring-2 peer-checked:ring-brand-dark/50 border-gray-300 hover:scale-110" 
+                                     style="background-color: {{ color|lower }};" title="{{ color }}">
+                                </div>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <hr class="border-gray-100 my-6">
+
+                    <!-- Sort -->
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Sort</h3>
+                        <select name="sort" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none">
+                            <option value="-created_at" {% if request.GET.sort == '-created_at' or not request.GET.sort %}selected{% endif %}>Newest Arrivals</option>
+                            <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="w-full mt-6 bg-brand-dark text-white py-3 rounded-xl font-semibold">
+
+                        Apply Filters
+
+                    </button>
+
+                </form>
+
+            </aside>
+            <section class="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+
+                {% for product in products %}
+
+                {% with first_variant=product.variants.first %}
+
+                <div class="bg-white rounded-3xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col justify-between group relative">
+
+                    <!-- Wishlist Icon at Top Right -->
+                    <button class="absolute top-6 right-6 z-10 w-8 h-8 bg-white/80 backdrop-blur rounded-full flex items-center justify-center text-gray-500 hover:text-red-500 hover:bg-white transition-colors shadow-sm">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+
+                    <a href="{% url 'product_detail' product.id %}" class="block">
+                        <div class="relative bg-gray-100 rounded-2xl overflow-hidden aspect-[4/3] mb-4">
+                            {% if first_variant and first_variant.images.first %}
+                            <img src="{{ first_variant.images.first.image.url }}" alt="{{ product.product_name }}"
+                                class="object-cover w-full h-full group-hover:scale-105 transition duration-300">
+                            {% endif %}
+                        </div>
+
+                        <h4 class="font-bold text-base text-gray-900">
+                            {{ product.product_name }}
+                        </h4>
+
+                        <p class="text-xs text-gray-400">
+                            {{ product.category.name }}
+                        </p>
+                    </a>
+
+                    <div class="flex items-center justify-between mt-auto pt-2">
+                        <span class="text-lg font-extrabold text-gray-900">
+                            ₹{{ first_variant.price }}
+                        </span>
+
+                        <!-- Cart Link at Bottom Right -->
+                        <a href="{% if first_variant %}{% url 'add_to_cart' first_variant.id %}{% else %}#{% endif %}" 
+                           class="text-gray-400 hover:text-brand-dark transition-colors p-1">
+                            <i class="fa-solid fa-cart-plus text-lg"></i>
+                        </a>
+                    </div>
+
+                </div>
+                {% endwith %}
+
+                {% empty %}
+
+                <div class="col-span-3 text-center py-12">
+                    No Products Found
+                </div>
+
+                {% endfor %}
+
+            </section>
+        </div>
+
+        <div class="flex items-center justify-center space-x-2 mt-12 pt-6 border-t border-gray-100">
+            <button
+                class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-brand-dark hover:text-brand-dark transition"><i
+                    class="fa-solid fa-chevron-left text-xs"></i></button>
+            <button
+                class="w-8 h-8 flex items-center justify-center rounded-full bg-brand-dark text-white text-xs font-bold">1</button>
+            <button
+                class="w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold text-gray-400 hover:bg-gray-100 transition">2</button>
+            <button
+                class="w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold text-gray-400 hover:bg-gray-100 transition">3</button>
+            <button
+                class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-brand-dark hover:text-brand-dark transition"><i
+                    class="fa-solid fa-chevron-right text-xs"></i></button>
+        </div>
+
+    </main>
+
+    <footer class="bg-brand-dark text-white mt-20 pt-16 pb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 border-b border-emerald-900 pb-12">
+
+                <div class="lg:col-span-2 space-y-4">
+                    <span class="text-2xl font-black tracking-widest text-white">ShoeDrop</span>
+                    <p class="text-gray-400 text-sm max-w-sm leading-relaxed">Elevating your journey with engineered
+                        precision and minimalist design.</p>
+                    <div class="flex space-x-4 pt-2 text-gray-400">
+                        <a href="#" class="hover:text-white transition text-lg"><i
+                                class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="hover:text-white transition text-lg"><i
+                                class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="hover:text-white transition text-lg"><i class="fa-brands fa-twitter"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-widest mb-4 text-emerald-400">Shop</h4>
+                    <ul class="space-y-2.5 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">New Arrivals</a></li>
+                        <li><a href="#" class="hover:text-white transition">Best Sellers</a></li>
+                        <li><a href="{%url 'shop'%}?category=Men" class="hover:text-white transition">Men</a></li>
+                        <li><a href="{%url 'shop'%}?category=Woman" class="hover:text-white transition">Women</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-xs

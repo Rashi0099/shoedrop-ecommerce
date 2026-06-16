@@ -77,3 +77,13 @@ def unblock_user(request, id):
     user.save()
 
     return redirect('customer_list')
+
+
+@staff_member_required(login_url='admin_login')
+def delete_user(request, id):
+    user = get_object_or_404(User, id=id, is_superuser=False)
+    username = user.username
+    from django.contrib import messages
+    user.delete()
+    messages.success(request, f'Customer "{username}" deleted successfully.')
+    return redirect('customer_list')
