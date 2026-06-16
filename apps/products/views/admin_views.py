@@ -332,7 +332,10 @@ def delete_variant(request, variant_id):
 @staff_member_required(login_url='admin_login')
 def delete_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    product_name = product.product_name
-    product.delete()
-    messages.success(request, f'Product "{product_name}" deleted successfully.')
+
+    # Soft delete — mark as inactive, keep data in database
+    product.is_active = False
+    product.save()
+
+    messages.success(request, f'Product "{product.product_name}" has been deactivated.')
     return redirect('product_list')

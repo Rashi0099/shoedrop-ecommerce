@@ -108,10 +108,15 @@ def edit_category(request, category_id):
 @staff_member_required(login_url='admin_login')
 def delete_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)
-    category_name = category.name
-    category.delete()
 
-    messages.success(request, f'Category "{category_name}" and its subcategories were deleted permanently.')
+    # Soft delete — just mark as inactive, do not remove from database
+    category.is_active = False
+    category.save()
+
+    # Also deactivate all subcategories under this category
+    SubCategory.objects.filter(category=category).update(is_active=False)
+
+    messages.success(request, f'Category "{category.name}" has been deactivated.')
     return redirect('category_list')
 
 
@@ -205,8 +210,10 @@ def edit_subcategory(request, subcategory_id):
 @staff_member_required(login_url='admin_login')
 def delete_subcategory(request, subcategory_id):
     subcategory = get_object_or_404(SubCategory, id=subcategory_id)
-    subcategory_name = subcategory.name
-    subcategory.delete()
 
-    messages.success(request, f'Subcategory "{subcategory_name}" was deleted permanently.')
+    # Soft delete — just mark as inactive
+    subcategory.is_active = False
+    subcategory.save()
+
+    messages.success(request, f'Subcategory "{subcategory.name}" has been deactivated.')
     return redirect('category_list')

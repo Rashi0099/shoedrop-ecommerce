@@ -30,7 +30,6 @@ def address_list(request):
 @login_required(login_url='login')
 def add_address(request):
     if request.method == 'POST':
-        print("post hit")
         full_name = request.POST.get('full_name', '').strip()
         phone_number = request.POST.get('phone_number', '').strip()
         city = request.POST.get('city', '').strip()
@@ -195,7 +194,6 @@ def edit_address(request, id):
             'address': address
         }
 
-        # validations
         if not full_name:
             messages.error(request, 'Full name is required')
             return render(request, 'user/addresses/edit_address.html', context)

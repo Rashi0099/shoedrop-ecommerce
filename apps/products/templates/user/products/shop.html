@@ -44,7 +44,7 @@
 
 
             <div class="flex items-center space-x-4 text-gray-700">
-                <button class="hover:text-brand-dark p-1"><i class="fa-regular fa-heart text-lg"></i></button>
+                <a herf ="{%url 'wishlist'%}" class="hover:text-brand-dark p-1"><i class="fa-regular fa-heart text-lg"></i></a>
                 <a href ="{%url 'cart'%}" class="hover:text-brand-dark p-1 relative">
                     <i class="fa-solid fa-bag-shopping text-lg"></i>
                 </a>
@@ -125,6 +125,11 @@
 
                     <hr class="border-gray-100 my-4">
 
+              
+                    
+
+                    <hr class="border-gray-100 my-4">
+
                     <!-- Size -->
 
                     <div class="grid grid-cols-4 gap-1.5 text-center text-xs font-semibold">
@@ -164,6 +169,8 @@
                             <option value="-created_at" {% if request.GET.sort == '-created_at' or not request.GET.sort %}selected{% endif %}>New Arrivals</option>
                             <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
                             <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="name_az" {% if request.GET.sort == 'name_az' %}selected{% endif %}>Name: A to Z</option>
+                            <option value="name_za" {% if request.GET.sort == 'name_za' %}selected{% endif %}>Name: Z to A</option>
                         </select>
                     </div>
 
@@ -187,10 +194,11 @@
 
                 <div class="bg-white rounded-3xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col justify-between group relative">
 
-                    <!-- Wishlist Icon at Top Right -->
-                    <button class="absolute top-6 right-6 z-10 w-8 h-8 bg-white/80 backdrop-blur rounded-full flex items-center justify-center text-gray-500 hover:text-red-500 hover:bg-white transition-colors shadow-sm">
+                    <!-- Wishlist Icon at Top Right — click to add to wishlist -->
+                    <a href="{% if first_variant %}{% url 'add_to_wishlist' first_variant.id %}{% else %}{% url 'wishlist' %}{% endif %}"
+                       class="absolute top-6 right-6 z-10 w-8 h-8 bg-white/80 backdrop-blur rounded-full flex items-center justify-center text-gray-500 hover:text-red-500 hover:bg-white transition-colors shadow-sm">
                         <i class="fa-regular fa-heart"></i>
-                    </button>
+                    </a>
 
                     <a href="{% url 'product_detail' product.id %}" class="block">
                         <div class="relative bg-gray-100 rounded-2xl overflow-hidden aspect-[4/3] mb-4">
@@ -235,20 +243,45 @@
             </section>
         </div>
 
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
         <div class="flex items-center justify-center space-x-2 mt-12 pt-6 border-t border-gray-100">
-            <button
-                class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-brand-dark hover:text-brand-dark transition"><i
-                    class="fa-solid fa-chevron-left text-xs"></i></button>
-            <button
-                class="w-8 h-8 flex items-center justify-center rounded-full bg-brand-dark text-white text-xs font-bold">1</button>
-            <button
-                class="w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold text-gray-400 hover:bg-gray-100 transition">2</button>
-            <button
-                class="w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold text-gray-400 hover:bg-gray-100 transition">3</button>
-            <button
-                class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-brand-dark hover:text-brand-dark transition"><i
-                    class="fa-solid fa-chevron-right text-xs"></i></button>
+
+            <!-- Previous button -->
+            {% if page_obj.has_previous %}
+            <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.subcategory %}subcategory={{ request.GET.subcategory }}&{% endif %}{% if request.GET.size %}size={{ request.GET.size }}&{% endif %}{% if request.GET.color %}color={{ request.GET.color }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}"
+               class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-brand-dark hover:text-brand-dark transition">
+                <i class="fa-solid fa-chevron-left text-xs"></i>
+            </a>
+            {% else %}
+            <span class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-100 text-gray-300">
+                <i class="fa-solid fa-chevron-left text-xs"></i>
+            </span>
+            {% endif %}
+
+            <!-- Page numbers -->
+            {% for num in page_obj.paginator.page_range %}
+            <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.subcategory %}subcategory={{ request.GET.subcategory }}&{% endif %}{% if request.GET.size %}size={{ request.GET.size }}&{% endif %}{% if request.GET.color %}color={{ request.GET.color }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ num }}"
+               class="w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold transition
+               {% if page_obj.number == num %}bg-brand-dark text-white{% else %}text-gray-400 hover:bg-gray-100{% endif %}">
+                {{ num }}
+            </a>
+            {% endfor %}
+
+            <!-- Next button -->
+            {% if page_obj.has_next %}
+            <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.subcategory %}subcategory={{ request.GET.subcategory }}&{% endif %}{% if request.GET.size %}size={{ request.GET.size }}&{% endif %}{% if request.GET.color %}color={{ request.GET.color }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.next_page_number }}"
+               class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-brand-dark hover:text-brand-dark transition">
+                <i class="fa-solid fa-chevron-right text-xs"></i>
+            </a>
+            {% else %}
+            <span class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-100 text-gray-300">
+                <i class="fa-solid fa-chevron-right text-xs"></i>
+            </span>
+            {% endif %}
+
         </div>
+        {% endif %}
 
     </main>
 
