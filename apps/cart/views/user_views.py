@@ -6,7 +6,7 @@ from apps.cart.models import CartItem
 from apps.products.models import ProductVariant, Product
 
 
-@login_required(login_url='user_login')
+@login_required(login_url='login')
 def cart_view(request):
 
     cart_items = CartItem.objects.filter(
@@ -36,7 +36,7 @@ def cart_view(request):
     return render(request, 'user/cart/cart.html', context)
 
 
-@login_required(login_url='user_login')
+@login_required(login_url='login')
 def add_to_cart(request, variant_id):
 
     variant = get_object_or_404(ProductVariant, id=variant_id)
@@ -63,7 +63,7 @@ def add_to_cart(request, variant_id):
     return redirect('cart')
 
 
-@login_required(login_url='user_login')
+@login_required(login_url='login')
 def remove_from_cart(request, item_id):
 
     cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
@@ -75,7 +75,7 @@ def remove_from_cart(request, item_id):
     return redirect('cart')
 
 
-@login_required(login_url='user_login')
+@login_required(login_url='login')
 def update_cart_quantity(request, item_id):
 
     cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)

@@ -24,7 +24,7 @@ def shop(request):
 
     subcategories = SubCategory.objects.filter(
         is_active=True
-    )
+    ).values_list('name', flat=True).distinct()
 
     sizes = ProductVariant.objects.filter(
         is_active=True
@@ -88,10 +88,14 @@ def shop(request):
             )
 
     if subcategory:
-
-        products = products.filter(
-            subcategory_id=subcategory
-        )
+        if subcategory.isdigit():
+            products = products.filter(
+                subcategory_id=subcategory
+            )
+        else:
+            products = products.filter(
+                subcategory__name__iexact=subcategory
+            )
 
     if size:
 
