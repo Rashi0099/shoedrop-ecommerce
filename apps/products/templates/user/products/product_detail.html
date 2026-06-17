@@ -22,13 +22,13 @@
         <div class="flex items-center space-x-6 text-gray-600 text-lg">
           <a href="{% url 'wishlist' %}" class="text-gray-600 hover:text-emerald-900 transition duration-200 relative"><i class="fa-regular fa-heart"></i></a>
 
-          <a href="#" class="text-gray-600 hover:text-emerald-900 transition duration-200 relative">
+          <a href="{%url 'cart'%}" class="text-gray-600 hover:text-emerald-900 transition duration-200 relative">
             <i class="fa-solid fa-bag-shopping"></i>
 
             <span class="absolute -top-1.5 -right-2 bg-emerald-950 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center scale-90">1</span>
           </a>
 
-          <a href="#" class="text-gray-600 hover:text-emerald-900 transition duration-200"><i class="fa-regular fa-user"></i></a>
+          <a href="{%url 'profile'%}" class="text-gray-600 hover:text-emerald-900 transition duration-200"><i class="fa-regular fa-user"></i></a>
         </div>
       </div>
     </header>
@@ -139,7 +139,7 @@
 
           <div class="space-y-3 pt-1">
             <div class="space-y-2">
-              <a href="#" class="w-full bg-emerald-950 text-white text-xs font-black uppercase tracking-widest py-3.5 px-6 rounded-xl hover:bg-emerald-900 transition-all duration-300 shadow-md flex items-center justify-center gap-2">Buy Now <i class="fa-solid fa-bolt text-[10px] text-yellow-400"></i></a>
+              <a href="{% if selected_variant %}{% url 'checkout' %}?buy_now={{ selected_variant.id }}{% else %}#{% endif %}" class="w-full bg-emerald-950 text-white text-xs font-black uppercase tracking-widest py-3.5 px-6 rounded-xl hover:bg-emerald-900 transition-all duration-300 shadow-md flex items-center justify-center gap-2">Buy Now <i class="fa-solid fa-bolt text-[10px] text-yellow-400"></i></a>
 
               <div class="grid grid-cols-2 gap-2">
                 <a href="{% if selected_variant %}

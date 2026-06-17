@@ -44,14 +44,16 @@
 
 
             <div class="flex items-center space-x-4 text-gray-700">
-                <a herf ="{%url 'wishlist'%}" class="hover:text-brand-dark p-1"><i class="fa-regular fa-heart text-lg"></i></a>
+                <a href ="{%url 'wishlist'%}" class="hover:text-brand-dark p-1"><i class="fa-regular fa-heart text-lg"></i></a>
                 <a href ="{%url 'cart'%}" class="hover:text-brand-dark p-1 relative">
                     <i class="fa-solid fa-bag-shopping text-lg"></i>
                 </a>
-                <button class="hover:text-brand-dark p-1"><i class="fa-regular fa-user text-lg"></i></button>
+                <a href="{%url 'profile'%}" class="hover:text-brand-dark p-1"><i class="fa-regular fa-user text-lg"></i></a>
                 
             </div>
+           
         </div>
+         
 
     </header>
 
@@ -66,6 +68,8 @@
                 </span>
                 Products Found
             </div>
+                        <a href ="{%url 'shop'%} ">All Category</a>
+
             
            
         </div>

@@ -34,7 +34,7 @@ def product_list(request):
     products = products.order_by('-created_at')
     total_products = products.count()
 
-    paginator = Paginator(products, 10)
+    paginator = Paginator(products, 15)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 

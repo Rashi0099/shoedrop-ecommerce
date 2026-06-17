@@ -141,7 +141,7 @@ def product_detail(request, product_id):
         is_active=True
     ).exclude(id=product.id).prefetch_related('variants__images')[:4]
 
-    return render(request, 'user/products/produc# Fallback: try matching by size onlyt_detail.html', {
+    return render(request, 'user/products/product_detail.html', {
         'product': product,
         'variants': variants,
         'selected_variant': selected_variant,

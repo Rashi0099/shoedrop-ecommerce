@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review your order | ShoeDrop</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            dark: '#0F2E25',   // deep green (footer / CTA)
+            darker: '#0A211A',
+            ink: '#1A1A1A',
+          }
+        },
+        fontFamily: {
+          sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+  .radio-dot input:checked ~ .dot-outer { border-color: #0F2E25; }
+  .radio-dot input:checked ~ .dot-outer .dot-inner { transform: scale(1); }
+</style>
+</head>
+<body class="bg-[#FAF9F6] text-brand.ink">
+
+<!-- ===================== NAVBAR ===================== -->
+<header class="border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
+    <a href="#" class="text-xl font-bold tracking-wide">SHOEDROP</a>
+
+    <nav class="hidden md:flex items-center gap-10 text-sm font-medium tracking-wide text-gray-700">
+      <a href="#" class="hover:text-brand-dark transition-colors">MEN</a>
+      <a href="#" class="hover:text-brand-dark transition-colors">WOMEN</a>
+      <a href="#" class="hover:text-brand-dark transition-colors">KIDS</a>
+    </nav>
+
+    <div class="flex items-center gap-5 text-gray-800">
+      <a href="#" aria-label="Wishlist" class="hover:text-brand-dark transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+        </svg>
+      </a>
+      <a href="#" aria-label="Bag" class="hover:text-brand-dark transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 7.5V6a4.5 4.5 0 10-9 0v1.5M3.75 7.5h16.5l-1.07 11.78A2.25 2.25 0 0116.94 21H7.06a2.25 2.25 0 01-2.24-1.72L3.75 7.5z" />
+        </svg>
+      </a>
+      <a href="#" aria-label="Account" class="hover:text-brand-dark transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.964 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== PAGE CONTENT ===================== -->
+<main class="max-w-7xl mx-auto px-6 lg:px-10 py-10">
+
+  <p class="text-xs font-semibold tracking-widest text-gray-500 uppercase mb-2">Checkout</p>
+  <h1 class="text-3xl font-bold mb-2">Review your order</h1>
+  <p class="text-sm text-gray-500 mb-8">Confirm delivery details and make sure everything looks perfect before placing the order.</p>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- ============ LEFT COLUMN ============ -->
+    <div class="lg:col-span-2 flex flex-col gap-6">
+
+      <!-- Order details card -->
+      <section class="bg-white border border-gray-200 rounded-2xl p-6">
+        <div class="flex items-start justify-between mb-1">
+          <div>
+            <h2 class="font-semibold text-base">Your Order Details</h2>
+            <p class="text-xs text-gray-400">View product details, qty, etc.</p>
+          </div>
+          <a href="{%url 'cart'%}" class="text-sm font-medium text-brand-dark hover:underline whitespace-nowrap">Modify Cart</a>
+        </div>
+
+        <div class="mt-4">
+          <div class="grid grid-cols-12 text-xs text-gray-400 font-medium pb-3 border-b border-gray-100">
+            <span class="col-span-6">PRODUCT</span>
+            <span class="col-span-2 text-right">PRICE</span>
+            <span class="col-span-1 text-right">QTY</span>
+            <span class="col-span-3 text-right">TOTAL</span>
+          </div>
+
+          {% for item in cart_items %}
+          <div class="grid grid-cols-12 items-center py-4 border-b border-gray-50 last:border-0">
+            <div class="col-span-6 flex items-center gap-3">
+              {% if item.variant.images.first %}
+                <img src="{{ item.variant.images.first.image.url }}" alt="{{ item.variant.product.product_name }}" class="w-14 h-14 rounded-full object-cover bg-gray-100">
+              {% else %}
+                <img src="https://placehold.co/56x56/png?text=Shoe" alt="Shoe" class="w-14 h-14 rounded-full object-cover bg-gray-100">
+              {% endif %}
+              <div>
+                <p class="text-sm font-semibold">{{ item.variant.product.product_name }}</p>
+                <p class="text-xs text-gray-400">
+                  {% if item.variant.size %}Size {{ item.variant.size }}{% endif %}
+                  {% if item.variant.size and item.variant.color %} / {% endif %}
+                  {% if item.variant.color %}{{ item.variant.color }}{% endif %}
+                </p>
+              </div>
+            </div>
+            <span class="col-span-2 text-right text-sm text-gray-700">₹{{ item.variant.price }}</span>
+            <span class="col-span-1 text-right text-sm text-gray-700">{{ item.quantity }}</span>
+            <span class="col-span-3 text-right text-sm font-semibold">₹{{ item.get_total_price }}</span>
+          </div>
+          {% empty %}
+          <div class="py-4 text-center text-sm text-gray-500">Your cart is empty.</div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <!-- Delivery address card -->
+      <section class="bg-white border border-gray-200 rounded-2xl p-6">
+        <div class="flex items-start justify-between mb-1">
+          <div>
+            <h2 class="font-semibold text-base">Select Delivery Address</h2>
+            <p class="text-xs text-gray-400">Choose where you'd like this delivered.</p>
+          </div>
+          <a href="{% url 'address_list' %}" class="text-sm font-medium text-brand-dark hover:underline whitespace-nowrap">Manage</a>
+        </div>
+
+        {% if addresses %}
+          <div class="flex flex-col gap-3 mt-4">
+            {% for address in addresses %}
+            <label class="radio-dot relative flex items-start justify-between border border-gray-200 rounded-xl px-5 py-4 cursor-pointer hover:border-gray-300 {% if address.is_default %}border-brand-dark bg-gray-50{% endif %}">
+              <input type="radio" name="address_id" value="{{ address.id }}" class="sr-only" {% if address.is_default %}checked{% endif %} required>
+              <div class="flex items-start gap-3">
+                <span class="dot-outer w-4 h-4 mt-1 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0">
+                  <span class="dot-inner w-2 h-2 rounded-full bg-brand-dark scale-0 transition-transform"></span>
+                </span>
+                <div>
+                  <p class="text-sm font-semibold">{{ address.full_name }} <span class="bg-gray-200 text-gray-600 text-[10px] px-2 py-0.5 rounded ml-2">{{ address.get_address_type_display }}</span></p>
+                  <p class="text-xs text-gray-500 mt-1">{{ address.address }}, {{ address.city }}, {{ address.state }} - {{ address.postal_code }}</p>
+                  <p class="text-xs text-gray-500 mt-0.5">Phone: {{ address.phone_number }}</p>
+                </div>
+              </div>
+            </label>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-xs text-red-500 mt-3 mb-4">You need to add an address to continue.</p>
+          <a href="{% url 'add_address' %}"
+             class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-xl py-10 text-gray-500 hover:border-brand-dark hover:text-brand-dark transition-colors">
+            <span class="flex items-center justify-center w-8 h-8 rounded-full border border-gray-300 text-lg leading-none">+</span>
+            <span class="text-sm font-medium">Add New Address</span>
+          </a>
+        {% endif %}
+      </section>
+
+      <!-- Payment method card -->
+      <section class="bg-white border border-gray-200 rounded-2xl p-6">
+        <h2 class="font-semibold text-base">Payment Method</h2>
+        <p class="text-xs text-gray-400 mb-4">How would you like to pay?</p>
+
+        <div class="flex flex-col gap-3">
+
+          <!-- Razorpay -->
+          <label class="radio-dot relative flex items-center justify-between border border-brand-dark bg-gray-50 rounded-xl px-5 py-4 cursor-pointer">
+            <input type="radio" name="payment_method" value="razorpay" class="sr-only" checked required>
+            <div class="flex items-center gap-3">
+              <span class="dot-outer w-4 h-4 rounded-full border-2 border-brand-dark flex items-center justify-center">
+                <span class="dot-inner w-2 h-2 rounded-full bg-brand-dark scale-100 transition-transform"></span>
+              </span>
+              <div>
+                <p class="text-sm font-semibold">Razorpay</p>
+                <p class="text-xs text-gray-400">Cards, NetBanking, Wallet &amp; UPI</p>
+              </div>
+            </div>
+            <span class="text-xs font-medium text-gray-400">RECOMMENDED</span>
+          </label>
+
+          <!-- Wallet -->
+          <label class="radio-dot relative flex items-center justify-between border border-gray-200 rounded-xl px-5 py-4 cursor-pointer hover:border-gray-300">
+            <input type="radio" name="payment_method" value="wallet" class="sr-only">
+            <div class="flex items-center gap-3">
+              <span class="dot-outer w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                <span class="dot-inner w-2 h-2 rounded-full bg-brand-dark scale-0 transition-transform"></span>
+              </span>
+              <div>
+                <p class="text-sm font-semibold">Wallet Payment</p>
+                <p class="text-xs text-gray-400">Pay Using Your Digital Wallet</p>
+              </div>
+            </div>
+          </label>
+
+          <!-- Cash on Delivery -->
+          <label class="radio-dot relative flex items-center justify-between border border-gray-200 rounded-xl px-5 py-4 cursor-pointer hover:border-gray-300">
+            <input type="radio" name="payment_method" value="cod" class="sr-only">
+            <div class="flex items-center gap-3">
+              <span class="dot-outer w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                <span class="dot-inner w-2 h-2 rounded-full bg-brand-dark scale-0 transition-transform"></span>
+              </span>
+              <div>
+                <p class="text-sm font-semibold">Cash on Delivery</p>
+                <p class="text-xs text-gray-400">Pay When Your Order Arrives</p>
+              </div>
+            </div>
+          </label>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ============ RIGHT COLUMN: ORDER SUMMARY ============ -->
+    <aside>
+      <div class="bg-white border border-gray-200 rounded-2xl p-6 sticky top-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-semibold text-base">Order Summary</h2>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+
+        <div class="flex flex-col gap-3 text-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-gray-500">Subtotal</span>
+            <span class="font-medium">₹{{ subtotal }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-gray-500">GST (18%)</span>
+            <span class="font-medium">₹{{ gst }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-gray-500">Delivery Charges</span>
+            <span class="font-medium text-emerald-600">{% if delivery_charges > 0 %}₹{{ delivery_charges }}{% else %}Free{% endif %}</span>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-100 mt-5 pt-5">
+          <p class="text-3xl font-bold">₹{{ grand_total }}</p>
+          <p class="text-xs text-gray-400 mt-1">Total</p>
+        </div>
+
+        <div class="border-t border-gray-100 mt-5 pt-5">
+          <p class="text-xs text-gray-500 mb-2">Have a coupon?</p>
+          <form class="flex items-center gap-2">
+            <input type="text" placeholder="ENTER CODE"
+                   class="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2.5 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-dark/30">
+            <button type="submit"
+                    class="text-xs font-semibold tracking-wide bg-brand-dark text-white rounded-lg px-4 py-2.5 hover:bg-brand-darker transition-colors">
+              APPLY
+            </button>
+          </form>
+        </div>
+
+        <form method="POST" action="{% url 'place_order' %}" id="checkout-form">
+          {% csrf_token %}
+          <!-- We will use JavaScript to copy the selected radio values into this form before submission -->
+          <input type="hidden" name="address_id" id="hidden_address_id">
+          <input type="hidden" name="payment_method" id="hidden_payment_method">
+          {% if request.GET.buy_now %}
+            <input type="hidden" name="buy_now" value="{{ request.GET.buy_now }}">
+          {% endif %}
+          
+          <button type="button" onclick="submitCheckout()"
+             class="mt-6 w-full block text-center bg-brand-dark text-white font-medium rounded-xl py-3.5 hover:bg-brand-darker transition-colors">
+            Continue to Payment
+          </button>
+        </form>
+
+        <script>
+        function submitCheckout() {
+            var selectedAddress = document.querySelector('input[name="address_id"]:checked');
+            var selectedPayment = document.querySelector('input[name="payment_method"]:checked');
+            
+            if (!selectedAddress) {
+                alert("Please select a delivery address.");
+                return;
+            }
+            
+            if (!selectedPayment) {
+                alert("Please select a payment method.");
+                return;
+            }
+            
+            document.getElementById('hidden_address_id').value = selectedAddress.value;
+            document.getElementById('hidden_payment_method').value = selectedPayment.value;
+            document.getElementById('checkout-form').submit();
+        }
+        </script>
+
+        <div class="flex items-center justify-center gap-6 mt-6 text-gray-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3M4.5 19.5h15a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5h-15A1.5 1.5 0 003 6v12a1.5 1.5 0 001.5 1.5z" />
+          </svg>
+        </div>
+        <p class="text-[11px] text-center text-gray-400 mt-3 leading-relaxed">
+          All data is kept encrypted. Payment data is processed.<br>
+          Fund/Add+/Buyer support / Customer support.
+        </p>
+      </div>
+
+      <div class="flex items-center justify-between mt-4 text-xs text-gray-400 px-1">
+        <a href="#" class="hover:text-brand-dark transition-colors">Privacy Policy</a>
+        <a href="#" class="hover:text-brand-dark transition-colors">Terms &amp; Conditions</a>
+      </div>
+    </aside>
+
+  </div>
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="bg-brand-dark text-white mt-16">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-14 grid grid-cols-1 md:grid-cols-5 gap-10">
+
+    <div class="md:col-span-2">
+      <h3 class="text-2xl font-bold mb-3">ShoeDrop</h3>
+      <p class="text-sm text-white/60 max-w-xs mb-6">Elevating your journey with engineered precision and minimalist design.</p>
+      <div class="flex items-center gap-4 text-white/70">
+        <a href="#" aria-label="Instagram" class="hover:text-white transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="5" />
+            <circle cx="12" cy="12" r="3.5" />
+            <circle cx="17" cy="7" r="0.8" fill="currentColor" />
+          </svg>
+        </a>
+        <a href="#" aria-label="Twitter" class="hover:text-white transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M22 5.92a8.2 8.2 0 01-2.36.65 4.1 4.1 0 001.8-2.27 8.22 8.22 0 01-2.6 1 4.1 4.1 0 00-7 3.74A11.65 11.65 0 013 4.6a4.1 4.1 0 001.27 5.47A4.07 4.07 0 012.8 9.5v.05a4.1 4.1 0 003.28 4.02 4.1 4.1 0 01-1.85.07 4.1 4.1 0 003.83 2.85A8.23 8.23 0 012 18.4a11.62 11.62 0 006.29 1.84c7.55 0 11.68-6.26 11.68-11.68 0-.18 0-.36-.01-.53A8.3 8.3 0 0022 5.92z" />
+          </svg>
+        </a>
+        <a href="#" aria-label="Facebook" class="hover:text-white transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 9h2.5V6.5H14c-1.93 0-3.5 1.57-3.5 3.5v2H9v2.5h1.5V20h2.5v-6h2l.5-2.5h-2.5V10c0-.55.45-1 1-1z" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <h4 class="text-xs font-semibold tracking-widest text-white/50 mb-4">SHOP</h4>
+      <ul class="flex flex-col gap-2.5 text-sm text-white/80">
+        <li><a href="#" class="hover:text-white transition-colors">New Arrivals</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Best Sellers</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Men</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Women</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="text-xs font-semibold tracking-widest text-white/50 mb-4">SUPPORT</h4>
+      <ul class="flex flex-col gap-2.5 text-sm text-white/80">
+        <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Shipping</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Returns</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="text-xs font-semibold tracking-widest text-white/50 mb-4">LEGAL</h4>
+      <ul class="flex flex-col gap-2.5 text-sm text-white/80">
+        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Terms</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Cookies</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-white/40">
+      <p>&copy; 2025 ShoeDrop. All rights reserved.</p>
+      <div class="flex items-center gap-6">
+        <a href="#" class="hover:text-white/70 transition-colors">Privacy Policy</a>
+        <a href="#" class="hover:text-white/70 transition-colors">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
