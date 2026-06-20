@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShoeDrop Secure Checkout</title>
+  <!-- Tailwind CSS Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-[#2a302e] min-h-screen w-full flex items-center justify-center p-4 antialiased">
+
+  <!-- Main Checkout Modal Container (Size reduced to max-w-sm) -->
+  <div class="w-full max-w-sm bg-[#192b2a] text-zinc-100 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden border border-zinc-800/30">
+    
+    <!-- Top Header Section -->
+    <div class="pt-8 pb-6 flex flex-col items-center justify-center border-b border-[#213735]">
+      <!-- Logo -->
+      <div class="flex items-center gap-2 text-xl font-black tracking-wider text-white">
+        <svg class="w-5 h-5 text-[#a7f3d0]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+        SHOEDROP
+      </div>
+      
+      <!-- Secure Checkout Badge -->
+      <div class="mt-2.5 flex items-center gap-1.5 bg-[#0b201d] text-[#10b981] px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-widest uppercase border border-[#0d362e]">
+        <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M6.267 3.455a.75.75 0 00-.708.522L4.013 9.223a.75.75 0 00.166.757l5.25 5.25a.75.75 0 001.06 0l5.25-5.25a.75.75 0 00.166-.757l-1.546-5.246a.75.75 0 00-.708-.522H6.267zm.582 4.045a1.5 1.5 0 113.001 0 1.5 1.5 0 01-3.001 0z" clip-rule="evenodd" />
+        </svg>
+        Secure Checkout
+      </div>
+    </div>
+
+    <!-- Main Content Body (Padding reduced from px-8 to px-6) -->
+    <div class="px-6 pt-6 pb-8 flex flex-col items-center">
+      
+      <!-- Pricing Header Section -->
+      <span class="text-[10px] text-zinc-400 font-semibold tracking-[0.2em] uppercase">Total Payable Amount</span>
+      <h1 class="text-3xl font-extrabold text-[#a7f3d0] mt-2 mb-6 tracking-tight">
+        ₹6252.82
+      </h1>
+
+      <!-- Order Details Grid Box -->
+      <div class="w-full bg-[#152423] rounded-xl border border-[#213735] divide-y divide-[#213735] text-[11px] leading-relaxed">
+        
+        <!-- Order Reference Row -->
+        <div class="grid grid-cols-3 p-3.5 items-center">
+          <span class="text-zinc-400">Order Reference</span>
+          <span class="col-span-2 text-right font-medium text-white tracking-wide">#SD-9921-X04</span>
+        </div>
+        
+        <!-- Billed To Row -->
+        <div class="grid grid-cols-3 p-3.5 items-center">
+          <span class="text-zinc-400">Billed to</span>
+          <span class="col-span-2 text-right font-medium text-white break-all">alex.walker@performance.com</span>
+        </div>
+        
+        <!-- Delivery Address Row -->
+        <div class="grid grid-cols-3 p-3.5 items-start">
+          <span class="text-zinc-400 pt-0.5">Delivery Address</span>
+          <span class="col-span-2 text-right font-medium text-white text-[11px]">
+            12/B Olympic Plaza, Sport Avenue, Bangalore - 560001
+          </span>
+        </div>
+        
+      </div>
+
+      <!-- Footer Subtext -->
+      <div class="my-6 text-[10px] text-zinc-400 tracking-wide font-medium">
+        Accepted Payment Methods
+      </div>
+
+      <!-- Action CTA Button -->
+      <button class="w-full bg-[#bbf7d0] hover:bg-[#a7f3d0] active:scale-[0.98] transition-all duration-150 text-[#0f1c1b] font-bold py-3.5 px-6 rounded-full flex items-center justify-center gap-2 shadow-xl shadow-emerald-950/30 text-xs tracking-wide">
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+          <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7 0v3h7.5z" clip-rule="evenodd" />
+        </svg>
+        Pay ₹6252.82 Securely
+      </button>
+
+    </div>
+  </div>
+
+</body>
+</html>
