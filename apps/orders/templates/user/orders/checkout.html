@@ -74,11 +74,23 @@
 
 <!-- ===================== PAGE CONTENT ===================== -->
 <main class="max-w-7xl mx-auto px-6 lg:px-10 py-10">
+{% if messages %}
 
-  <p class="text-xs font-semibold tracking-widest text-gray-500 uppercase mb-2">Checkout</p>
-  <h1 class="text-3xl font-bold mb-2">Review your order</h1>
-  <p class="text-sm text-gray-500 mb-8">Confirm delivery details and make sure everything looks perfect before placing the order.</p>
+    {% for i in messages %}
 
+        <div class="mb-4 p-3 rounded-bg bg-red-100 text-red-700 text-sm">
+
+            {{ i }}
+
+        </div>
+
+    {% endfor %}
+
+{% endif %}
+
+
+  <h1 class="text-3xl font-bold mb-2">Checkout</h1>
+  
   <!-- SINGLE MAIN FORM START (Wraps both columns) -->
   <form method="POST" action="{% url 'place_order' %}">
     {% csrf_token %}
@@ -181,12 +193,14 @@
         <section class="bg-white border border-gray-200 rounded-2xl p-6">
           <h2 class="font-semibold text-base">Payment Method</h2>
           <p class="text-xs text-gray-400 mb-4">How would you like to pay?</p>
+          
+ 
 
           <div class="flex flex-col gap-3">
 
             <!-- Razorpay (recommended) -->
             <label class="radio-dot relative flex items-center justify-between border border-gray-200 rounded-xl px-5 py-4 cursor-pointer hover:border-gray-300">
-              <input type="radio" name="payment_method" value="razorpay" class="sr-only" checked required>
+              <input type="radio" name="payment_method" value="razorpay" class="sr-only"disabled >
               <div class="flex items-center gap-3">
                 <span class="dot-outer w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center">
                   <span class="dot-inner w-2 h-2 rounded-full bg-brand-dark scale-0 transition-transform"></span>
@@ -196,12 +210,12 @@
                   <p class="text-xs text-gray-400">Cards, NetBanking, Wallet &amp; UPI</p>
                 </div>
               </div>
-              <span class="text-xs font-medium text-gray-400">RECOMMENDED</span>
+              
             </label>
 
             <!-- Wallet -->
             <label class="radio-dot relative flex items-center justify-between border border-gray-200 rounded-xl px-5 py-4 cursor-pointer hover:border-gray-300">
-              <input type="radio" name="payment_method" value="wallet" class="sr-only">
+              <input type="radio" name="payment_method" value="wallet" class="sr-only" disabled>
               <div class="flex items-center gap-3">
                 <span class="dot-outer w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center">
                   <span class="dot-inner w-2 h-2 rounded-full bg-brand-dark scale-0 transition-transform"></span>
@@ -215,7 +229,7 @@
 
             <!-- Cash on Delivery -->
             <label class="radio-dot relative flex items-center justify-between border border-gray-200 rounded-xl px-5 py-4 cursor-pointer hover:border-gray-300">
-              <input type="radio" name="payment_method" value="cod" class="sr-only">
+              <input type="radio" name="payment_method" value="cod" class="sr-only" checked >
               <div class="flex items-center gap-3">
                 <span class="dot-outer w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center">
                   <span class="dot-inner w-2 h-2 rounded-full bg-brand-dark scale-0 transition-transform"></span>

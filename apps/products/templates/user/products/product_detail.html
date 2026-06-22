@@ -22,16 +22,30 @@
         <div class="flex items-center space-x-6 text-gray-600 text-lg">
           <a href="{% url 'wishlist' %}" class="text-gray-600 hover:text-emerald-900 transition duration-200 relative"><i class="fa-regular fa-heart"></i></a>
 
-          <a href="{%url 'cart'%}" class="text-gray-600 hover:text-emerald-900 transition duration-200 relative">
+          <a href="{% url 'cart' %}" class="text-gray-600 hover:text-emerald-900 transition duration-200 relative">
             <i class="fa-solid fa-bag-shopping"></i>
 
             <span class="absolute -top-1.5 -right-2 bg-emerald-950 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center scale-90">1</span>
           </a>
 
-          <a href="{%url 'profile'%}" class="text-gray-600 hover:text-emerald-900 transition duration-200"><i class="fa-regular fa-user"></i></a>
+          <a href="{% url 'profile' %}" class="text-gray-600 hover:text-emerald-900 transition duration-200"><i class="fa-regular fa-user"></i></a>
         </div>
       </div>
     </header>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        {% for message in messages %}
+        <div class="p-4 mb-2 text-sm rounded-xl font-bold {% if message.tags == 'error' %}bg-red-50 text-red-800 border-red-200{% else %}bg-emerald-50 text-emerald-800 border-emerald-200{% endif %} border shadow-sm flex items-center justify-between" role="alert">
+            <span>{{ message }}</span>
+            <button type="button" class="ml-auto text-gray-500 hover:text-gray-900 transition-colors" onclick="this.parentElement.style.display='none';">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 mb-12">
@@ -89,15 +103,20 @@
                 {% for color in colors %}
                   <a href="?color={{ color|urlencode }}{% if current_size %}
                       
+                      
                       &size={{ current_size|urlencode }}
                     {% endif %}"
                     class="block w-8 h-8 rounded-full border-2 transition-all {% if current_color == color %}
                       
+                      
                       border-emerald-950 ring-2 ring-emerald-950/50
+
 
                     {% else %}
                       
+                      
                       border-gray-300 hover:scale-110
+
 
                     {% endif %}"
                     style="background-color: {{ color|lower }};"
@@ -118,15 +137,20 @@
                 {% for size in sizes %}
                   <a href="?size={{ size|urlencode }}{% if current_color %}
                       
+                      
                       &color={{ current_color|urlencode }}
                     {% endif %}"
                     class="border text-center rounded-lg py-2 text-xs font-bold tracking-wider transition-all duration-200 block shadow-sm {% if current_size == size %}
                       
+                      
                       bg-emerald-950 text-white border-emerald-950 shadow-sm
+
 
                     {% else %}
                       
+                      
                       bg-white border-gray-200 text-gray-700 hover:border-emerald-800 hover:text-emerald-950
+
 
                     {% endif %}">
                     {{ size }}
@@ -138,14 +162,22 @@
 
           <div class="space-y-3 pt-1">
             <div class="space-y-2">
-              <a href="{% if selected_variant %}{% url 'checkout' %}?buy_now={{ selected_variant.id }}{% else %}#{% endif %}" class="w-full bg-emerald-950 text-white text-xs font-black uppercase tracking-widest py-3.5 px-6 rounded-xl hover:bg-emerald-900 transition-all duration-300 shadow-md flex items-center justify-center gap-2">Buy Now <i class="fa-solid fa-bolt text-[10px] text-yellow-400"></i></a>
+              {% if selected_variant and selected_variant.stock > 0 %}
+                <a href="{% url 'checkout' %}?buy_now={{ selected_variant.id }}" class="w-full bg-emerald-950 text-white text-xs font-black uppercase tracking-widest py-3.5 px-6 rounded-xl hover:bg-emerald-900 transition-all duration-300 shadow-md flex items-center justify-center gap-2">
+                  Buy Now
+                </a>
+              {% else %}
+                <button disabled class="w-full bg-gray-300 text-gray-500 text-xs font-black uppercase tracking-widest py-3.5 px-6 rounded-xl cursor-not-allowed">Out Of Stock</button>
+              {% endif %}
 
               <div class="grid grid-cols-2 gap-2">
                 <a href="{% if selected_variant %}
                     {% url 'add_to_cart' selected_variant.id %}
                   {% else %}
                     
+                    
                     #
+
 
                   {% endif %}"
                   class="border-2 border-emerald-950 bg-white text-emerald-950 text-xs font-black uppercase tracking-widest py-2.5 px-4 rounded-xl hover:bg-emerald-50/50 transition flex items-center justify-center gap-2 shadow-sm">
@@ -374,39 +406,37 @@
       </div>
     </footer>
 
-
-
     <script>
       // Zoom in at the exact cursor position on the image
       function zoomAtCursor(event) {
-        var box = document.getElementById('image-zoom-box');
-        var img = document.getElementById('main-product-image');
-        if (!img) return;
-
+        var box = document.getElementById('image-zoom-box')
+        var img = document.getElementById('main-product-image')
+        if (!img) return
+      
         // Calculate cursor position as percentage inside the box
-        var rect = box.getBoundingClientRect();
-        var x = ((event.clientX - rect.left) / rect.width) * 100;
-        var y = ((event.clientY - rect.top) / rect.height) * 100;
-
+        var rect = box.getBoundingClientRect()
+        var x = ((event.clientX - rect.left) / rect.width) * 100
+        var y = ((event.clientY - rect.top) / rect.height) * 100
+      
         // Apply 2.5x zoom centered at the cursor position
-        img.style.transformOrigin = x + '% ' + y + '%';
-        img.style.transform = 'scale(2.5)';
+        img.style.transformOrigin = x + '% ' + y + '%'
+        img.style.transform = 'scale(2.5)'
       }
-
+      
       // Reset zoom when mouse leaves the image
       function resetZoom() {
-        var img = document.getElementById('main-product-image');
-        if (!img) return;
-        img.style.transform = 'scale(1)';
-        img.style.transformOrigin = 'center center';
+        var img = document.getElementById('main-product-image')
+        if (!img) return
+        img.style.transform = 'scale(1)'
+        img.style.transformOrigin = 'center center'
       }
-
+      
       // Switch main image when thumbnail is clicked
       function switchImage(src) {
-        var mainImg = document.getElementById('main-product-image');
+        var mainImg = document.getElementById('main-product-image')
         if (mainImg) {
-          mainImg.src = src;
-          resetZoom();
+          mainImg.src = src
+          resetZoom()
         }
       }
     </script>

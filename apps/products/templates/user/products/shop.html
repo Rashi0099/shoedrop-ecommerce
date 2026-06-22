@@ -57,6 +57,19 @@
 
     </header>
 
+    <!-- Messages -->
+    {% if messages %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        {% for message in messages %}
+        <div class="p-4 mb-2 text-sm rounded-xl font-bold {% if message.tags == 'error' %}bg-red-50 text-red-800 border-red-200{% else %}bg-emerald-50 text-emerald-800 border-emerald-200{% endif %} border shadow-sm flex items-center justify-between" role="alert">
+            <span>{{ message }}</span>
+            <button type="button" class="ml-auto text-gray-500 hover:text-gray-900 transition-colors" onclick="this.parentElement.style.display='none';">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   
