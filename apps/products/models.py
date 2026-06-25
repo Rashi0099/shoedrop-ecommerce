@@ -30,6 +30,10 @@ class Product(models.Model):
         default=True
     )
 
+    is_deleted = models.BooleanField(
+        default=False
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True
     )

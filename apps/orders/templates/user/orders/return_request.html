@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShoeDrop — Return Order #SD-{{ order.id }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50/50 font-sans text-slate-900 antialiased flex flex-col min-h-screen">
+
+  <!-- ==================== NAVIGATION ==================== -->
+  <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/80">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-20">
+
+      <!-- Logo -->
+      <a href="{% url 'landing_page' %}"
+        class="text-xl font-black tracking-[0.25em] text-slate-950 uppercase hover:opacity-80 transition-opacity">
+        SHOEDROP
+      </a>
+
+      <!-- Center nav links -->
+      <div class="hidden space-x-10 text-xs font-bold tracking-[0.2em] text-slate-500 md:flex">
+        <a href="#" class="hover:text-slate-950 transition-colors">MEN</a>
+        <a href="#" class="hover:text-slate-950 transition-colors">WOMEN</a>
+        <a href="#" class="hover:text-slate-950 transition-colors">KIDS</a>
+      </div>
+
+      <!-- Right icons -->
+      <div class="flex items-center space-x-5 text-slate-800">
+        <button class="p-2 hover:text-slate-950 transition-colors">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+          </svg>
+        </button>
+        <a href="#" class="p-2 hover:text-slate-950 transition-colors">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+          </svg>
+        </a>
+        <a href="#" class="p-2 text-slate-950">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+          </svg>
+        </a>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- ==================== MAIN CONTENT AREA ==================== -->
+  <div class="mx-auto max-w-7xl w-full flex flex-col md:flex-row px-4 sm:px-6 lg:px-8 py-10 gap-8 flex-grow">
+
+    <!-- SIDEBAR NAVIGATION MENU -->
+    <aside class="w-full md:w-64 flex-shrink-0">
+      <div class="mb-5 hidden md:block">
+        <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">Welcome Back</span>
+        <span class="text-xs font-black uppercase tracking-wider text-slate-950">Member</span>
+      </div>
+
+      <nav class="flex space-x-2 overflow-x-auto pb-3 scrollbar-none md:block md:space-x-0 md:space-y-1 md:pb-0">
+        <!-- Profile -->
+        <a href="#"
+          class="flex items-center gap-3 rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 hover:bg-white hover:text-slate-950 border border-transparent hover:border-slate-200 transition duration-200 whitespace-nowrap md:w-full">
+          <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+          </svg>
+          <span>Profile</span>
+        </a>
+
+        <!-- Address -->
+        <a href="{% url 'address_list' %}"
+          class="flex items-center gap-3 rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 hover:bg-white hover:text-slate-950 border border-transparent hover:border-slate-200 transition duration-200 whitespace-nowrap md:w-full">
+          <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+          </svg>
+          <span>Address</span>
+        </a>
+
+        <!-- My Orders (Active State) -->
+        <a href="{% url 'order_list' %}"
+          class="flex items-center gap-3 rounded-xl bg-slate-950 px-4 py-3 text-xs font-bold uppercase tracking-wider text-white md:w-full shadow-sm shadow-slate-950/10 whitespace-nowrap">
+          <svg class="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+          </svg>
+          <span>My Orders</span>
+        </a>
+
+        <!-- Wishlist -->
+        <a href="#"
+          class="flex items-center gap-3 rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 hover:bg-white hover:text-slate-950 border border-transparent hover:border-slate-200 transition duration-200 whitespace-nowrap md:w-full">
+          <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+          </svg>
+          <span>Wishlist</span>
+        </a>
+
+        <!-- Wallet -->
+        <a href="#"
+          class="flex items-center gap-3 rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 hover:bg-white hover:text-slate-950 border border-transparent hover:border-slate-200 transition duration-200 whitespace-nowrap md:w-full">
+          <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 0 0-2.25-2.25H15a3 3 0 1 1-6 0H5.25A2.25 2.25 0 0 0 3 12m18 0v6A2.25 2.25 0 0 1 18.75 20.25H5.25A2.25 2.25 0 0 1 3 18v-6m18 0V9A2.25 2.25 0 0 0 18.75 6.75H5.25A2.25 2.25 0 0 0 3 9v3M16.25 12.75h.008v.008h-.008v-.008Z" />
+          </svg>
+          <span>Wallet</span>
+        </a>
+        
+        <!-- Logout -->
+        <a href="{% url 'logout' %}"
+          class="flex items-center gap-3 rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-wider text-red-500 hover:bg-red-50 hover:text-red-600 border border-transparent transition duration-200 whitespace-nowrap mt-4 md:w-full">
+          <svg class="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+          </svg>
+          <span>Logout</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- RIGHT CONTENT: Return Form -->
+    <main class="flex-1 w-full max-w-4xl">
+
+    <!-- Page Title -->
+    <div class="text-center mb-10">
+      <h1 class="text-3xl font-black uppercase tracking-widest text-slate-950">Return Order</h1>
+      <p class="text-xs text-slate-400 font-medium mt-2">
+        You are returning selected items from this order. Please review the details and confirm your return.
+      </p>
+    </div>
+
+    <!-- Flash Messages -->
+    {% if messages %}
+    <div class="mb-6 space-y-2">
+      {% for message in messages %}
+      <div class="px-4 py-3 rounded-xl text-xs font-bold
+        {% if message.tags == 'success' %}bg-emerald-50 text-emerald-700 border border-emerald-200
+        {% elif message.tags == 'error' %}bg-red-50 text-red-700 border border-red-200
+        {% else %}bg-slate-100 text-slate-700 border border-slate-200{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ==================== RETURN FORM ==================== -->
+    <form method="POST" enctype="multipart/form-data" id="return_form">
+      {% csrf_token %}
+
+      <div class="flex flex-col lg:flex-row gap-8">
+
+        <!-- ===== LEFT COLUMN — Items + Reason ===== -->
+        <div class="flex-1 space-y-6">
+
+          <!-- Items in this order -->
+          {% for item in items_to_return %}
+          <input type="hidden" name="item_ids" value="{{ item.id }}">
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 flex items-center gap-5">
+
+            <!-- Product image -->
+            <div class="w-16 h-16 bg-slate-50 border border-slate-100 rounded-xl overflow-hidden shrink-0 flex items-center justify-center">
+              {% if item.product_variant.images.first %}
+                <img src="{{ item.product_variant.images.first.image.url }}" class="w-full h-full object-cover">
+              {% else %}
+                <span class="text-[9px] font-bold text-slate-300 uppercase">No Img</span>
+              {% endif %}
+            </div>
+
+            <!-- Product info -->
+            <div class="flex-1">
+              <h3 class="text-sm font-black text-slate-950 uppercase tracking-wide">
+                {{ item.product_variant.product.product_name }}
+              </h3>
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                Color: {{ item.product_variant.color|default:"N/A" }} &nbsp;|&nbsp;
+                Size: {{ item.product_variant.size|default:"N/A" }}
+              </p>
+              <p class="text-[10px] font-medium text-slate-400 mt-1">
+                Delivered on: {{ order.updated_at|date:"d M Y" }}
+              </p>
+            </div>
+
+            <!-- Price -->
+            <div class="text-sm font-black text-slate-950 shrink-0">
+              ₹{{ item.unit_price }}
+            </div>
+
+          </div>
+          {% endfor %}
+
+          <!-- ===== REASON SECTION ===== -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-6 space-y-5">
+
+            <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-950 border-b border-slate-100 pb-3">
+              Why are you returning this order?
+            </h2>
+
+            <!-- Reason dropdown -->
+            <div>
+              <label for="reason" class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                Select a reason
+              </label>
+              <div class="relative">
+                <select name="reason" id="reason" required
+                  class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold text-slate-700 appearance-none focus:outline-none focus:border-slate-950 transition-colors">
+                  <option value="">— Pick a reason —</option>
+                  <option value="Wrong size / Doesn't fit">Wrong size / Doesn't fit</option>
+                  <option value="Defective or damaged">Defective or damaged</option>
+                  <option value="Wrong item received">Wrong item received</option>
+                  <option value="Item not as described">Item not as described</option>
+                  <option value="Changed my mind">Changed my mind</option>
+                  <option value="Discoloration or quality issue">Discoloration or quality issue</option>
+                </select>
+                <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Return type -->
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                Return type
+              </label>
+              <div class="flex gap-3">
+                <label class="flex items-center gap-2 px-4 py-2.5 border border-slate-200 rounded-xl cursor-pointer hover:border-slate-950 transition-colors has-[:checked]:border-slate-950 has-[:checked]:bg-slate-50">
+                  <input type="radio" name="return_type" value="Refund" checked class="accent-slate-950">
+                  <span class="text-xs font-bold text-slate-700">Refund</span>
+                </label>
+                <label class="flex items-center gap-2 px-4 py-2.5 border border-slate-200 rounded-xl cursor-pointer hover:border-slate-950 transition-colors has-[:checked]:border-slate-950 has-[:checked]:bg-slate-50">
+                  <input type="radio" name="return_type" value="Exchange" class="accent-slate-950">
+                  <span class="text-xs font-bold text-slate-700">Exchange</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Refund mode -->
+            <div>
+              <label for="refund_mode" class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                Refund method
+              </label>
+              <div class="relative">
+                <select name="refund_mode" id="refund_mode"
+                  class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold text-slate-700 appearance-none focus:outline-none focus:border-slate-950 transition-colors">
+                  <option value="Wallet">Wallet</option>
+                  <option value="Original Payment">Original Payment Method</option>
+                  <option value="UPI">UPI</option>
+                  <option value="GPay">Google Pay</option>
+                </select>
+                <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Pickup address -->
+            <div>
+              <label for="pickup_address" class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                Pickup address
+              </label>
+              <div class="relative">
+                <select name="pickup_address" id="pickup_address" required
+                  class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold text-slate-700 appearance-none focus:outline-none focus:border-slate-950 transition-colors">
+                  {% for address in addresses %}
+                  <option value="{{ address.id }}">
+                    {{ address.full_name }} — {{ address.address }}, {{ address.city }}
+                  </option>
+                  {% empty %}
+                  <option value="">No addresses found</option>
+                  {% endfor %}
+                </select>
+                <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Optional comments -->
+            <div>
+              <label for="comments" class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                Write your reason (optional)
+              </label>
+              <textarea name="comments" id="comments" rows="4"
+                placeholder="How can we improve?"
+                class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs font-medium text-slate-700 placeholder-slate-300 resize-none focus:outline-none focus:border-slate-950 transition-colors">
+              </textarea>
+            </div>
+
+            <!-- Upload images (optional) -->
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                Upload images (optional)
+              </label>
+              <input type="file" name="images" id="images" multiple accept="image/*"
+                class="w-full text-xs font-medium text-slate-600 border border-slate-200 rounded-xl px-4 py-3 bg-white focus:outline-none focus:border-slate-950 cursor-pointer transition-colors file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:uppercase file:tracking-wider file:bg-slate-950 file:text-white hover:file:bg-slate-800">
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ===== RIGHT COLUMN — Summary + Submit ===== -->
+        <div class="lg:w-80 space-y-5">
+
+          <!-- Refund Summary -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-6">
+            <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-950 border-b border-slate-100 pb-3 mb-4">
+              Refund Summary
+            </h2>
+
+            <div class="space-y-3 text-xs font-medium text-slate-500 border-b border-slate-100 pb-4 mb-4">
+              {% for item in items_to_return %}
+              <div class="flex justify-between">
+                <span class="text-slate-600 font-semibold truncate max-w-[160px]">
+                  {{ item.product_variant.product.product_name }}
+                </span>
+                <span class="font-bold text-slate-950">₹{{ item.unit_price }}</span>
+              </div>
+              {% endfor %}
+              <div class="flex justify-between">
+                <span>Shipping Fee</span>
+                <span class="font-bold text-emerald-600">₹0.00</span>
+              </div>
+            </div>
+
+            <!-- Total -->
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-black uppercase tracking-widest text-slate-950">Total Refund</span>
+              <span class="text-lg font-black text-slate-950">₹{{ refund_total }}</span>
+            </div>
+          </div>
+
+          <!-- Confirm checkbox -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-5">
+            <label class="flex items-start gap-3 cursor-pointer">
+              <input type="checkbox" id="confirm_checkbox" required
+                class="mt-0.5 w-4 h-4 rounded accent-slate-950 shrink-0">
+              <span class="text-[10px] font-medium text-slate-500 leading-relaxed">
+                I confirm that the item is unused, in its original packaging with all tags intact, and in original condition as per the return policy.
+              </span>
+            </label>
+          </div>
+
+          <!-- Submit button -->
+          <button type="submit"
+            class="w-full bg-slate-950 text-white text-[10px] font-black uppercase tracking-widest py-4 rounded-2xl shadow-md hover:bg-slate-800 active:scale-[0.99] transition-all">
+            Confirm Return
+          </button>
+
+          <!-- Cancel link -->
+          <div class="text-center">
+            <a href="{% url 'order_details' order.id %}"
+              class="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-950 transition-colors underline underline-offset-4">
+              Cancel / Keep Item
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </form>
+
+  </main>
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="bg-[#0d1f18] text-white mt-auto">
+    <div class="mx-auto max-w-7xl px-8 lg:px-12 py-16 grid grid-cols-2 md:grid-cols-5 gap-12">
+
+      <!-- Brand -->
+      <div class="col-span-2 space-y-4">
+        <span class="text-xl font-black tracking-widest">SHOE<span class="text-gray-400">DROP</span></span>
+        <p class="text-xs text-gray-400 max-w-xs leading-relaxed font-medium">
+          Elevating your journey with engineered precision and minimalist design.
+        </p>
+      </div>
+
+      <div>
+        <h4 class="text-xs font-black uppercase tracking-widest text-white mb-5">Shop</h4>
+        <ul class="space-y-3 text-xs font-semibold text-gray-400">
+          <li><a href="#" class="hover:text-white transition-colors">New Arrivals</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Best Sellers</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Men</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Women</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-xs font-black uppercase tracking-widest text-white mb-5">Support</h4>
+        <ul class="space-y-3 text-xs font-semibold text-gray-400">
+          <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Shipping</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Returns</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-xs font-black uppercase tracking-widest text-white mb-5">Company</h4>
+        <ul class="space-y-3 text-xs font-semibold text-gray-400">
+          <li><a href="#" class="hover:text-white transition-colors">About</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Stores</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="mx-auto max-w-7xl px-8 lg:px-12 py-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] text-gray-500 font-semibold tracking-wide">
+      <p>© 2026 ShoeDrop. All rights reserved.</p>
+      <div class="flex gap-5">
+        <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+        <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+        <a href="#" class="hover:text-white transition-colors">Store Locator</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

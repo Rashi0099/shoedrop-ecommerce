@@ -10,7 +10,8 @@ from apps.products.models import ProductVariant
 def wishlist_view(request):
 
     wishlist_items = WishlistItem.objects.filter(
-        user=request.user
+        user=request.user,
+        variant__product__is_deleted=False
     ).select_related('variant__product').prefetch_related('variant__images')
 
     context = {
@@ -25,7 +26,7 @@ def add_to_wishlist(request, variant_id):
 
     variant = get_object_or_404(ProductVariant, id=variant_id)
 
-    if not variant.product.is_active or not variant.is_active:
+    if not variant.product.is_active or not variant.is_active or variant.product.is_deleted:
         messages.error(request, 'This product is not available.')
         return redirect('shop')
 
@@ -35,11 +36,15 @@ def add_to_wishlist(request, variant_id):
     )
 
     if created:
-        messages.success(request, 'Item added to wishlist.')
+        messages.success(request, 'Added to wishlist.')
     else:
-        messages.info(request, 'This item is already in your wishlist.')
+        messages.info(request, 'Already in your wishlist.')
 
-    return redirect('wishlist')
+    # Go back to whichever page the user came from (shop, product detail, etc.)
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return redirect(referer)
+    return redirect('shop')
 
 
 @login_required(login_url='login')
@@ -49,4 +54,30 @@ def remove_from_wishlist(request, item_id):
     wishlist_item.delete()
 
     messages.success(request, 'Item removed from wishlist.')
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return redirect(referer)
     return redirect('wishlist')
+
+
+@login_required(login_url='login')
+def toggle_wishlist(request, variant_id):
+    """Add to wishlist if not present, remove if already present. Always returns to referer."""
+    variant = get_object_or_404(ProductVariant, id=variant_id)
+
+    existing = WishlistItem.objects.filter(user=request.user, variant=variant).first()
+
+    if existing:
+        existing.delete()
+        messages.success(request, 'Removed from wishlist.')
+    else:
+        if not variant.product.is_active or not variant.is_active or variant.product.is_deleted:
+            messages.error(request, 'This product is not available.')
+        else:
+            WishlistItem.objects.create(user=request.user, variant=variant)
+            messages.success(request, 'Added to wishlist.')
+
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return redirect(referer)
+    return redirect('shop')

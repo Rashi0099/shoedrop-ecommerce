@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shoedrop Admin — Return #{{ return_request.id }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
+    </style>
+</head>
+<body class="bg-[#111111] text-white font-sans flex h-screen overflow-hidden">
+
+<!-- SIDEBAR -->
+<aside class="w-[240px] bg-[#171717] flex flex-col justify-between border-r border-[#2a2a2a] hidden md:flex shrink-0 z-10">
+    <div>
+        <div class="px-8 py-10 mb-4">
+            <h2 class="text-white text-lg font-bold tracking-[0.2em] uppercase">Shoedrop</h2>
+            <p class="text-[#888] text-[9px] font-medium tracking-widest mt-1 uppercase">Admin Console</p>
+        </div>
+        <nav class="flex flex-col gap-1 px-4">
+            <a href="{% url 'admin_dashboard' %}" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
+                <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                DASHBOARD
+            </a>
+            <a href="{% url 'product_list' %}" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
+                <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                PRODUCTS
+            </a>
+            <a href="{% url 'category_list' %}" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
+                <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                CATEGORIES
+            </a>
+            <a href="{% url 'admin_order_list' %}" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
+                <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                ORDERS
+            </a>
+            <a href="{% url 'admin_return_list' %}" class="flex items-center gap-4 px-4 py-3 bg-[#222222] text-[#e5e5e5] rounded-lg text-xs font-semibold tracking-wider transition-colors">
+                <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                RETURNS
+            </a>
+            <a href="{% url 'customer_list' %}" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
+                <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                CUSTOMERS
+            </a>
+        </nav>
+    </div>
+    <div class="px-6 py-8">
+        <div class="flex items-center gap-3 bg-[#202020] p-3 rounded-xl border border-[#333]">
+            <div class="w-10 h-10 rounded-full bg-[#2c4c3b] text-[#5cb85c] flex items-center justify-center text-xs font-bold">AD</div>
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-white">Admin User</p>
+                <p class="text-[9px] text-[#777] uppercase tracking-wider">Master Access</p>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="flex-1 overflow-y-auto bg-[#111111] p-6 md:p-10">
+    <div class="max-w-[1400px] mx-auto">
+        {% include 'admin/_messages.html' %}
+
+        <!-- Page header -->
+        <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-8">
+            <div>
+                <div class="text-[10px] font-bold text-[#777] uppercase tracking-widest mb-3">
+                    <a href="{% url 'admin_return_list' %}" class="hover:text-white transition-colors">RETURNS</a>
+                    / #{{ return_request.id }}
+                </div>
+                <div class="flex items-center gap-4 mb-1 flex-wrap">
+                    <h1 class="text-2xl font-bold text-white">RETURN REQUEST #{{ return_request.id }}</h1>
+                    {% if return_request.status == 'Refunded' %}
+                        <span class="px-3 py-1 rounded-md border border-[#A5D6A7]/30 bg-[#A5D6A7]/10 text-[#A5D6A7] text-[10px] font-bold uppercase tracking-widest">Refund Completed</span>
+                    {% elif return_request.status == 'Approved' %}
+                        <span class="px-3 py-1 rounded-md border border-[#3b82f6]/30 bg-[#3b82f6]/10 text-[#3b82f6] text-[10px] font-bold uppercase tracking-widest">Approved</span>
+                    {% elif return_request.status == 'Rejected' %}
+                        <span class="px-3 py-1 rounded-md border border-[#ef4444]/30 bg-[#ef4444]/10 text-[#ef4444] text-[10px] font-bold uppercase tracking-widest">Rejected</span>
+                    {% elif return_request.status == 'Reviewing' %}
+                        <span class="px-3 py-1 rounded-md border border-[#8b5cf6]/30 bg-[#8b5cf6]/10 text-[#8b5cf6] text-[10px] font-bold uppercase tracking-widest">Under Review</span>
+                    {% else %}
+                        <span class="px-3 py-1 rounded-md border border-[#f59e0b]/30 bg-[#f59e0b]/10 text-[#f59e0b] text-[10px] font-bold uppercase tracking-widest">Pending</span>
+                    {% endif %}
+                </div>
+                <p class="text-[#777] text-xs">
+                    Order #{{ return_request.order.id }} &bull; {{ return_request.created_at|date:"M d, Y, h:i A" }}
+                </p>
+            </div>
+
+          
+        </div>
+
+        <!-- Return Status Tracking Bar -->
+        <div class="bg-[#161616] border border-[#2A2A2A] rounded-xl p-5 mb-6">
+            <p class="text-[9px] font-bold text-[#777] uppercase tracking-widest mb-4">Return Journey</p>
+            <div class="flex items-center gap-2">
+
+                <!-- Step 1: Submitted -->
+                <div class="flex flex-col items-center gap-1 flex-1 text-center">
+                    <div class="w-7 h-7 rounded-full bg-[#A5D6A7] text-[#111] flex items-center justify-center text-[10px] font-bold shrink-0">✓</div>
+                    <span class="text-[9px] font-bold text-[#A5D6A7] uppercase tracking-widest">Submitted</span>
+                </div>
+
+                <div class="flex-1 h-px {% if return_request.status != 'Pending' %}bg-[#A5D6A7]{% else %}bg-[#333]{% endif %}"></div>
+
+                <!-- Step 2: Under Review -->
+                <div class="flex flex-col items-center gap-1 flex-1 text-center">
+                    <div class="w-7 h-7 rounded-full {% if return_request.status != 'Pending' %}bg-[#A5D6A7] text-[#111]{% else %}bg-[#222] text-[#555]{% endif %} flex items-center justify-center text-[10px] font-bold shrink-0">
+                        {% if return_request.status != 'Pending' %}✓{% else %}2{% endif %}
+                    </div>
+                    <span class="text-[9px] font-bold {% if return_request.status != 'Pending' %}text-[#A5D6A7]{% else %}text-[#555]{% endif %} uppercase tracking-widest">Reviewing</span>
+                </div>
+
+                <div class="flex-1 h-px {% if return_request.status == 'Approved' or return_request.status == 'Refunded' %}bg-[#A5D6A7]{% elif return_request.status == 'Rejected' %}bg-[#ef4444]{% else %}bg-[#333]{% endif %}"></div>
+
+                <!-- Step 3: Decision -->
+                <div class="flex flex-col items-center gap-1 flex-1 text-center">
+                    {% if return_request.status == 'Approved' or return_request.status == 'Refunded' %}
+                        <div class="w-7 h-7 rounded-full bg-[#A5D6A7] text-[#111] flex items-center justify-center text-[10px] font-bold shrink-0">✓</div>
+                        <span class="text-[9px] font-bold text-[#A5D6A7] uppercase tracking-widest">Approved</span>
+                    {% elif return_request.status == 'Rejected' %}
+                        <div class="w-7 h-7 rounded-full bg-[#ef4444] text-white flex items-center justify-center text-[10px] font-bold shrink-0">✕</div>
+                        <span class="text-[9px] font-bold text-[#ef4444] uppercase tracking-widest">Rejected</span>
+                    {% else %}
+                        <div class="w-7 h-7 rounded-full bg-[#222] text-[#555] flex items-center justify-center text-[10px] font-bold shrink-0">3</div>
+                        <span class="text-[9px] font-bold text-[#555] uppercase tracking-widest">Decision</span>
+                    {% endif %}
+                </div>
+
+                <div class="flex-1 h-px {% if return_request.status == 'Refunded' %}bg-[#A5D6A7]{% else %}bg-[#333]{% endif %}"></div>
+
+                <!-- Step 4: Refunded -->
+                <div class="flex flex-col items-center gap-1 flex-1 text-center">
+                    <div class="w-7 h-7 rounded-full {% if return_request.status == 'Refunded' %}bg-[#A5D6A7] text-[#111]{% else %}bg-[#222] text-[#555]{% endif %} flex items-center justify-center text-[10px] font-bold shrink-0">
+                        {% if return_request.status == 'Refunded' %}✓{% else %}4{% endif %}
+                    </div>
+                    <span class="text-[9px] font-bold {% if return_request.status == 'Refunded' %}text-[#A5D6A7]{% else %}text-[#555]{% endif %} uppercase tracking-widest">Refunded</span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Two-column layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Left column -->
+            <div class="lg:col-span-8 flex flex-col gap-6">
+
+                <!-- Product Details card -->
+                <div class="bg-[#161616] border border-[#2A2A2A] rounded-xl overflow-hidden">
+                    <div class="px-6 py-4 border-b border-[#2A2A2A]">
+                        <h2 class="text-xs font-bold text-[#aaa] uppercase tracking-widest">&#9881; Product Details</h2>
+                    </div>
+                    <div class="p-6 flex items-start gap-6 flex-wrap">
+                        <!-- Product image -->
+                        <div class="w-24 h-24 bg-white rounded-xl overflow-hidden shrink-0 flex items-center justify-center border border-[#2A2A2A]">
+                            {% if return_request.order_item.product_variant.images.first %}
+                                <img src="{{ return_request.order_item.product_variant.images.first.image.url }}" class="w-full h-full object-cover">
+                            {% else %}
+                                <span class="text-[9px] text-gray-400 font-bold uppercase">No Image</span>
+                            {% endif %}
+                        </div>
+                        <!-- Product info grid -->
+                        <div class="flex-1 grid grid-cols-2 md:grid-cols-3 gap-5">
+                            <div>
+                                <p class="text-[9px] font-bold text-[#777] uppercase tracking-widest mb-1">Product Name</p>
+                                <p class="text-sm font-bold text-white">{{ return_request.order_item.product_variant.product.product_name }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] font-bold text-[#777] uppercase tracking-widest mb-1">Price Paid</p>
+                                <p class="text-sm font-bold text-[#A5D6A7]">&#8377;{{ return_request.order_item.unit_price }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] font-bold text-[#777] uppercase tracking-widest mb-1">SKU</p>
+                                <p class="text-xs font-mono text-[#aaa]">{{ return_request.order_item.product_variant.sku|default:"N/A" }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] font-bold text-[#777] uppercase tracking-widest mb-1">Size</p>
+                                <p class="text-xs font-bold text-white">{{ return_request.order_item.product_variant.size|default:"N/A" }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] font-bold text-[#777] uppercase tracking-widest mb-1">Return Type</p>
+                                <p class="text-xs font-bold text-white">{{ return_request.return_type }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] font-bold text-[#777] uppercase tracking-widest mb-1">Refund Mode</p>
+                                <p class="text-xs font-bold text-white">{{ return_request.refund_mode|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Reason for return -->
+                    <div class="px-6 pb-6">
+                        <div class="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-4">
+                            <p class="text-[9px] font-bold text-[#777] uppercase tracking-widest mb-2">Reason for Return</p>
+                            <p class="text-sm text-[#ccc] italic">"{{ return_request.reason }}"</p>
+                            {% if return_request.comments %}
+                            <p class="text-xs text-[#888] mt-2">{{ return_request.comments }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                               
+
+                <!-- Return images (if any) -->
+                {% if return_request.images.exists %}
+                <div class="bg-[#161616] border border-[#2A2A2A] rounded-xl overflow-hidden">
+                    <div class="px-6 py-4 border-b border-[#2A2A2A]">
+                        <h2 class="text-xs font-bold text-[#aaa] uppercase tracking-widest">&#128247; Submitted Images</h2>
+                    </div>
+                    <div class="p-6 flex flex-wrap gap-4">
+                        {% for img in return_request.images.all %}
+                        <div class="w-24 h-24 rounded-xl overflow-hidden border border-[#2A2A2A]">
+                            <img src="{{ img.image.url }}" class="w-full h-full object-cover">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+
+            <!-- Right column -->
+            <div class="lg:col-span-4 flex flex-col gap-6">
+
+                <!-- Process Return -->
+                <div class="bg-[#161616] border border-[#2A2A2A] rounded-xl p-6">
+                    <h2 class="text-xs font-bold text-[#aaa] uppercase tracking-widest mb-5">&#8987; Process Return</h2>
+                    <form method="POST" action="{% url 'admin_update_return_status' return_request.id %}" class="space-y-4">
+                        {% csrf_token %}
+                        <div>
+                            <label class="block text-[9px] font-bold text-[#777] uppercase tracking-widest mb-2">Update Status</label>
+                            <div class="relative">
+                                <select name="status" class="w-full bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl py-3 px-4 text-sm text-white appearance-none focus:outline-none focus:border-[#444]">
+                                    {% if return_request.status == 'Pending' %}
+
+                                        <option value="Pending" selected>Pending</option>
+                                        <option value="Reviewing">Reviewing</option>
+                                        <option value="Approved" disabled>Approved</option>
+                                        <option value="Rejected" disabled>Rejected</option>
+                                        <option value="Refunded" disabled>Refund Completed</option>
+
+                                    {% elif return_request.status == 'Reviewing' %}
+
+                                        <option value="Pending" disabled>Pending</option>
+                                        <option value="Reviewing" selected>Reviewing</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Rejected">Rejected</option>
+                                        <option value="Refunded" disabled>Refund Completed</option>
+
+                                    {% elif return_request.status == 'Approved' %}
+
+                                        <option value="Pending" disabled>Pending</option>
+                                        <option value="Reviewing" disabled>Reviewing</option>
+                                        <option value="Approved" selected>Approved</option>
+                                        <option value="Rejected" disabled>Rejected</option>
+                                        <option value="Refunded">Refund Completed</option>
+
+                                    {% elif return_request.status == 'Rejected' %}
+
+                                        <option value="Pending" disabled>Pending</option>
+                                        <option value="Reviewing" disabled>Reviewing</option>
+                                        <option value="Approved" disabled>Approved</option>
+                                        <option value="Rejected" selected>Rejected</option>
+                                        <option value="Refunded" disabled>Refund Completed</option>
+
+                                    {% elif return_request.status == 'Refunded' %}
+
+                                        <option value="Pending" disabled>Pending</option>
+                                        <option value="Reviewing" disabled>Reviewing</option>
+                                        <option value="Approved" disabled>Approved</option>
+                                        <option value="Rejected" disabled>Rejected</option>
+                                        <option value="Refunded" selected>Refund Completed</option>
+
+                                    {% endif %}
+                                </select>
+                                <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#777] pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-[#A5D6A7] hover:bg-[#8cc48e] text-black rounded-xl py-3 text-xs font-bold uppercase tracking-widest transition-colors">
+                            Save Changes
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Customer Details -->
+                <div class="bg-[#161616] border border-[#2A2A2A] rounded-xl p-6">
+                    <h2 class="text-xs font-bold text-[#aaa] uppercase tracking-widest mb-5">&#128100; Customer Details</h2>
+
+                    <div class="flex items-center gap-3 mb-5 pb-5 border-b border-[#2A2A2A]">
+                        <div class="w-9 h-9 rounded-full bg-[#A5D6A7] text-[#111] flex items-center justify-center text-sm font-bold uppercase shrink-0">
+                            {{ return_request.user.username|first }}
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-white">{{ return_request.user.get_full_name|default:return_request.user.username }}</p>
+                            <p class="text-[10px] text-[#aaa]">{{ return_request.user.email }}</p>
+                        </div>
+                    </div>
+
+                    {% if return_request.pickup_address %}
+                    <div class="mb-4">
+                        <p class="text-[9px] font-bold text-[#777] uppercase tracking-widest mb-2">&#128205; Pickup Address</p>
+                        <div class="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-3">
+                            <p class="text-xs font-bold text-white mb-1">{{ return_request.pickup_address.full_name }}</p>
+                            <p class="text-[10px] text-[#aaa] leading-relaxed">
+                                {{ return_request.pickup_address.address }}<br>
+                                {{ return_request.pickup_address.city }}, {{ return_request.pickup_address.state }}<br>
+                                {{ return_request.pickup_address.postal_code }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-[9px] font-bold text-[#777] uppercase tracking-widest mb-1">Phone</p>
+                            <p class="text-xs font-bold text-white">{{ return_request.pickup_address.phone_number }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-bold text-[#777] uppercase tracking-widest mb-1">Joined</p>
+                            <p class="text-xs font-bold text-white">{{ return_request.user.date_joined|date:"M Y" }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

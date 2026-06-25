@@ -165,7 +165,7 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 SITE_ID = 2
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
+    'apps.accounts.backends.EmailBackend',       
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 

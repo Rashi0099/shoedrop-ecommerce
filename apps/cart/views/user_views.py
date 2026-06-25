@@ -24,10 +24,14 @@ def cart_view(request):
     total = subtotal + tax
 
     suggested_products = Product.objects.filter(
-        is_active=True
+        is_active=True,
+        is_deleted=False
     ).exclude(
         variants__cartitem__user=request.user
     ).distinct()[:4]
+
+    # Check if any cart item has insufficient stock
+    has_out_of_stock = any(item.variant.stock < item.quantity for item in cart_items)
 
     context = {
         'cart_items': cart_items,
@@ -35,6 +39,7 @@ def cart_view(request):
         'tax': tax,
         'total': total,
         'suggested_products': suggested_products,
+        'has_out_of_stock': has_out_of_stock,
     }
 
     return render(request, 'user/cart/cart.html', context)

@@ -119,6 +119,15 @@ def add_address(request):
         )
         messages.success(request,'new address added')
 
+        # Beginner-friendly explicit redirection check
+        buy_now_id = request.GET.get('buy_now')
+        from_checkout = request.GET.get('from_checkout')
+
+        if buy_now_id:
+            return redirect(f'/orders/checkout/?buy_now={buy_now_id}')
+        elif from_checkout:
+            return redirect('checkout')
+
         return redirect('address_list')
 
     return render(request, 'user/addresses/add_address.html')

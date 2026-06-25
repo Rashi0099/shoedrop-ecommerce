@@ -181,14 +181,19 @@
 
                     <!-- Sort -->
                     <div>
-                        <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">Sort</h3>
-                        <select name="sort" class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs outline-none">
-                            <option value="-created_at" {% if request.GET.sort == '-created_at' or not request.GET.sort %}selected{% endif %}>New Arrivals</option>
-                            <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
-                            <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
-                            <option value="name_az" {% if request.GET.sort == 'name_az' %}selected{% endif %}>Name: A to Z</option>
-                            <option value="name_za" {% if request.GET.sort == 'name_za' %}selected{% endif %}>Name: Z to A</option>
-                        </select>
+                        <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2.5">Sort</h3>
+                        <div class="relative group">
+                            <select name="sort" class="w-full appearance-none bg-white border border-gray-200 hover:border-brand-dark/50 text-gray-700 text-xs font-semibold rounded-xl px-3.5 py-2.5 pr-10 outline-none focus:border-brand-dark focus:ring-1 focus:ring-brand-dark transition-all cursor-pointer shadow-sm">
+                                <option value="-created_at" {% if request.GET.sort == '-created_at' or not request.GET.sort %}selected{% endif %}>New Arrivals</option>
+                                <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                                <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                                <option value="name_az" {% if request.GET.sort == 'name_az' %}selected{% endif %}>Name: A to Z</option>
+                                <option value="name_za" {% if request.GET.sort == 'name_za' %}selected{% endif %}>Name: Z to A</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-gray-400 group-hover:text-brand-dark transition-colors">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mt-5">
@@ -211,10 +216,11 @@
 
                 <div class="bg-white rounded-3xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col justify-between group relative">
 
-                    <!-- Wishlist Icon at Top Right — click to add to wishlist -->
-                    <a href="{% if first_variant %}{% url 'add_to_wishlist' first_variant.id %}{% else %}{% url 'wishlist' %}{% endif %}"
-                       class="absolute top-6 right-6 z-10 w-8 h-8 bg-white/80 backdrop-blur rounded-full flex items-center justify-center text-gray-500 hover:text-red-500 hover:bg-white transition-colors shadow-sm">
-                        <i class="fa-regular fa-heart"></i>
+                    <!-- Wishlist Icon at Top Right — filled red if already in wishlist -->
+                    <a href="{% if first_variant %}{% url 'toggle_wishlist' first_variant.id %}{% else %}{% url 'wishlist' %}{% endif %}"
+                       class="absolute top-6 right-6 z-10 w-8 h-8 bg-white/80 backdrop-blur rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-sm
+                              {% if first_variant and first_variant.id in wishlist_variant_ids %}text-red-500{% else %}text-gray-400 hover:text-red-500{% endif %}">
+                        <i class="{% if first_variant and first_variant.id in wishlist_variant_ids %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
                     </a>
 
                     <a href="{% url 'product_detail' product.id %}" class="block">
@@ -261,42 +267,24 @@
         </div>
 
         <!-- Pagination -->
-        {% if page_obj.has_other_pages %}
-        <div class="flex items-center justify-center space-x-2 mt-12 pt-6 border-t border-gray-100">
-
-            <!-- Previous button -->
-            {% if page_obj.has_previous %}
-            <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.subcategory %}subcategory={{ request.GET.subcategory }}&{% endif %}{% if request.GET.size %}size={{ request.GET.size }}&{% endif %}{% if request.GET.color %}color={{ request.GET.color }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}"
-               class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-brand-dark hover:text-brand-dark transition">
-                <i class="fa-solid fa-chevron-left text-xs"></i>
-            </a>
-            {% else %}
-            <span class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-100 text-gray-300">
-                <i class="fa-solid fa-chevron-left text-xs"></i>
-            </span>
-            {% endif %}
-
-            <!-- Page numbers -->
-            {% for num in page_obj.paginator.page_range %}
-            <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.subcategory %}subcategory={{ request.GET.subcategory }}&{% endif %}{% if request.GET.size %}size={{ request.GET.size }}&{% endif %}{% if request.GET.color %}color={{ request.GET.color }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ num }}"
-               class="w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold transition
-               {% if page_obj.number == num %}bg-brand-dark text-white{% else %}text-gray-400 hover:bg-gray-100{% endif %}">
-                {{ num }}
-            </a>
-            {% endfor %}
-
-            <!-- Next button -->
-            {% if page_obj.has_next %}
-            <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.subcategory %}subcategory={{ request.GET.subcategory }}&{% endif %}{% if request.GET.size %}size={{ request.GET.size }}&{% endif %}{% if request.GET.color %}color={{ request.GET.color }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.next_page_number }}"
-               class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-brand-dark hover:text-brand-dark transition">
-                <i class="fa-solid fa-chevron-right text-xs"></i>
-            </a>
-            {% else %}
-            <span class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-100 text-gray-300">
-                <i class="fa-solid fa-chevron-right text-xs"></i>
-            </span>
-            {% endif %}
-
+        {% if page_obj.has_other_pages or page_obj.paginator.count > 0 %}
+        <div class="p-4 mt-8 bg-white border border-gray-100 rounded-2xl flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-gray-500 shadow-sm">
+            <div>Showing {{ page_obj.start_index|default:0 }} to {{ page_obj.end_index|default:0 }} of {{ page_obj.paginator.count }} results</div>
+            <div class="flex items-center gap-3">
+                {% if page_obj.has_previous %}
+                <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.subcategory %}subcategory={{ request.GET.subcategory }}&{% endif %}{% if request.GET.size %}size={{ request.GET.size }}&{% endif %}{% if request.GET.color %}color={{ request.GET.color }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}"
+                   class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-700 flex items-center justify-center hover:bg-gray-100 transition-colors">&lt;</a>
+                {% else %}
+                <button class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-400 flex items-center justify-center opacity-50" disabled>&lt;</button>
+                {% endif %}
+                <span class="text-gray-900">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.subcategory %}subcategory={{ request.GET.subcategory }}&{% endif %}{% if request.GET.size %}size={{ request.GET.size }}&{% endif %}{% if request.GET.color %}color={{ request.GET.color }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.next_page_number }}"
+                   class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-700 flex items-center justify-center hover:bg-gray-100 transition-colors">&gt;</a>
+                {% else %}
+                <button class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-400 flex items-center justify-center opacity-50" disabled>&gt;</button>
+                {% endif %}
+            </div>
         </div>
         {% endif %}
 

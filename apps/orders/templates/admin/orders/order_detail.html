@@ -123,12 +123,46 @@
                     {% csrf_token %}
                     <div class="relative min-w-[180px]">
                         <select name="status" class="w-full bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl py-3 px-4 text-sm text-white appearance-none focus:outline-none focus:border-[#444] font-medium">
-                            <option value="pending" {% if order.order_status == 'pending' %}selected{% endif %}>Pending</option>
-                            <option value="processing" {% if order.order_status == 'processing' %}selected{% endif %}>Processing</option>
-                            <option value="shipped" {% if order.order_status == 'shipped' %}selected{% endif %}>Shipped</option>
-                            <option value="delivered" {% if order.order_status == 'delivered' %}selected{% endif %}>Delivered</option>
-                            <option value="cancelled" {% if order.order_status == 'cancelled' %}selected{% endif %}>Cancelled</option>
-                            <option value="returned" {% if order.order_status == 'returned' %}selected{% endif %}>Returned</option>
+                             
+                        {% if order.order_status == 'pending' %}
+
+                            <option value="pending" selected>Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped" disabled>Shipped</option>
+                            <option value="delivered" disabled>Delivered</option>
+
+                        {% elif order.order_status == 'processing' %}
+
+                            <option value="pending" disabled>Pending</option>
+                            <option value="processing" selected>Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered" disabled>Delivered</option>
+
+                        {% elif order.order_status == 'shipped' %}
+
+                            <option value="pending" disabled>Pending</option>
+                            <option value="processing" disabled>Processing</option>
+                            <option value="shipped" selected>Shipped</option>
+                            <option value="delivered">Delivered</option>
+
+                        {% elif order.order_status == 'delivered' %}
+
+                            <option value="pending" disabled>Pending</option>
+                            <option value="processing" disabled>Processing</option>
+                            <option value="shipped" disabled>Shipped</option>
+                            <option value="delivered" selected>Delivered</option>
+
+                        {% elif order.order_status == 'cancelled' %}
+                            <option value="cancelled" selected disabled>Cancelled</option>
+                        {% elif order.order_status == 'return_requested' %}
+                            <option value="return_requested" selected disabled>Return Requested</option>
+                        {% elif order.order_status == 'return_rejected' %}
+                            <option value="return_rejected" selected disabled>Return Rejected</option>
+                        {% elif order.order_status == 'returned' %}
+                            <option value="returned" selected disabled>Returned</option>
+
+                        {% endif %}
+
                         </select>
                         <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#777] pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
@@ -176,10 +210,32 @@
                                     </div>
                                 </div>
                                 <div class="col-span-2 text-center">
-                                    <!-- Using order level status for items in admin view -->
-                                    <span class="inline-flex px-2 py-0.5 rounded bg-[#333] text-[#aaa] text-[9px] font-bold uppercase tracking-widest border border-[#444]">
-                                        {{ order.order_status }}
-                                    </span>
+                                    <!-- Per-item status badge -->
+                                    {% if item.item_status == 'cancelled' %}
+                                        <span class="inline-flex px-2 py-0.5 rounded bg-[#ef4444]/20 text-[#ef4444] text-[9px] font-bold uppercase tracking-widest border border-[#ef4444]/30">
+                                            Cancelled
+                                        </span>
+                                    {% elif item.item_status == 'active' %}
+                                        <span class="inline-flex px-2 py-0.5 rounded bg-[#10b981]/20 text-[#10b981] text-[9px] font-bold uppercase tracking-widest border border-[#10b981]/30">
+                                            Active
+                                        </span>
+                                    {% elif item.item_status == 'return_requested' %}
+                                        <span class="inline-flex px-2 py-0.5 rounded bg-[#f59e0b]/20 text-[#f59e0b] text-[9px] font-bold uppercase tracking-widest border border-[#f59e0b]/30">
+                                            Return Req.
+                                        </span>
+                                    {% elif item.item_status == 'returned' %}
+                                        <span class="inline-flex px-2 py-0.5 rounded bg-[#3b82f6]/20 text-[#3b82f6] text-[9px] font-bold uppercase tracking-widest border border-[#3b82f6]/30">
+                                            Returned
+                                        </span>
+                                    {% elif item.item_status == 'return_rejected' %}
+                                        <span class="inline-flex px-2 py-0.5 rounded bg-[#ef4444]/20 text-[#ef4444] text-[9px] font-bold uppercase tracking-widest border border-[#ef4444]/30">
+                                            Rejected
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex px-2 py-0.5 rounded bg-[#333] text-[#aaa] text-[9px] font-bold uppercase tracking-widest border border-[#444]">
+                                            {{ item.item_status }}
+                                        </span>
+                                    {% endif %}
                                 </div>
                                 <div class="col-span-1 text-center text-sm font-bold text-white">
                                     {{ item.quantity }}

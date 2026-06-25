@@ -15,7 +15,7 @@ def product_list(request):
     category_id = request.GET.get('category', '')
     subcategory_id = request.GET.get('subcategory', '')
 
-    products = Product.objects.select_related('category', 'subcategory')
+    products = Product.objects.filter(is_deleted=False).select_related('category', 'subcategory')
 
     if search:
         products = products.filter(product_name__icontains=search)
@@ -109,7 +109,7 @@ def add_product(request):
 
 @staff_member_required(login_url='admin_login')
 def edit_product(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    product = get_object_or_404(Product, id=product_id, is_deleted=False)
 
     if request.method == 'POST':
         product_name = request.POST.get('product_name', '').strip()
@@ -171,7 +171,7 @@ def edit_product(request, product_id):
 
 @staff_member_required(login_url='admin_login')
 def toggle_product_status(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    product = get_object_or_404(Product, id=product_id, is_deleted=False)
     product.is_active = not product.is_active
     product.save()
 
@@ -182,7 +182,7 @@ def toggle_product_status(request, product_id):
 
 @staff_member_required(login_url='admin_login')
 def variant_list(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    product = get_object_or_404(Product, id=product_id, is_deleted=False)
     variants = ProductVariant.objects.filter(product=product).order_by('-created_at')
 
     context = {
@@ -195,7 +195,7 @@ def variant_list(request, product_id):
 
 @staff_member_required(login_url='admin_login')
 def add_variant(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    product = get_object_or_404(Product, id=product_id, is_deleted=False)
 
     if request.method == 'POST':
         size = request.POST.get('size', '').strip()
@@ -331,11 +331,12 @@ def delete_variant(request, variant_id):
 
 @staff_member_required(login_url='admin_login')
 def delete_product(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    product = get_object_or_404(Product, id=product_id, is_deleted=False)
 
-    # Soft delete — mark as inactive, keep data in database
+    # Soft delete — mark as deleted, and deactivate from store
+    product.is_deleted = True
     product.is_active = False
     product.save()
 
-    messages.success(request, f'Product "{product.product_name}" has been deactivated.')
+    messages.success(request, f'Product "{product.product_name}" has been deleted.')
     return redirect('product_list')

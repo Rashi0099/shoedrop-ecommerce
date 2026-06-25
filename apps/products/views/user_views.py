@@ -9,7 +9,8 @@ from apps.category.models import Category, SubCategory
 def shop(request):
 
     products = Product.objects.filter(
-        is_active=True
+        is_active=True,
+        is_deleted=False
     ).prefetch_related('variants__images')
 
     categories = Category.objects.filter(is_active=True)
@@ -75,6 +76,15 @@ def shop(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    # Build set of variant IDs in the current user's wishlist for icon highlighting
+    wishlist_variant_ids = set()
+    if request.user.is_authenticated:
+        from apps.wishlist.models import WishlistItem
+        wishlist_variant_ids = set(
+            WishlistItem.objects.filter(user=request.user)
+            .values_list('variant_id', flat=True)
+        )
+
     context = {
         'products': page_obj,
         'page_obj': page_obj,
@@ -82,6 +92,7 @@ def shop(request):
         'subcategories': subcategories,
         'sizes': sizes,
         'colors': colors,
+        'wishlist_variant_ids': wishlist_variant_ids,
     }
 
     return render(request, 'user/products/shop.html', context)
@@ -90,7 +101,7 @@ def shop(request):
 def product_detail(request, product_id):
 
     try:
-        product = Product.objects.get(id=product_id, is_active=True)
+        product = Product.objects.get(id=product_id, is_active=True, is_deleted=False)
     except Product.DoesNotExist:
         messages.error(request, 'This product is not available.')
         return redirect('shop')
@@ -138,7 +149,8 @@ def product_detail(request, product_id):
 
     related_products = Product.objects.filter(
         category=product.category,
-        is_active=True
+        is_active=True,
+        is_deleted=False
     ).exclude(id=product.id).prefetch_related('variants__images')[:4]
 
     return render(request, 'user/products/product_detail.html', {

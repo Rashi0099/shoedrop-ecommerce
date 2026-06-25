@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shoedrop Admin - Orders</title>
+    <title>Shoedrop Admin — Return Requests</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         ::-webkit-scrollbar { width: 6px; }
@@ -14,196 +14,245 @@
 </head>
 <body class="bg-[#111111] text-white font-sans flex h-screen overflow-hidden">
 
-    <!-- SIDEBAR -->
+    <!-- ==================== SIDEBAR ==================== -->
     <aside class="w-[240px] bg-[#171717] flex flex-col justify-between border-r border-[#2a2a2a] hidden md:flex shrink-0 z-10">
         <div>
+            <!-- Brand -->
             <div class="px-8 py-10 mb-4">
                 <h2 class="text-white text-lg font-bold tracking-[0.2em] uppercase">Shoedrop</h2>
                 <p class="text-[#888] text-[9px] font-medium tracking-widest mt-1 uppercase">Admin Console</p>
             </div>
 
+            <!-- Nav links -->
             <nav class="flex flex-col gap-1 px-4">
+
                 <a href="{% url 'admin_dashboard' %}" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
                     <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                     DASHBOARD
                 </a>
+
                 <a href="{% url 'product_list' %}" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
                     <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                     PRODUCTS
                 </a>
+
                 <a href="{% url 'category_list' %}" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
                     <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                     CATEGORIES
                 </a>
-                <a href="{% url 'admin_order_list' %}" class="flex items-center gap-4 px-4 py-3 bg-[#222222] text-[#e5e5e5] rounded-lg text-xs font-semibold tracking-wider transition-colors">
+
+                <a href="{% url 'admin_order_list' %}" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
                     <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     ORDERS
                 </a>
-                <a href="#" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
+
+                <!-- Active: Returns -->
+                <a href="{% url 'admin_return_list' %}" class="flex items-center gap-4 px-4 py-3 bg-[#222222] text-[#e5e5e5] rounded-lg text-xs font-semibold tracking-wider transition-colors">
                     <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
                     RETURNS
                 </a>
+
                 <a href="{% url 'customer_list' %}" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
                     <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     CUSTOMERS
                 </a>
+
                 <a href="#" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
                     <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                     ANALYTICS
                 </a>
+
                 <a href="#" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
                     <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
                     COUPONS
                 </a>
+
                 <a href="#" class="flex items-center gap-4 px-4 py-3 text-[#777] hover:text-[#d1d1d1] rounded-lg text-xs font-medium tracking-wider transition-colors">
                     <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     BANNER
                 </a>
+
             </nav>
         </div>
 
+        <!-- Admin badge -->
         <div class="px-6 py-8">
             <div class="flex items-center gap-3 bg-[#202020] p-3 rounded-xl border border-[#333]">
                 <div class="w-10 h-10 rounded-full bg-[#2c4c3b] text-[#5cb85c] flex items-center justify-center text-xs font-bold">AD</div>
                 <div>
-                    <a href="#">
                     <p class="text-xs font-semibold uppercase tracking-wider text-white">Admin User</p>
                     <p class="text-[9px] text-[#777] uppercase tracking-wider">Master Access</p>
-                    </a>
                 </div>
             </div>
         </div>
     </aside>
 
-    <!-- MAIN -->
+    <!-- ==================== MAIN CONTENT ==================== -->
     <main class="flex-1 overflow-y-auto bg-[#111111] p-6 md:p-10">
         <div class="max-w-[1400px] mx-auto">
+
             {% include 'admin/_messages.html' %}
-            
+
+            <!-- Page header -->
             <div class="mb-8">
-                <h1 class="text-2xl font-bold text-white mb-2">Order Management</h1>
-                <p class="text-[#777] text-sm">Manage and track your customer transactional data.</p>
+                <h1 class="text-2xl font-bold text-white mb-2">Return Requests</h1>
+                <p class="text-[#777] text-sm">Manage and process customer return requests.</p>
             </div>
 
             <!-- Toolbar -->
             <form method="GET" class="flex flex-wrap gap-4 mb-8">
+                <!-- Search -->
                 <div class="relative flex-1 min-w-[200px] max-w-[400px]">
-                    <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#777]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search Order ID or Customer" class="w-full bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl py-3 pl-10 pr-4 text-sm text-white placeholder-[#555] focus:outline-none focus:border-[#444]">
+                    <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#777]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" name="q" value="{{ search }}" placeholder="Search customer or product"
+                        class="w-full bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl py-3 pl-10 pr-4 text-sm text-white placeholder-[#555] focus:outline-none focus:border-[#444]">
                 </div>
-                
+
+                <!-- Status filter -->
                 <div class="relative min-w-[160px]">
                     <select name="status" class="w-full bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl py-3 px-4 text-sm text-white appearance-none focus:outline-none focus:border-[#444]">
                         <option value="">All Statuses</option>
-                        <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
-                        <option value="processing" {% if request.GET.status == 'processing' %}selected{% endif %}>Processing</option>
-                        <option value="shipped" {% if request.GET.status == 'shipped' %}selected{% endif %}>Shipped</option>
-                        <option value="delivered" {% if request.GET.status == 'delivered' %}selected{% endif %}>Delivered</option>
-                        <option value="cancelled" {% if request.GET.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
-                        <option value="returned" {% if request.GET.status == 'returned' %}selected{% endif %}>Returned</option>
+                        <option value="Pending"   {% if status_filter == 'Pending'   %}selected{% endif %}>Pending</option>
+                        <option value="Reviewing" {% if status_filter == 'Reviewing' %}selected{% endif %}>Reviewing</option>
+                        <option value="Approved"  {% if status_filter == 'Approved'  %}selected{% endif %}>Approved</option>
+                        <option value="Rejected"  {% if status_filter == 'Rejected'  %}selected{% endif %}>Rejected</option>
+                        <option value="Refunded"  {% if status_filter == 'Refunded'  %}selected{% endif %}>Refunded</option>
                     </select>
-                    <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#777] pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#777] pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </div>
 
+                <!-- Sort -->
                 <div class="relative min-w-[160px]">
                     <select name="sort" class="w-full bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl py-3 px-4 text-sm text-white appearance-none focus:outline-none focus:border-[#444]">
-                        <option value="-created_at">Newest First</option>
-                        <option value="created_at">Oldest First</option>
+                        <option value="-created_at" {% if sort == '-created_at' or not sort %}selected{% endif %}>Newest First</option>
+                        <option value="created_at"  {% if sort == 'created_at'  %}selected{% endif %}>Oldest First</option>
+                        <option value="status"      {% if sort == 'status'      %}selected{% endif %}>By Status</option>
                     </select>
-                    <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#777] pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#777] pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </div>
 
                 <!-- Apply -->
-                <button type="submit" class="bg-[#1A1A1A] border border-[#2A2A2A] text-white rounded-xl py-3 px-6 text-sm hover:bg-[#222] transition-colors">
-                    Apply
-                </button>
+                <button type="submit" class="bg-[#1A1A1A] border border-[#2A2A2A] text-white rounded-xl py-3 px-6 text-sm hover:bg-[#222] transition-colors">Apply</button>
+
                 <!-- Reset -->
-                <a href="{% url 'admin_order_list' %}" class="bg-[#1A1A1A] border border-[#2A2A2A] text-white rounded-xl py-3 px-6 text-sm hover:bg-[#222] transition-colors">
-                    Reset
-                </a>
+                <a href="{% url 'admin_return_list' %}" class="bg-[#1A1A1A] border border-[#2A2A2A] text-white rounded-xl py-3 px-6 text-sm hover:bg-[#222] transition-colors">Reset</a>
+
+                <button type="submit" class="hidden"></button>
             </form>
 
-            <!-- Table Card -->
+            <!-- Table card -->
             <div class="bg-[#161616] border border-[#2A2A2A] rounded-xl overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b border-[#2A2A2A]">
+                                <th class="px-6 py-4 text-[10px] font-bold text-[#777] uppercase tracking-wider">ID</th>
                                 <th class="px-6 py-4 text-[10px] font-bold text-[#777] uppercase tracking-wider">Order ID</th>
+                                <th class="px-6 py-4 text-[10px] font-bold text-[#777] uppercase tracking-wider">Product</th>
                                 <th class="px-6 py-4 text-[10px] font-bold text-[#777] uppercase tracking-wider">Customer</th>
-                                <th class="px-6 py-4 text-[10px] font-bold text-[#777] uppercase tracking-wider">Date</th>
                                 <th class="px-6 py-4 text-[10px] font-bold text-[#777] uppercase tracking-wider">Amount</th>
-                                <th class="px-6 py-4 text-[10px] font-bold text-[#777] uppercase tracking-wider">Payment</th>
                                 <th class="px-6 py-4 text-[10px] font-bold text-[#777] uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-4 text-[10px] font-bold text-[#777] uppercase tracking-wider text-right">Action</th>
+                                <th class="px-6 py-4 text-[10px] font-bold text-[#777] uppercase tracking-wider text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for order in orders %}
+                            {% for ret in returns %}
                             <tr class="border-b border-[#2A2A2A] last:border-0 hover:bg-[#1A1A1A] transition-colors">
-                                <td class="px-6 py-4">
-                                    <div class="text-[#A5D6A7] font-mono text-xs">SV-{{ order.id|stringformat:"04d" }}</div>
+
+                                <!-- ID -->
+                                <td class="px-6 py-4 text-xs text-[#888] font-bold">
+                                    #{{ forloop.counter|stringformat:"02d" }}
                                 </td>
+
+                                <!-- Order ID -->
                                 <td class="px-6 py-4">
-                                    <div class="text-white text-xs font-bold mb-1">{{ order.user.username }}</div>
-                                    <div class="text-[#777] text-[10px]">{{ order.user.email }}</div>
+                                    <a href="{% url 'admin_order_details' ret.order.id %}"
+                                        class="text-[#A5D6A7] font-mono text-xs hover:text-white transition-colors">
+                                        SV-{{ ret.order.id|stringformat:"08X" }}
+                                    </a>
                                 </td>
+
+                                <!-- Product -->
                                 <td class="px-6 py-4">
-                                    <div class="text-[#aaa] text-xs mb-1">{{ order.created_at|date:"d M Y" }}</div>
-                                    <div class="text-[#777] text-[10px]">{{ order.created_at|time:"H:i" }}</div>
+                                    <div class="text-white text-xs font-bold mb-0.5">
+                                        {{ ret.order_item.product_variant.product.product_name }}
+                                    </div>
+                                    <div class="text-[#777] text-[10px]">
+                                        Size {{ ret.order_item.product_variant.size|default:"-" }} ·
+                                        {{ ret.order_item.product_variant.color|default:"-" }}
+                                    </div>
                                 </td>
+
+                                <!-- Customer -->
                                 <td class="px-6 py-4">
-                                    <div class="text-white text-xs font-bold">₹{{ order.total_amount }}</div>
+                                    <div class="text-white text-xs font-bold mb-0.5">{{ ret.user.username }}</div>
+                                    <div class="text-[#777] text-[10px]">{{ ret.user.email }}</div>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <div class="text-[#888] text-[10px] font-bold uppercase tracking-wider">{{ order.payment_method }}</div>
+
+                                <!-- Amount -->
+                                <td class="px-6 py-4 text-white text-xs font-bold">
+                                    ₹{{ ret.order_item.total }}
                                 </td>
+
+                                <!-- Status badge -->
                                 <td class="px-6 py-4">
-                                    {% if order.order_status == 'cancelled' or order.order_status == 'returned' %}
-                                    <span class="inline-flex items-center px-2 py-1 rounded-md border border-[#ef4444]/30 bg-[#ef4444]/10 text-[#ef4444] text-[9px] font-bold uppercase tracking-widest">
-                                        {{ order.order_status }}
-                                    </span>
-                                    {% elif order.order_status == 'pending' or order.order_status == 'processing' %}
-                                    <span class="inline-flex items-center px-2 py-1 rounded-md border border-[#10b981]/30 bg-[#10b981]/10 text-[#10b981] text-[9px] font-bold uppercase tracking-widest">
-                                        {{ order.order_status }}
-                                    </span>
-                                    {% elif order.order_status == 'shipped' %}
-                                    <span class="inline-flex items-center px-2 py-1 rounded-md border border-[#3b82f6]/30 bg-[#3b82f6]/10 text-[#3b82f6] text-[9px] font-bold uppercase tracking-widest">
-                                        {{ order.order_status }}
-                                    </span>
+                                    {% if ret.status == 'Refunded' %}
+                                        <span class="inline-flex px-2 py-1 rounded border border-[#A5D6A7]/30 bg-[#A5D6A7]/10 text-[#A5D6A7] text-[9px] font-bold uppercase tracking-widest">
+                                            Refunded
+                                        </span>
+                                    {% elif ret.status == 'Approved' %}
+                                        <span class="inline-flex px-2 py-1 rounded border border-[#3b82f6]/30 bg-[#3b82f6]/10 text-[#3b82f6] text-[9px] font-bold uppercase tracking-widest">
+                                            Approved
+                                        </span>
+                                    {% elif ret.status == 'Rejected' %}
+                                        <span class="inline-flex px-2 py-1 rounded border border-[#ef4444]/30 bg-[#ef4444]/10 text-[#ef4444] text-[9px] font-bold uppercase tracking-widest">
+                                            Rejected
+                                        </span>
+                                    {% elif ret.status == 'Reviewing' %}
+                                        <span class="inline-flex px-2 py-1 rounded border border-[#6366f1]/30 bg-[#6366f1]/10 text-[#6366f1] text-[9px] font-bold uppercase tracking-widest">
+                                            Reviewing
+                                        </span>
                                     {% else %}
-                                    <span class="inline-flex items-center px-2 py-1 rounded-md border border-[#888]/30 bg-[#888]/10 text-[#aaa] text-[9px] font-bold uppercase tracking-widest">
-                                        {{ order.order_status }}
-                                    </span>
+                                        <span class="inline-flex px-2 py-1 rounded border border-[#f59e0b]/30 bg-[#f59e0b]/10 text-[#f59e0b] text-[9px] font-bold uppercase tracking-widest">
+                                            Requested
+                                        </span>
                                     {% endif %}
                                 </td>
+
+                                <!-- Action -->
                                 <td class="px-6 py-4 text-right">
-                                    <a href="{% url 'admin_order_details' order.id %}" class="text-[#A5D6A7] hover:text-white text-xs font-semibold transition-colors">Details</a>
+                                    <a href="{% url 'admin_return_detail' ret.id %}"
+                                        class="text-[#A5D6A7] hover:text-white text-xs font-semibold transition-colors uppercase tracking-wider">
+                                        Manage
+                                    </a>
                                 </td>
+
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="7" class="px-6 py-8 text-center text-[#777] text-sm">No orders found.</td>
+                                <td colspan="7" class="px-6 py-10 text-center text-[#777] text-sm">
+                                    No return requests found.
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
-                
-                <!-- Pagination -->
-                {% if orders.has_other_pages or orders.paginator.count > 0 %}
+
+                <!-- Footer: count -->
+                {% if returns.has_other_pages or returns.paginator.count > 0 %}
                 <div class="p-4 bg-[#1A1A1C]/40 border-t border-[#2A2A2A] flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-[#777]">
-                    <div>Showing {{ orders.start_index|default:0 }} to {{ orders.end_index|default:0 }} of {{ orders.paginator.count }} results</div>
+                    <div>Showing {{ returns.start_index|default:0 }} to {{ returns.end_index|default:0 }} of {{ returns.paginator.count }} results</div>
                     <div class="flex items-center gap-3">
-                        {% if orders.has_previous %}
-                        <a href="?page={{ orders.previous_page_number }}&q={{ search }}&status={{ status }}&sort={{ sort }}"
+                        {% if returns.has_previous %}
+                        <a href="?page={{ returns.previous_page_number }}&q={{ search }}&status={{ status_filter }}&sort={{ sort }}"
                            class="w-8 h-8 rounded-lg bg-[#1C1C1E] border border-[#2A2A2A] text-white flex items-center justify-center hover:bg-[#252528] transition-colors">&lt;</a>
                         {% else %}
                         <button class="w-8 h-8 rounded-lg bg-[#1C1C1E] border border-[#2A2A2A] text-white flex items-center justify-center opacity-30" disabled>&lt;</button>
                         {% endif %}
-                        <span class="text-white">Page {{ orders.number }} of {{ orders.paginator.num_pages }}</span>
-                        {% if orders.has_next %}
-                        <a href="?page={{ orders.next_page_number }}&q={{ search }}&status={{ status }}&sort={{ sort }}"
+                        <span class="text-white">Page {{ returns.number }} of {{ returns.paginator.num_pages }}</span>
+                        {% if returns.has_next %}
+                        <a href="?page={{ returns.next_page_number }}&q={{ search }}&status={{ status_filter }}&sort={{ sort }}"
                            class="w-8 h-8 rounded-lg bg-[#1C1C1E] border border-[#2A2A2A] text-white flex items-center justify-center hover:bg-[#252528] transition-colors">&gt;</a>
                         {% else %}
                         <button class="w-8 h-8 rounded-lg bg-[#1C1C1E] border border-[#2A2A2A] text-white flex items-center justify-center opacity-30" disabled>&gt;</button>
@@ -211,7 +260,6 @@
                     </div>
                 </div>
                 {% endif %}
-
         </div>
     </main>
 

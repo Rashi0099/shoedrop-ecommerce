@@ -11,13 +11,37 @@ from apps.category.models import Category, SubCategory
 @staff_member_required(login_url='admin_login')
 def category_list(request):
     search = request.GET.get('search', '')
+    sort = request.GET.get('sort', '')
+    status_filter = request.GET.get('status', '')
+
+    subcategories_queryset = SubCategory.objects.select_related('category')
 
     if search:
-        subcategories_queryset = SubCategory.objects.select_related('category').filter(
+        subcategories_queryset = subcategories_queryset.filter(
             Q(name__icontains=search) | Q(category__name__icontains=search)
-        ).order_by('category__name', 'name')
+        )
+
+    if status_filter == 'active':
+        subcategories_queryset = subcategories_queryset.filter(is_active=True)
+    elif status_filter == 'inactive':
+        subcategories_queryset = subcategories_queryset.filter(is_active=False)
+
+    # Sorting logic
+    if sort == 'category':
+        subcategories_queryset = subcategories_queryset.order_by('category__name', 'name')
+    elif sort == '-category':
+        subcategories_queryset = subcategories_queryset.order_by('-category__name', 'name')
+    elif sort == 'subcategory':
+        subcategories_queryset = subcategories_queryset.order_by('name')
+    elif sort == '-subcategory':
+        subcategories_queryset = subcategories_queryset.order_by('-name')
+    elif sort == 'status':
+        subcategories_queryset = subcategories_queryset.order_by('-is_active', 'category__name')
+    elif sort == '-status':
+        subcategories_queryset = subcategories_queryset.order_by('is_active', 'category__name')
     else:
-        subcategories_queryset = SubCategory.objects.select_related('category').all().order_by('category__name', 'name')
+        # Default sort
+        subcategories_queryset = subcategories_queryset.order_by('category__name', 'name')
 
     combined_list = list(subcategories_queryset)
     total_count = len(combined_list)
@@ -29,7 +53,9 @@ def category_list(request):
     context = {
         'categories': page_obj,
         'total_categories': total_count,
-        'search': search
+        'search': search,
+        'sort': sort,
+        'status_filter': status_filter
     }
 
     return render(

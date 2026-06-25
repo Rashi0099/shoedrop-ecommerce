@@ -139,7 +139,7 @@
       
       <!-- Top Links & Title -->
       <div class="border-b border-slate-100 pb-5 mb-6">
-        <a href="#" class="inline-flex items-center text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-950 mb-4 transition-colors">
+        <a href="{% url 'order_list' %}" class="inline-flex items-center text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-950 mb-4 transition-colors">
           <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
           Back to Orders
         </a>
@@ -147,7 +147,9 @@
         <p class="text-xs text-slate-400 font-medium mt-1">Placed on {{ order.created_at|date:"M d, Y" }} at {{ order.created_at|time:"h:i A" }}</p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <form method="POST" action="{% url 'cancel_order' order.id %}" id="bulk-action-form">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         <!-- Left Column -->
         <div class="lg:col-span-7 flex flex-col gap-6">
@@ -155,7 +157,7 @@
           <!-- Tracking Progress -->
           <div class="border border-slate-100 rounded-xl p-6 bg-slate-50/30 relative flex justify-between items-center text-center">
             <div class="tracking-line"></div>
-            <div class="tracking-progress" style="width: {% if order.order_status == 'pending' %}0%{% elif order.order_status == 'processing' %}33%{% elif order.order_status == 'shipped' %}66%{% elif order.order_status == 'delivered' %}100%{% else %}0%{% endif %};"></div>
+            <div class="tracking-progress" style="width: {% if order.order_status == 'pending' %}0%{% elif order.order_status == 'processing' %}33%{% elif order.order_status == 'shipped' %}66%{% elif order.order_status == 'delivered' or order.order_status == 'return_requested' or order.order_status == 'returned' or order.order_status == 'return_rejected' %}100%{% else %}0%{% endif %};"></div>
             
             <div class="relative z-10 flex flex-col items-center gap-2">
               <div class="w-6 h-6 rounded-full bg-slate-950 flex items-center justify-center text-white ring-4 ring-white">
@@ -165,21 +167,21 @@
             </div>
             
             <div class="relative z-10 flex flex-col items-center gap-2">
-              <div class="w-6 h-6 rounded-full {% if order.order_status == 'processing' or order.order_status == 'shipped' or order.order_status == 'delivered' %}bg-slate-950 text-white{% else %}bg-slate-200 text-transparent{% endif %} flex items-center justify-center ring-4 ring-white">
+              <div class="w-6 h-6 rounded-full {% if order.order_status in 'processing,shipped,delivered,return_requested,returned,return_rejected' %}bg-slate-950 text-white{% else %}bg-slate-200 text-transparent{% endif %} flex items-center justify-center ring-4 ring-white">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
               </div>
               <span class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Processing</span>
             </div>
             
             <div class="relative z-10 flex flex-col items-center gap-2">
-              <div class="w-6 h-6 rounded-full {% if order.order_status == 'shipped' or order.order_status == 'delivered' %}bg-slate-950 text-white{% else %}bg-slate-200 text-transparent{% endif %} flex items-center justify-center ring-4 ring-white">
+              <div class="w-6 h-6 rounded-full {% if order.order_status in 'shipped,delivered,return_requested,returned,return_rejected' %}bg-slate-950 text-white{% else %}bg-slate-200 text-transparent{% endif %} flex items-center justify-center ring-4 ring-white">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
               </div>
               <span class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Shipped</span>
             </div>
             
             <div class="relative z-10 flex flex-col items-center gap-2">
-              <div class="w-6 h-6 rounded-full {% if order.order_status == 'delivered' %}bg-slate-950 text-white{% else %}bg-slate-200 text-transparent{% endif %} flex items-center justify-center ring-4 ring-white">
+              <div class="w-6 h-6 rounded-full {% if order.order_status in 'delivered,return_requested,returned,return_rejected' %}bg-slate-950 text-white{% else %}bg-slate-200 text-transparent{% endif %} flex items-center justify-center ring-4 ring-white">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
               </div>
               <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Delivered</span>
@@ -189,7 +191,17 @@
           <!-- Items Ordered -->
           <div class="border border-slate-100 rounded-xl p-6 bg-slate-50/30">
             {% for item in order.items.all %}
-            <div class="flex items-center gap-5">
+            <div class="flex flex-col gap-4" id="item-row-{{ item.id }}">
+              <div class="flex items-start gap-5">
+              
+              <!-- Checkbox -->
+              {% if item.item_status == 'active' and order.order_status in 'pending,processing,delivered' %}
+              <div class="mt-6 shrink-0">
+                <input type="checkbox" name="selected_items" value="{{ item.id }}" class="w-4 h-4 rounded border-slate-300 accent-slate-950 cursor-pointer bulk-checkbox">
+              </div>
+              {% endif %}
+              <!-- Thumbnail -->
+
               <div class="w-20 h-20 bg-white border border-slate-100 rounded-lg overflow-hidden shrink-0 flex items-center justify-center">
                 {% if item.product_variant.images.first %}
                   <img src="{{ item.product_variant.images.first.image.url }}" class="w-full h-full object-cover">
@@ -197,27 +209,162 @@
                   <span class="text-[9px] font-bold text-slate-300 uppercase">Image</span>
                 {% endif %}
               </div>
-              
-              <div class="flex-1 flex flex-col sm:flex-row justify-between items-start">
-                <div>
-                  <h3 class="text-sm font-black text-slate-950 uppercase tracking-wide">{{ item.product_variant.product.product_name }}</h3>
-                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 mb-3">
-                    Color: {{ item.product_variant.color|default:"N/A" }} | Size: {{ item.product_variant.size|default:"N/A" }}
-                  </p>
-                  <div class="inline-flex border border-slate-200 bg-white rounded-full px-3 py-1 text-[10px] font-bold text-slate-950 uppercase tracking-widest">
-                    Qty: {{ item.quantity }}
+
+              <!-- Details + actions -->
+              <div class="flex-1 flex flex-col gap-2">
+                <div class="flex flex-col sm:flex-row justify-between items-start">
+                  <div>
+                    <h3 class="text-sm font-black text-slate-950 uppercase tracking-wide">{{ item.product_variant.product.product_name }}</h3>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 mb-2">
+                      Color: {{ item.product_variant.color|default:"N/A" }} | Size: {{ item.product_variant.size|default:"N/A" }}
+                    </p>
+                    <div class="inline-flex border border-slate-200 bg-white rounded-full px-3 py-1 text-[10px] font-bold text-slate-950 uppercase tracking-widest">
+                      Qty: {{ item.quantity }}
+                    </div>
                   </div>
+                  <div class="text-sm font-black text-slate-950 mt-3 sm:mt-0">₹{{ item.unit_price }}</div>
                 </div>
-                <div class="text-sm font-black text-slate-950 mt-3 sm:mt-0">
-                  ₹{{ item.unit_price }}
-                </div>
+
+                <!-- Per-item status badge -->
+                {% if item.item_status == 'cancelled' %}
+                  <span class="self-start inline-flex items-center gap-1.5 bg-red-50 text-red-500 border border-red-200 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    Item Cancelled
+                  </span>
+                {% elif item.item_status == 'return_requested' %}
+                  <span class="self-start inline-flex items-center gap-1.5 bg-amber-50 text-amber-500 border border-amber-200 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    Return Requested
+                  </span>
+                {% elif item.item_status == 'returned' %}
+                  <span class="self-start inline-flex items-center gap-1.5 bg-blue-50 text-blue-500 border border-blue-200 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Returned
+                  </span>
+                {% elif item.item_status == 'return_rejected' %}
+                  <span class="self-start inline-flex items-center gap-1.5 bg-red-50 text-red-500 border border-red-200 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    Return Rejected
+                  </span>
+                {% endif %}
               </div>
+              </div> <!-- End Top Row -->
+
+              <!-- Bottom Row: Full Width Return Tracking -->
+              {% if item.item_status == 'return_requested' or item.item_status == 'return_rejected' or item.item_status == 'returned' %}
+                {% with return_request=item.returns.first %}
+                {% if return_request %}
+                <div class="border border-slate-100 rounded-xl p-4 sm:p-6 bg-slate-50/30 w-full mt-2">
+                  <div class="mb-5">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Return Tracking</span>
+                  </div>
+                  
+                  <div class="relative flex justify-between items-center text-center px-4 sm:px-8">
+                    <div class="tracking-line !top-3 !left-4 !right-4 sm:!left-8 sm:!right-8"></div>
+                    <div class="tracking-progress !top-3 !left-4 sm:!left-8" style="width: {% if return_request.status == 'Pending' %}0%{% elif return_request.status == 'Reviewing' %}33%{% elif return_request.status == 'Approved' or return_request.status == 'Rejected' %}66%{% elif return_request.status == 'Refunded' %}100%{% else %}0%{% endif %}; {% if return_request.status == 'Rejected' %}background-color: #ef4444;{% endif %}"></div>
+                    
+                    <div class="relative z-10 flex flex-col items-center gap-2">
+                      <div class="w-6 h-6 rounded-full bg-slate-950 flex items-center justify-center text-white ring-4 ring-white">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                      </div>
+                      <span class="text-[8px] font-bold text-slate-600 uppercase tracking-widest">Submitted</span>
+                    </div>
+                    
+                    <div class="relative z-10 flex flex-col items-center gap-2">
+                      <div class="w-6 h-6 rounded-full {% if return_request.status != 'Pending' %}bg-slate-950 text-white{% else %}bg-slate-200 text-transparent{% endif %} flex items-center justify-center ring-4 ring-white">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                      </div>
+                      <span class="text-[8px] font-bold text-slate-600 uppercase tracking-widest">Reviewing</span>
+                    </div>
+                    
+                    <div class="relative z-10 flex flex-col items-center gap-2">
+                      {% if return_request.status == 'Approved' or return_request.status == 'Refunded' %}
+                      <div class="w-6 h-6 rounded-full bg-slate-950 text-white flex items-center justify-center ring-4 ring-white">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                      </div>
+                      <span class="text-[8px] font-bold text-slate-600 uppercase tracking-widest">Approved</span>
+                      {% elif return_request.status == 'Rejected' %}
+                      <div class="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center ring-4 ring-white">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </div>
+                      <span class="text-[8px] font-bold text-red-500 uppercase tracking-widest">Rejected</span>
+                      {% else %}
+                      <div class="w-6 h-6 rounded-full bg-slate-200 text-transparent flex items-center justify-center ring-4 ring-white">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                      </div>
+                      <span class="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Decision</span>
+                      {% endif %}
+                    </div>
+                    
+                    <div class="relative z-10 flex flex-col items-center gap-2">
+                      <div class="w-6 h-6 rounded-full {% if return_request.status == 'Refunded' %}bg-slate-950 text-white{% else %}bg-slate-200 text-transparent{% endif %} flex items-center justify-center ring-4 ring-white">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                      </div>
+                      <span class="text-[8px] font-bold {% if return_request.status == 'Refunded' %}text-slate-600{% else %}text-slate-400{% endif %} uppercase tracking-widest">Refunded</span>
+                    </div>
+                  </div>
+
+                  <!-- Return Request Details -->
+                  <div class="mt-6 pt-4 border-t border-slate-200/60 grid grid-cols-1 md:grid-cols-3 gap-6 text-[10px] text-slate-500">
+                    <div>
+                      <span class="block text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Return Information</span>
+                      <p class="font-bold text-slate-950">Type: <span class="font-medium text-slate-600 ml-1">{{ return_request.return_type|default:"Refund" }}</span></p>
+                      <p class="font-bold text-slate-950 mt-1">Reason: <span class="font-medium text-slate-600 ml-1">{{ return_request.reason|default:"N/A" }}</span></p>
+                      <p class="font-bold text-slate-950 mt-1">Refund Method: <span class="font-medium text-slate-600 ml-1">{{ return_request.refund_mode|default:"N/A" }}</span></p>
+                    </div>
+                    
+                    <div>
+                      <span class="block text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Pickup Address</span>
+                      {% if return_request.pickup_address %}
+                        <p class="font-bold text-slate-950">{{ return_request.pickup_address.full_name }}</p>
+                        <p class="font-medium text-slate-600 leading-normal mt-0.5">
+                          {{ return_request.pickup_address.address }}, {{ return_request.pickup_address.city }}<br>
+                          {{ return_request.pickup_address.state }}, {{ return_request.pickup_address.postal_code }}
+                        </p>
+                        <p class="font-medium text-slate-600 mt-1">Phone: {{ return_request.pickup_address.phone_number }}</p>
+                      {% else %}
+                        <p class="font-medium text-slate-400">No pickup address selected.</p>
+                      {% endif %}
+                    </div>
+                    
+                    <div>
+                      <span class="block text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Comments</span>
+                      <p class="font-medium text-slate-600 leading-relaxed italic bg-white border border-slate-100 rounded-lg p-2.5 max-h-24 overflow-y-auto">
+                        {{ return_request.comments|default:"No additional comments." }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Uploaded Images -->
+                  {% if return_request.images.exists %}
+                  <div class="mt-4 pt-4 border-t border-slate-200/60">
+                    <span class="block text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-2">Uploaded Images</span>
+                    <div class="flex gap-2 overflow-x-auto pb-1">
+                      {% for img in return_request.images.all %}
+                        <a href="{{ img.image.url }}" target="_blank" class="w-12 h-12 rounded-lg border border-slate-200 overflow-hidden shrink-0 block hover:border-slate-400 transition-colors">
+                          <img src="{{ img.image.url }}" class="w-full h-full object-cover">
+                        </a>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  {% endif %}
+                </div>
+                {% else %}
+                  <!-- Fallback if no return request object is found -->
+                  <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-600 border border-slate-200 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest mt-2">
+                    {{ item.get_item_status_display }}
+                  </span>
+                {% endif %}
+                {% endwith %}
+              {% endif %}
+
             </div>
             {% if not forloop.last %}<hr class="my-5 border-slate-100">{% endif %}
             {% empty %}
             <p class="text-xs font-semibold text-slate-500 text-center">No items found.</p>
             {% endfor %}
           </div>
+
 
           <!-- Address and Shipping -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
@@ -267,21 +414,64 @@
               <span class="text-xl font-black text-slate-950">₹{{ order.total_amount }}</span>
             </div>
 
-            <a href="#" class="w-full bg-slate-950 text-white text-[10px] font-bold uppercase tracking-widest py-3 rounded-xl shadow-md hover:bg-slate-900 transition flex justify-center items-center gap-2 mb-3">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            <a href="#" class="block w-full bg-slate-950 text-white text-[10px] font-bold uppercase tracking-widest py-3 rounded-xl shadow-md hover:bg-slate-900 transition text-center mb-3">
               Download Invoice
             </a>
 
             <div class="grid grid-cols-2 gap-3">
-              {% if order.order_status != 'cancelled' and order.order_status != 'returned' and order.order_status != 'delivered' %}
-              <button class="col-span-2 border border-slate-300 text-slate-600 hover:bg-white hover:text-slate-950 transition text-[10px] font-bold uppercase tracking-widest py-3 rounded-xl bg-transparent">
-                Cancel Order
+
+              {% if order.order_status == 'delivered' %}
+              <!-- Return selected items -->
+              <button type="button" onclick="submitReturnForm()"
+                class="col-span-2 text-center border border-slate-300 text-slate-600 hover:bg-slate-950 hover:text-white hover:border-slate-950 transition text-[10px] font-bold uppercase tracking-widest py-3 rounded-xl">
+                Return Selected Items
               </button>
-              {% elif order.order_status == 'delivered' %}
-              <button class="col-span-2 border border-slate-300 text-slate-600 hover:bg-white hover:text-slate-950 transition text-[10px] font-bold uppercase tracking-widest py-3 rounded-xl bg-transparent">
-                Return Order
+
+              {% elif order.order_status in 'return_requested,returned,return_rejected' %}
+              <!-- Dynamic Return Status based on the actual Return object -->
+              {% with latest_return=order.returns.last %}
+                {% if latest_return %}
+                  {% if latest_return.status == 'Pending' %}
+                    <div class="col-span-2 text-center text-[10px] font-bold uppercase tracking-widest py-3 rounded-xl bg-amber-50 text-amber-600 border border-amber-200">
+                      Return Requested
+                    </div>
+                  {% elif latest_return.status == 'Reviewing' %}
+                    <div class="col-span-2 text-center text-[10px] font-bold uppercase tracking-widest py-3 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200">
+                      Return Under Review
+                    </div>
+                  {% elif latest_return.status == 'Approved' %}
+                    <div class="col-span-2 text-center text-[10px] font-bold uppercase tracking-widest py-3 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200">
+                      Return Approved
+                    </div>
+                  {% elif latest_return.status == 'Refunded' %}
+                    <div class="col-span-2 text-center text-[10px] font-bold uppercase tracking-widest py-3 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200">
+                      Return Completed
+                    </div>
+                  {% elif latest_return.status == 'Rejected' %}
+                    <div class="col-span-2 text-center text-[10px] font-bold uppercase tracking-widest py-3 rounded-xl bg-red-50 text-red-600 border border-red-200">
+                      Return Rejected
+                    </div>
+                  {% endif %}
+                {% else %}
+                  <!-- Fallback -->
+                  <div class="col-span-2 text-center text-[10px] font-bold uppercase tracking-widest py-3 rounded-xl bg-slate-100 text-slate-600 border border-slate-200">
+                    {{ order.get_order_status_display }}
+                  </div>
+                {% endif %}
+              {% endwith %}
+
+              {% elif order.order_status == 'pending' or order.order_status == 'processing' %}
+              <!-- Cancel selected items -->
+              <button type="submit" onclick="return confirm('Are you sure you want to cancel the selected items?');"
+                class="col-span-2 w-full border border-slate-300 text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition text-[10px] font-bold uppercase tracking-widest py-3 rounded-xl bg-transparent">
+                Cancel Selected Items
               </button>
+              {% elif order.order_status == 'cancelled' %}
+              <div class="col-span-2 text-center text-[10px] font-bold uppercase tracking-widest py-3 rounded-xl bg-red-50 text-red-600 border border-red-200">
+                Order Cancelled
+              </div>
               {% endif %}
+
             </div>
 
           </div>
@@ -301,6 +491,7 @@
 
       </div>
       
+    </form>
     </main>
   </div>
 
@@ -349,5 +540,68 @@
     </div>
   </footer>
 
+  <!-- Flash Messages -->
+  {% if messages %}
+  <div id="flash-messages" class="fixed top-24 right-4 z-50 flex flex-col gap-2">
+    {% for message in messages %}
+    <div class="flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg text-xs font-bold uppercase tracking-widest
+      {% if message.tags == 'success' %}bg-emerald-600 text-white
+      {% elif message.tags == 'error' %}bg-red-600 text-white
+      {% else %}bg-slate-800 text-white{% endif %}">
+      {% if message.tags == 'success' %}
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+      {% else %}
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      {% endif %}
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  <script>
+    setTimeout(() => {
+      const el = document.getElementById('flash-messages');
+      if (el) el.style.display = 'none';
+    }, 4000);
+  </script>
+  {% endif %}
+
+  <script>
+    function togglePanel(id) {
+      const panel = document.getElementById(id);
+      if (!panel) return;
+      // Toggle between flex and none (avoids Tailwind hidden/flex conflict)
+      panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
+    }
+
+    const refundHints = {
+      'Wallet': '💳 Refund will be credited to your ShoeDrop wallet after approval.',
+      'Original Payment': '🏦 Refund will be sent back to your original payment method within 5–7 business days.',
+      'UPI': '📲 Our team will contact you to collect your UPI ID after return approval.',
+      'GPay': '📲 Our team will contact you to collect your GPay number after return approval.',
+    };
+
+    function updateRefundHint(value, itemId) {
+      const hint = document.getElementById('refund_hint-' + itemId);
+      if (hint) hint.textContent = refundHints[value] || '';
+    }
+
+    // Set hint on page load for all return forms
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('[id^="refund_mode-"]').forEach(select => {
+        const itemId = select.id.split('-')[1];
+        updateRefundHint(select.value, itemId);
+      });
+    });
+  
+    function submitReturnForm() {
+      let selected = [];
+      document.querySelectorAll('.bulk-checkbox:checked').forEach(cb => selected.push(cb.value));
+      if (selected.length === 0) {
+        alert('Please select at least one item to return.');
+        return;
+      }
+      window.location.href = "{% url 'return_order' order.id %}?items=" + selected.join(',');
+    }
+  </script>
 </body>
 </html>

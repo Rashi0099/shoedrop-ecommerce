@@ -157,7 +157,11 @@
               <h2 class="font-semibold text-base">Select Delivery Address</h2>
               <p class="text-xs text-gray-400">Choose where you'd like this delivered.</p>
             </div>
-            <a href="{% url 'address_list' %}" class="text-sm font-medium text-brand-dark hover:underline whitespace-nowrap">Manage</a>
+            {% if request.GET.buy_now %}
+              <a href="{% url 'add_address' %}?buy_now={{ request.GET.buy_now }}" class="text-sm font-medium text-brand-dark hover:underline whitespace-nowrap">Add Address</a>
+            {% else %}
+              <a href="{% url 'add_address' %}?from_checkout=True" class="text-sm font-medium text-brand-dark hover:underline whitespace-nowrap">Add Address</a>
+            {% endif %}
           </div>
 
           {% if addresses %}
@@ -180,7 +184,11 @@
             </div>
           {% else %}
             <p class="text-xs text-red-500 mt-3 mb-4">You need to add an address to continue.</p>
-            <a href="{% url 'add_address' %}"
+            {% if request.GET.buy_now %}
+              <a href="{% url 'add_address' %}?buy_now={{ request.GET.buy_now }}"
+            {% else %}
+              <a href="{% url 'add_address' %}?from_checkout=True"
+            {% endif %}
                class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-xl py-10 text-gray-500 hover:border-brand-dark hover:text-brand-dark transition-colors">
               <span class="flex items-center justify-center w-8 h-8 rounded-full border border-gray-300 text-lg leading-none">+</span>
               <span class="text-sm font-medium">Add New Address</span>
