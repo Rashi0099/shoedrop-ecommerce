@@ -414,7 +414,7 @@
               <span class="text-xl font-black text-slate-950">₹{{ order.total_amount }}</span>
             </div>
 
-            <a href="#" class="block w-full bg-slate-950 text-white text-[10px] font-bold uppercase tracking-widest py-3 rounded-xl shadow-md hover:bg-slate-900 transition text-center mb-3">
+            <a href="{% url 'download_invoice' order.id %}" target="_blank" class="block w-full bg-slate-950 text-white text-[10px] font-bold uppercase tracking-widest py-3 rounded-xl shadow-md hover:bg-slate-900 transition text-center mb-3">
               Download Invoice
             </a>
 

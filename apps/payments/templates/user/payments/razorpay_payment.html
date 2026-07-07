@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Razorpay Payment</title>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    var options = {
+
+        key: "{{ razorpay_key }}",
+
+        amount: "{{ amount }}",
+
+        currency: "INR",
+
+        name: "ShoeDrop",
+
+        description: "Order Payment",
+
+        order_id: "{{ razorpay_order_id }}",
+
+        redirect: false,
+
+        handler: function (response) {
+
+            console.log("Payment Success");
+            console.log(response);
+
+            var form = document.createElement("form");
+            form.method = "POST";
+            form.action = "{% url 'verify_razorpay_payment' %}";
+
+            // CSRF
+            var csrf = document.createElement("input");
+            csrf.type = "hidden";
+            csrf.name = "csrfmiddlewaretoken";
+            csrf.value = "{{ csrf_token }}";
+            form.appendChild(csrf);
+
+            // Order ID
+            var order = document.createElement("input");
+            order.type = "hidden";
+            order.name = "razorpay_order_id";
+            order.value = response.razorpay_order_id;
+            form.appendChild(order);
+
+            // Payment ID
+            var payment = document.createElement("input");
+            payment.type = "hidden";
+            payment.name = "razorpay_payment_id";
+            payment.value = response.razorpay_payment_id;
+            form.appendChild(payment);
+
+            // Signature
+            var signature = document.createElement("input");
+            signature.type = "hidden";
+            signature.name = "razorpay_signature";
+            signature.value = response.razorpay_signature;
+            form.appendChild(signature);
+
+            document.body.appendChild(form);
+            form.submit();
+        },
+
+        modal: {
+
+            escape: true,
+
+            ondismiss: function () {
+
+                console.log("Checkout Closed");
+                window.location.href = "{% url 'checkout' %}";
+
+            }
+
+        },
+
+        theme: {
+
+            color: "#043322"
+
+        }
+
+    };
+
+    var rzp = new Razorpay(options);
+
+    rzp.on("payment.failed", function (response) {
+
+        console.log("Payment Failed");
+        console.log(response.error);
+
+        alert(
+            "Code : " + response.error.code + "\n\n" +
+            "Description : " + response.error.description + "\n\n" +
+            "Source : " + response.error.source + "\n\n" +
+            "Step : " + response.error.step + "\n\n" +
+            "Reason : " + response.error.reason
+        );
+
+        console.log("Metadata :", response.error.metadata);
+
+    });
+
+    rzp.open();
+
+});
+
+</script>
+
+</body>
+</html>

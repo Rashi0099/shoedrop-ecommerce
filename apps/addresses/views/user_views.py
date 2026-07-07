@@ -119,7 +119,6 @@ def add_address(request):
         )
         messages.success(request,'new address added')
 
-        # Beginner-friendly explicit redirection check
         buy_now_id = request.GET.get('buy_now')
         from_checkout = request.GET.get('from_checkout')
 

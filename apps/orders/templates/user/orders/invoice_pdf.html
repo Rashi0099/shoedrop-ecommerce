@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice #{{ order.id }}</title>
+    <style>
+        /* 
+          xhtml2pdf supports basic CSS. 
+          Using @page for margins and simple tables for layout is the safest approach.
+        */
+        @page {
+            size: a4;
+            margin: 1cm;
+        }
+        body {
+            font-family: Helvetica, sans-serif;
+            color: #333;
+            font-size: 12px;
+        }
+        /* Top Header Table */
+        .header-table {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        .header-left {
+            text-align: left;
+        }
+        .header-right {
+            text-align: right;
+        }
+        .company-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #043322; /* Dark green theme color */
+            margin-bottom: 5px;
+        }
+        .invoice-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1f2937;
+            letter-spacing: 2px;
+        }
+        .gray-text {
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        /* Details Table (Shipping & Payment) */
+        .details-table {
+            width: 100%;
+            margin-bottom: 40px;
+        }
+        .details-title {
+            font-size: 10px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 10px;
+        }
+        .bold-text {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #111827;
+        }
+
+        /* Items Table */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .items-table th {
+            text-align: left;
+            font-size: 10px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .items-table td {
+            padding: 15px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        /* Summary Table */
+        .summary-table {
+            width: 100%;
+        }
+        .summary-right {
+            width: 300px;
+            float: right;
+        }
+        .summary-row td {
+            padding: 8px 0;
+            text-align: right;
+        }
+        .summary-label {
+            color: #6b7280;
+            padding-right: 20px;
+        }
+        .summary-value {
+            font-weight: bold;
+        }
+        .grand-total {
+            font-size: 18px;
+            font-weight: bold;
+            color: #043322;
+            padding-top: 15px;
+        }
+        .grand-total-label {
+            font-size: 14px;
+            font-weight: bold;
+            padding-top: 15px;
+            padding-right: 20px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #374151;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .badge {
+            background-color: #fef3c7;
+            color: #d97706;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .badge-paid {
+            background-color: #d1fae5;
+            color: #047857;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <table class="header-table">
+        <tr>
+            <td class="header-left" style="width: 50%;">
+                <div class="company-name">ShoeDrop</div>
+                <div class="gray-text">
+                    128 High Street, Fashion District<br>
+                    Greater London, SE1 0NY<br>
+                    United Kingdom
+                </div>
+            </td>
+            <td class="header-right" style="width: 50%;">
+                <div class="invoice-title">INVOICE</div>
+                <br>
+                <div class="gray-text">
+                    Invoice No: <strong style="color: #333;">#INV-{{ order.id|stringformat:"04d" }}</strong><br>
+                    Order ID: <strong style="color: #333;">#ORD-{{ order.id|stringformat:"04d" }}</strong><br>
+                    Date: <strong style="color: #333;">{{ order.created_at|date:"M d, Y" }}</strong>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+
+    <!-- Shipping and Payment Details -->
+    <table class="details-table">
+        <tr>
+            <td style="width: 50%;">
+                <div class="details-title">SHIPPING TO</div>
+                <div class="bold-text">{{ order.address.name }}</div>
+                <div class="gray-text">
+                    {{ order.address.house_name }}, {{ order.address.street_name }}<br>
+                    {{ order.address.city }}, {{ order.address.state }} {{ order.address.pin_code }}<br>
+                    Phone: {{ order.address.phone }}
+                </div>
+            </td>
+            <td style="width: 50%;">
+                <div class="details-title">PAYMENT DETAILS</div>
+                
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="color: #6b7280; padding-bottom: 10px;">Method:</td>
+                        <td style="text-align: right; font-weight: bold; padding-bottom: 10px;">{{ order.payment_method|upper }}</td>
+                    </tr>
+                    <tr>
+                        <td style="color: #6b7280;">Status:</td>
+                        <td style="text-align: right;">
+                            {% if order.payment_status == 'paid' %}
+                                <span class="badge badge-paid">PAID</span>
+                            {% else %}
+                                <span class="badge">{{ order.payment_status|upper }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+
+    <!-- Order Items -->
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th style="width: 40%;">PRODUCT NAME</th>
+                <th style="width: 30%;">DETAILS</th>
+                <th style="width: 10%; text-align: center;">QTY</th>
+                <th style="width: 10%; text-align: right;">PRICE</th>
+                <th style="width: 10%; text-align: right;">TOTAL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>
+                    <strong style="color: #111827;">{{ item.product_variant.product.product_name }}</strong>
+                </td>
+                <td style="color: #6b7280; font-size: 11px;">
+                    Color: {{ item.product_variant.color }} | Size: {{ item.product_variant.size }}
+                </td>
+                <td style="text-align: center; font-weight: bold;">
+                    {{ item.quantity|stringformat:"02d" }}
+                </td>
+                <td style="text-align: right; color: #374151;">
+                    ₹{{ item.unit_price }}
+                </td>
+                <td style="text-align: right; font-weight: bold;">
+                    ₹{{ item.total }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+
+    <!-- Summary Section -->
+    <table class="summary-table">
+        <tr>
+            <td style="width: 50%;"></td>
+            <td style="width: 50%;">
+                <table style="width: 100%;" class="summary-row">
+                    <tr>
+                        <td class="summary-label">Subtotal</td>
+                        <td class="summary-value">₹{{ subtotal }}</td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label">Shipping</td>
+                        <td class="summary-value" style="color: #047857;">FREE</td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label">Estimated Tax (18%)</td>
+                        <td class="summary-value">₹{{ gst }}</td>
+                    </tr>
+                    <tr>
+                        <td class="grand-total-label">GRAND TOTAL</td>
+                        <td class="grand-total">₹{{ order.total_amount }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Footer -->
+    <div class="footer">
+        Thank you for shopping with us.<br>
+        <span style="font-weight: normal; font-size: 11px; color: #6b7280;">
+            support@shoedrop.com &nbsp;&nbsp;|&nbsp;&nbsp; www.shoedrop.com
+        </span>
+    </div>
+
+</body>
+</html>
