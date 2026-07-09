@@ -26,6 +26,14 @@ class User(AbstractUser):
         null=True
     )
 
+    referred_by = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='referrals'
+    )
+
     is_blocked = models.BooleanField(
         default=False
     )

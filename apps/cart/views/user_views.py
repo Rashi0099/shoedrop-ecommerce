@@ -19,7 +19,7 @@ def cart_view(request):
 
     subtotal = sum(item.get_total_price() for item in cart_items)
 
-    tax = round(subtotal * 10 / 100, 2)
+    tax = round(subtotal * 18 / 100, 2)
 
     total = subtotal + tax
 
@@ -94,7 +94,12 @@ def remove_from_cart(request, item_id):
 @login_required(login_url='login')
 def update_cart_quantity(request, item_id):
 
-    cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
+    try:
+        cart_item = CartItem.objects.get(id=item_id, user=request.user)
+    except CartItem.DoesNotExist:
+        messages.error(request, 'Cart item not found. It may have already been removed.')
+        return redirect('cart')
+
     action = request.POST.get('action')
 
     if action == 'increase':

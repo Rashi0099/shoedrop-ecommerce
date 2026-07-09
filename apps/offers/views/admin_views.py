@@ -4,6 +4,7 @@ from django.contrib import messages
 
 from apps.offers.models import Offer
 from apps.products.models import Product
+from apps.category.models import Category
 
 
 @login_required(login_url='admin_login')
@@ -37,6 +38,7 @@ def add_offer(request):
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
         product_ids = request.POST.getlist('products')
+        category_ids = request.POST.getlist('categories')
 
         offer = Offer.objects.create(
             offer_title=offer_title,
@@ -48,12 +50,15 @@ def add_offer(request):
 
         if product_ids:
             offer.products.set(Product.objects.filter(id__in=product_ids))
+        if category_ids:
+            offer.categories.set(Category.objects.filter(id__in=category_ids))
 
         messages.success(request, 'Offer created successfully.')
         return redirect('offer_list')
 
     products = Product.objects.all()
-    return render(request, 'admin/offers/add_offer.html', {'products': products})
+    categories = Category.objects.all()
+    return render(request, 'admin/offers/add_offer.html', {'products': products, 'categories': categories})
 
 
 @login_required(login_url='admin_login')
@@ -76,14 +81,22 @@ def edit_offer(request, offer_id):
             offer.products.set(Product.objects.filter(id__in=product_ids))
         else:
             offer.products.clear()
+            
+        category_ids = request.POST.getlist('categories')
+        if category_ids:
+            offer.categories.set(Category.objects.filter(id__in=category_ids))
+        else:
+            offer.categories.clear()
 
         messages.success(request, 'Offer updated successfully.')
         return redirect('offer_list')
 
     products = Product.objects.all()
+    categories = Category.objects.all()
     context = {
         'offer': offer,
         'products': products,
+        'categories': categories,
         'start_date_str': offer.start_date.strftime('%Y-%m-%dT%H:%M') if offer.start_date else '',
         'end_date_str': offer.end_date.strftime('%Y-%m-%dT%H:%M') if offer.end_date else '',
     }

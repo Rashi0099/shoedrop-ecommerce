@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from apps.products.models import Product
+from apps.category.models import Category
 
 
 class Offer(models.Model):
@@ -10,6 +11,7 @@ class Offer(models.Model):
     start_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
     products = models.ManyToManyField(Product, blank=True, related_name='offers')
+    categories = models.ManyToManyField(Category, blank=True, related_name='offers')
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

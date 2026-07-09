@@ -23,7 +23,7 @@
           <div class="z-10 max-w-[80%]">
             <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-3">The Referral Reward</p>
             <h2 class="text-2xl sm:text-3xl font-light text-slate-800 leading-tight">
-              Invite friends and earn <br/> <span class="font-medium text-[#1d4638]">₹200 in wallet</span> when they sign up
+              Invite friends and earn <br/> <span class="font-medium text-[#1d4638]">₹100 in wallet</span> when they sign up
             </h2>
           </div>
           <div class="bg-slate-50 w-12 h-12 rounded-full flex items-center justify-center shrink-0 border border-slate-100 z-10 group-hover:bg-[#1d4638]/5 transition-colors">
@@ -48,17 +48,7 @@
             </div>
           </div>
 
-          <!-- Direct Link -->
-          <div class="flex-1">
-            <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-2">Direct Link</p>
-            <div class="flex items-center">
-              <!-- Mock link for design -->
-              <input type="text" readonly value="{{ request.get_host }}/signup/?ref={{ request.user.referral_code }}" id="referralLink" class="w-full bg-slate-50 border border-r-0 border-slate-200 rounded-l-xl px-4 py-3 text-xs font-medium text-slate-400 focus:outline-none truncate">
-              <button onclick="copyToClipboard('referralLink')" class="bg-white text-slate-700 text-[10px] font-bold uppercase tracking-widest px-5 py-3 rounded-r-xl border border-slate-200 hover:bg-slate-50 transition shrink-0 h-[46px]">
-                Copy Link
-              </button>
-            </div>
-          </div>
+         
 
         </div>
       </div>
@@ -81,28 +71,19 @@
                 </tr>
               </thead>
               <tbody class="text-xs font-semibold text-slate-700">
-                <!-- Static Sample Data based on image -->
+                {% for referral in referrals %}
                 <tr class="border-b border-slate-50/50">
-                  <td class="py-4 text-slate-800">Sarah Jenkins</td>
+                  <td class="py-4 text-slate-800">{{ referral.username }}</td>
                   <td class="py-4 text-center">
                     <span class="inline-flex items-center justify-center bg-emerald-50 text-emerald-600 text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-md border border-emerald-100">Joined</span>
                   </td>
-                  <td class="py-4 text-right text-slate-500 font-medium">₹200 Added</td>
+                  <td class="py-4 text-right text-slate-500 font-medium">₹100 Added</td>
                 </tr>
-                <tr class="border-b border-slate-50/50">
-                  <td class="py-4 text-slate-800">Michael Ross</td>
-                  <td class="py-4 text-center">
-                    <span class="inline-flex items-center justify-center bg-amber-50 text-amber-600 text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-md border border-amber-100">Pending</span>
-                  </td>
-                  <td class="py-4 text-right text-slate-400 font-medium">—</td>
-                </tr>
+                {% empty %}
                 <tr>
-                  <td class="py-4 text-slate-800">Elena Rossi</td>
-                  <td class="py-4 text-center">
-                    <span class="inline-flex items-center justify-center bg-emerald-50 text-emerald-600 text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-md border border-emerald-100">Joined</span>
-                  </td>
-                  <td class="py-4 text-right text-slate-500 font-medium">₹200 Added</td>
+                  <td colspan="3" class="py-8 text-center text-slate-500 text-xs">No referrals yet. Share your code to earn!</td>
                 </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
@@ -137,7 +118,7 @@
         <div class="text-6xl font-light text-slate-100 mb-4 tracking-tighter">03</div>
         <h4 class="text-[10px] font-bold uppercase tracking-widest text-[#1d4638] mb-3">Earn Rewards</h4>
         <p class="text-xs text-slate-400 leading-relaxed">
-          Once they successfully join, ₹200 will be instantly credited to your wallet for your next premium purchase.
+          Once they successfully join, ₹100 will be instantly credited to your wallet for your next premium purchase. They also get a ₹300 welcome bonus!
         </p>
       </div>
 

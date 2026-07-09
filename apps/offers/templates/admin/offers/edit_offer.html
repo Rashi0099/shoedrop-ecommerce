@@ -69,6 +69,17 @@
                     </select>
                 </div>
                 
+                <!-- Categories -->
+                <div>
+                    <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">Categories</label>
+                    <select name="categories" multiple
+                        class="w-full bg-[#1C1C1E] text-white text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors h-32 custom-scrollbar">
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if category in offer.categories.all %}selected{% endif %}>{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
                 <!-- Status -->
                 <div class="flex items-center gap-4 pt-2">
                     <label class="text-[9px] font-bold uppercase tracking-widest text-gray-500">Status</label>

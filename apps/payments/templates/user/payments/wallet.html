@@ -105,11 +105,25 @@
               </svg>
               <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Refer & Earn</span>
             </div>
-            <h3 class="text-xl font-black tracking-wide mb-3">Spread the Luxe</h3>
-            <p class="text-xs text-gray-400 mb-6 leading-relaxed">Invite your friends to <span class="font-bold text-white">SHOEDROP</span> and both receive <span class="text-emerald-400 font-bold">₹200 off</span> your next order.</p>
-            <a href="{% url 'refer_earn' %}" class="w-full block text-center bg-[#1d4638] text-white text-[10px] font-bold uppercase tracking-widest py-3.5 rounded-lg hover:bg-[#2a5948] transition">
-              Refer &amp; Earn &rarr;
+            <p class="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-2">Your Unique Code</p>
+            <div class="flex items-center bg-white/10 rounded-lg p-1 border border-white/10">
+              <input type="text" readonly value="{{ request.user.referral_code }}" id="walletReferralCode" class="w-full bg-transparent text-white px-3 text-sm font-bold tracking-widest focus:outline-none">
+              <button onclick="copyToClipboard('walletReferralCode')" class="bg-[#1d4638] text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-md hover:bg-[#2a5948] transition shrink-0">
+                Copy
+              </button>
+            </div>
+            <a href="{% url 'refer_earn' %}" class="mt-4 w-full block text-center bg-transparent border border-emerald-400/50 text-emerald-400 text-[10px] font-bold uppercase tracking-widest py-2 rounded-lg hover:bg-emerald-400 hover:text-[#111815] transition">
+              View Details & History &rarr;
             </a>
+            <script>
+                function copyToClipboard(elementId) {
+                  const copyText = document.getElementById(elementId);
+                  copyText.select();
+                  copyText.setSelectionRange(0, 99999);
+                  navigator.clipboard.writeText(copyText.value);
+                  alert("Copied: " + copyText.value);
+                }
+            </script>
           </div>
           <!-- Subtle glow -->
           <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>

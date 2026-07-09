@@ -67,7 +67,18 @@
                         <option value="{{ product.id }}">{{ product.product_name }}</option>
                         {% endfor %}
                     </select>
-                    <p class="text-[8px] text-gray-600 mt-2 tracking-widest uppercase">Hold Ctrl/Cmd to select multiple products. Leave empty for all.</p>
+                    <p class="text-[8px] text-gray-600 mt-2 tracking-widest uppercase">Hold Ctrl/Cmd to select multiple products.</p>
+                </div>
+                
+                <!-- Categories -->
+                <div>
+                    <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">Categories</label>
+                    <select name="categories" multiple
+                        class="w-full bg-[#1C1C1E] text-white text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors h-32 custom-scrollbar">
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
 
             </div>

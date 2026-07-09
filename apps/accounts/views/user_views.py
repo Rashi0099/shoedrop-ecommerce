@@ -188,6 +188,10 @@ def verify_otp(request):
                 referrer = User.objects.filter(referral_code=referral_code).exclude(id=new_user.id).first()
 
                 if referrer:
+                    # Link the referral
+                    new_user.referred_by = referrer
+                    new_user.save()
+
                     from decimal import Decimal
                     # New user gets ₹300
                     new_wallet, _ = Wallet.objects.get_or_create(user=new_user)
@@ -802,7 +806,8 @@ def edit_profile(request):
 
 @login_required(login_url='login')
 def refer_earn(request):
-    return render(request, 'user/accounts/refer_earn.html')
+    referrals = request.user.referrals.all().order_by('-created_at')
+    return render(request, 'user/accounts/refer_earn.html', {'referrals': referrals})
        
 
     return render(

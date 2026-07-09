@@ -96,9 +96,18 @@ class ProductVariant(models.Model):
 
     def get_discount_percentage(self):
         max_discount = 0
+        
+        # Check product offers
         for offer in self.product.offers.filter(is_active=True):
             if offer.is_valid() and offer.discount_percentage > max_discount:
                 max_discount = offer.discount_percentage
+                
+        # Check category offers
+        if hasattr(self.product, 'category') and self.product.category:
+            for offer in self.product.category.offers.filter(is_active=True):
+                if offer.is_valid() and offer.discount_percentage > max_discount:
+                    max_discount = offer.discount_percentage
+                    
         return max_discount
 
 class VariantImage(models.Model):
