@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Invoice #{{ order.id }}</title>
-    <style>
+{% extends 'user/base.html' %}
+
+{% block content %}
+<style>
         /* 
           xhtml2pdf supports basic CSS. 
           Using @page for margins and simple tables for layout is the safest approach.
@@ -136,10 +134,10 @@
             color: #047857;
         }
     </style>
-</head>
-<body>
 
-    <!-- Header Section -->
+
+
+<!-- Header Section -->
     <table class="header-table">
         <tr>
             <td class="header-left" style="width: 50%;">
@@ -271,6 +269,4 @@
             support@shoedrop.com &nbsp;&nbsp;|&nbsp;&nbsp; www.shoedrop.com
         </span>
     </div>
-
-</body>
-</html>
+{% endblock %}

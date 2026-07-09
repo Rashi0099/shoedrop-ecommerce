@@ -1,24 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShoeDrop Secure Checkout</title>
-  <!-- Tailwind CSS Play CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Inter Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
+{% extends 'user/base.html' %}
+
+{% block content %}
+<style>
     body {
       font-family: 'Inter', sans-serif;
     }
   </style>
-</head>
-<body class="bg-[#2a302e] min-h-screen w-full flex items-center justify-center p-4 antialiased">
 
-  <!-- Main Checkout Modal Container (Size reduced to max-w-sm) -->
+
+
+<!-- Main Checkout Modal Container (Size reduced to max-w-sm) -->
   <div class="w-full max-w-sm bg-[#192b2a] text-zinc-100 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden border border-zinc-800/30">
     
     <!-- Top Header Section -->
@@ -89,6 +80,4 @@
 
     </div>
   </div>
-
-</body>
-</html>
+{% endblock %}

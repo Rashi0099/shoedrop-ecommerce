@@ -1,0 +1,98 @@
+{% extends 'user/base.html' %}
+
+{% block content %}
+<!-- Modal Overlay -->
+<div id="couponModal" class="fixed inset-0 bg-black/40 hidden z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
+  
+  <!-- Modal Content -->
+  <div class="bg-white rounded-2xl w-full max-w-md mx-4 shadow-2xl flex flex-col max-h-[85vh]">
+    
+    <!-- Header -->
+    <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white rounded-t-2xl z-10">
+      <h3 class="text-lg font-bold text-gray-900">Available Coupons</h3>
+      <button type="button" onclick="closeCouponModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Coupons List -->
+    <div class="p-6 overflow-y-auto flex flex-col gap-4">
+      
+      {% if available_coupons %}
+        {% for coupon in available_coupons %}
+          <!-- Coupon Card -->
+          <div class="border border-gray-200 rounded-xl p-4 hover:border-brand-dark/30 transition-colors relative bg-white">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold tracking-wider bg-brand-dark text-white uppercase">{{ coupon.coupon_code }}</span>
+                  <span class="text-[10px] text-gray-400">Expires {{ coupon.valid_till|date:"M d, Y" }}</span>
+                </div>
+                <h4 class="font-bold text-brand-dark text-base mb-1">{{ coupon.coupon_name }}</h4>
+                <p class="text-xs text-gray-500">
+                  {% if coupon.discount_type == 'percentage' %}
+                    {{ coupon.discount_value }}% Off on your order
+                  {% else %}
+                    ₹{{ coupon.discount_value }} Off on your order
+                  {% endif %}
+                </p>
+                {% if coupon.min_cart_value %}
+                  <p class="text-xs text-gray-400 mt-1">Valid on orders over ₹{{ coupon.min_cart_value }}</p>
+                {% endif %}
+              </div>
+              <div class="flex flex-col items-end justify-center">
+                <button type="button" onclick="applyCoupon('{{ coupon.coupon_code }}')" class="px-5 py-2 bg-brand-dark text-white text-xs font-semibold rounded-lg hover:bg-brand-darker transition-colors whitespace-nowrap">
+                  Apply
+                </button>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="text-center py-6 text-gray-500 text-sm border border-dashed border-gray-200 rounded-xl">
+          No coupons available at the moment.
+        </div>
+      {% endif %}
+
+    </div>
+
+    <!-- Footer / Manual Code Entry -->
+    <div class="px-6 py-5 border-t border-gray-100 bg-gray-50 rounded-b-2xl text-center">
+      <p class="text-xs text-gray-500">Have a different code? <button type="button" onclick="focusManualCoupon()" class="font-bold text-brand-dark hover:underline">Enter it here</button></p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function openCouponModal() {
+    const modal = document.getElementById('couponModal');
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCouponModal() {
+    const modal = document.getElementById('couponModal');
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  function focusManualCoupon() {
+    closeCouponModal();
+    const manualInput = document.querySelector('input[name="coupon_code"]');
+    if (manualInput) {
+      manualInput.focus();
+    }
+  }
+
+  function applyCoupon(code) {
+    const manualInput = document.querySelector('input[name="coupon_code"]');
+    if (manualInput) {
+      manualInput.value = code;
+    }
+    closeCouponModal();
+  }
+</script>
+{% endblock %}

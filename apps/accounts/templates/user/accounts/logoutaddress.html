@@ -1,26 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Addresses - ShoeDrop</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-[#F8F9FA] text-gray-800 min-h-screen relative flex flex-col justify-between antialiased overflow-hidden">
+{% extends 'user/base.html' %}
 
-  <!-- BACKGROUND CONTENT LAYER (With absolute blur overlay mimicking image_b1b72d.png) -->
+{% block content %}
+<!-- BACKGROUND CONTENT LAYER (With absolute blur overlay mimicking image_b1b72d.png) -->
   <div class="w-full h-full flex flex-col justify-between filter blur-[4px] pointer-events-none select-none">
     
     <!-- Header -->
-    <nav class="bg-white border-b border-gray-100">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
-        <span class="text-xl font-black tracking-[0.2em] text-[#111]">SHOEDROP</span>
-        <div class="hidden md:flex space-x-10 text-xs font-bold tracking-widest text-gray-400 uppercase">
-          <span>Ladies</span><span>Kids</span><span>Western Wear</span>
-        </div>
-        <div class="w-20"></div>
-      </div>
-    </nav>
+    
 
     <!-- Content Dashboard Mock -->
     <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow grid grid-cols-4 gap-8">
@@ -82,6 +67,4 @@
 
     </div>
   </div>
-
-</body>
-</html>
+{% endblock %}

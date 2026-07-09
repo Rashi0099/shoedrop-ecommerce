@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Razorpay Payment</title>
+{% extends 'user/base.html' %}
 
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-</head>
-<body>
+{% block content %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
 
 <script>
 
@@ -115,6 +111,4 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 </script>
-
-</body>
-</html>
+{% endblock %}

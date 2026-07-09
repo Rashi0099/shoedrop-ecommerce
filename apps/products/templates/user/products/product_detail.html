@@ -1,39 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ShoeDrop - {{ product.product_name }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  </head>
+{% extends 'user/base.html' %}
 
-  <body class="bg-gray-50 text-gray-900 font-sans antialiased selection:bg-emerald-800 selection:text-white">
-    <header class="border-b border-gray-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-        <div class="text-xl font-black tracking-wider text-emerald-950 uppercase cursor-pointer hover:opacity-80 transition">ShoeDrop</div>
-
-        <nav class="hidden md:flex space-x-8 text-xs font-semibold tracking-widest uppercase text-gray-500">
-          <a href="{% url 'shop' %}?category=Men" class="hover:text-emerald-900 transition relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-emerald-900 hover:after:w-full after:transition-all">Men</a>
-          <a href="{% url 'shop' %}?category=Woman" class="hover:text-emerald-900 transition relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-emerald-900 hover:after:w-full after:transition-all">Women</a>
-          <a href="{% url 'shop' %}?category=Kids" class="hover:text-emerald-900 transition relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-emerald-900 hover:after:w-full after:transition-all">Kids</a>
-        </nav>
-
-        <div class="flex items-center space-x-6 text-gray-600 text-lg">
-          <a href="{% url 'wishlist' %}" class="text-gray-600 hover:text-emerald-900 transition duration-200 relative"><i class="fa-regular fa-heart"></i></a>
-
-          <a href="{% url 'cart' %}" class="text-gray-600 hover:text-emerald-900 transition duration-200 relative">
-            <i class="fa-solid fa-bag-shopping"></i>
-
-            <span class="absolute -top-1.5 -right-2 bg-emerald-950 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center scale-90">1</span>
-          </a>
-
-          <a href="{% url 'profile' %}" class="text-gray-600 hover:text-emerald-900 transition duration-200"><i class="fa-regular fa-user"></i></a>
-        </div>
-      </div>
-    </header>
-
-    <!-- Messages -->
+{% block content %}
+<!-- Messages -->
     {% if messages %}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         {% for message in messages %}
@@ -85,7 +53,13 @@
             <h1 class="text-2xl xl:text-3xl font-black text-emerald-950 tracking-tight leading-tight">{{ product.product_name }}</h1>
             <p class="text-xl font-black text-emerald-900 tracking-tight">
               {% if selected_variant %}
-                ₹{{ selected_variant.price }}
+                {% if selected_variant.get_discount_percentage > 0 %}
+                  <span class="text-lg text-gray-400 line-through font-medium mr-2">₹{{ selected_variant.price }}</span>
+                  <span class="text-emerald-600">₹{{ selected_variant.get_offer_price|floatformat:2 }}</span>
+                  <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-1 rounded-lg ml-2 align-middle">{{ selected_variant.get_discount_percentage|floatformat:0 }}% OFF</span>
+                {% else %}
+                  ₹{{ selected_variant.price }}
+                {% endif %}
               {% else %}
                 Price Unavailable
               {% endif %}
@@ -101,11 +75,7 @@
               <h4 class="text-xs font-black text-emerald-950 uppercase tracking-widest">Select Color</h4>
               <div class="flex items-center gap-3">
                 {% for color in colors %}
-                  <a href="?color={{ color|urlencode }}{% if current_size %}
-                      
-                      
-                      &size={{ current_size|urlencode }}
-                    {% endif %}"
+                  <a href="?color={{ color|urlencode }}{% if current_size %}&size={{ current_size|urlencode }}{% endif %}"
                     class="block w-8 h-8 rounded-full border-2 transition-all {% if current_color == color %}
                       
                       
@@ -135,11 +105,7 @@
               </div>
               <div class="grid grid-cols-5 gap-2">
                 {% for size in sizes %}
-                  <a href="?size={{ size|urlencode }}{% if current_color %}
-                      
-                      
-                      &color={{ current_color|urlencode }}
-                    {% endif %}"
+                  <a href="?size={{ size|urlencode }}{% if current_color %}&color={{ current_color|urlencode }}{% endif %}"
                     class="border text-center rounded-lg py-2 text-xs font-bold tracking-wider transition-all duration-200 block shadow-sm {% if current_size == size %}
                       
                       
@@ -171,24 +137,12 @@
               {% endif %}
 
               <div class="grid grid-cols-2 gap-2">
-                <a href="{% if selected_variant %}
-                    {% url 'add_to_cart' selected_variant.id %}
-                  {% else %}
-                    
-                    
-                    #
-
-
-                  {% endif %}"
+                <a href="{% if selected_variant %}{% url 'add_to_cart' selected_variant.id %}{% else %}#{% endif %}"
                   class="border-2 border-emerald-950 bg-white text-emerald-950 text-xs font-black uppercase tracking-widest py-2.5 px-4 rounded-xl hover:bg-emerald-50/50 transition flex items-center justify-center gap-2 shadow-sm">
                   <i class="fa-solid fa-bag-shopping"></i> Add to Cart
                 </a>
-                <a href="{% if selected_variant %}
-                    {% url 'add_to_wishlist' selected_variant.id %}
-                  {% else %}
-                    {% url 'wishlist' %}
-                  {% endif %}"
-                  class="border border-gray-200 bg-white text-gray-500 hover:text-red-500 text-xs font-black uppercase tracking-widest py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-sm">
+                <a href="{% if selected_variant %}{% url 'add_to_wishlist' selected_variant.id %}{% else %}{% url 'wishlist' %}{% endif %}"
+                  class="border-2 border-gray-300 bg-white text-gray-800 hover:border-red-500 hover:text-red-600 hover:bg-red-50 text-xs font-black uppercase tracking-widest py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-sm">
                   <i class="fa-regular fa-heart"></i> Wishlist
                 </a>
               </div>
@@ -228,7 +182,14 @@
                   </div>
                   <h3 class="text-xs font-bold text-emerald-950 group-hover:text-emerald-800 transition tracking-wide">{{ rel_product.product_name }}</h3>
                   {% if rel_variant %}
-                    <p class="text-xs text-emerald-900 font-black mt-0.5">₹{{ rel_variant.price }}</p>
+                    {% if rel_variant.get_discount_percentage > 0 %}
+                      <div class="mt-0.5 flex items-baseline gap-2">
+                        <p class="text-xs text-emerald-900 font-black">₹{{ rel_variant.get_offer_price|floatformat:2 }}</p>
+                        <p class="text-[10px] text-gray-400 line-through">₹{{ rel_variant.price }}</p>
+                      </div>
+                    {% else %}
+                      <p class="text-xs text-emerald-900 font-black mt-0.5">₹{{ rel_variant.price }}</p>
+                    {% endif %}
                   {% endif %}
                 </a>
               {% endwith %}
@@ -237,174 +198,311 @@
         </section>
       {% endif %}
 
-      <section class="border-t border-gray-200/80 pt-10 pb-12">
+      <!-- =================== CUSTOMER REVIEWS SECTION =================== -->
+      <section class="border-t border-gray-200/80 pt-10 pb-12" id="reviews-section">
         <div class="flex items-center justify-between mb-8">
-          <h2 class="text-lg font-black text-emerald-950 tracking-tight uppercase">Customer Reviews</h2>
-          <div class="flex items-center gap-4 text-xs font-bold text-gray-500">
-            <span>Sort By: <button class="text-emerald-950 underline font-black">Most Relevant</button></span>
-          </div>
+          <h2 class="text-lg font-black text-emerald-950 tracking-tight uppercase">
+            Customer Reviews
+            {% if total_reviews %}
+              <span class="ml-2 text-sm font-bold text-gray-400">({{ total_reviews }})</span>
+            {% endif %}
+          </h2>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-            <div class="flex items-baseline gap-2">
-              <span class="text-4xl font-black text-emerald-950 tracking-tight">4.9</span>
-              <div class="flex flex-col">
-                <div class="flex text-amber-400 text-xs gap-0.5">
-                  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                </div>
-                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">Based on 1,240 Reviews</span>
-              </div>
-            </div>
 
-            <div class="space-y-2 text-xs font-bold text-gray-600">
-              <div class="flex items-center gap-3">
-                <span class="w-3">5</span>
-                <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-emerald-950 w-[90%] rounded-full"></div>
-                </div>
-                <span class="w-8 text-right text-gray-400">1,120</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="w-3">4</span>
-                <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-emerald-950 w-[8%] rounded-full"></div>
-                </div>
-                <span class="w-8 text-right text-gray-400">102</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="w-3">3</span>
-                <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-emerald-950 w-[1%] rounded-full"></div>
-                </div>
-                <span class="w-8 text-right text-gray-400">12</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="w-3">2</span>
-                <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-emerald-950 w-[0.5%] rounded-full"></div>
-                </div>
-                <span class="w-8 text-right text-gray-400">4</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="w-3">1</span>
-                <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-emerald-950 w-[0.5%] rounded-full"></div>
-                </div>
-                <span class="w-8 text-right text-gray-400">2</span>
-              </div>
-            </div>
+          <!-- ===== LEFT: Rating Summary + Write Review ===== -->
+          <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-5">
 
-            <button class="w-full bg-transparent border-2 border-emerald-950 text-emerald-950 text-xs font-black uppercase tracking-widest py-3 px-4 rounded-xl hover:bg-gray-50 transition text-center block">Write a Review</button>
+            {% if total_reviews > 0 %}
+              <!-- Average Rating Display -->
+              <div class="flex items-baseline gap-3">
+                <span class="text-5xl font-black text-emerald-950 tracking-tight">{{ avg_rating }}</span>
+                <div class="flex flex-col">
+                  <div class="flex text-amber-400 text-sm gap-0.5">
+                    {% for i in "12345" %}
+                      {% if forloop.counter <= avg_rating %}
+                        <i class="fa-solid fa-star"></i>
+                      {% elif forloop.counter|add:"-1" < avg_rating %}
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                      {% else %}
+                        <i class="fa-regular fa-star"></i>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                  <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">Based on {{ total_reviews }} Review{{ total_reviews|pluralize }}</span>
+                </div>
+              </div>
+
+              <!-- Star Breakdown Bars -->
+              <div class="space-y-2 text-xs font-bold text-gray-600">
+                {% for star in "54321" %}
+                  {% with count=rating_counts|default_if_none:0 %}
+                    <div class="flex items-center gap-3">
+                      <span class="w-3">{{ star }}</span>
+                      <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                        {% if total_reviews > 0 %}
+                          {% if star == "5" %}
+                            <div class="h-full bg-emerald-950 rounded-full" style="width: {% widthratio rating_counts.5 total_reviews 100 %}%"></div>
+                          {% elif star == "4" %}
+                            <div class="h-full bg-emerald-950 rounded-full" style="width: {% widthratio rating_counts.4 total_reviews 100 %}%"></div>
+                          {% elif star == "3" %}
+                            <div class="h-full bg-emerald-950 rounded-full" style="width: {% widthratio rating_counts.3 total_reviews 100 %}%"></div>
+                          {% elif star == "2" %}
+                            <div class="h-full bg-emerald-950 rounded-full" style="width: {% widthratio rating_counts.2 total_reviews 100 %}%"></div>
+                          {% elif star == "1" %}
+                            <div class="h-full bg-emerald-950 rounded-full" style="width: {% widthratio rating_counts.1 total_reviews 100 %}%"></div>
+                          {% endif %}
+                        {% else %}
+                          <div class="h-full bg-emerald-950 rounded-full w-0"></div>
+                        {% endif %}
+                      </div>
+                      <span class="w-6 text-right text-gray-400">
+                        {% if star == "5" %}{{ rating_counts.5 }}
+                        {% elif star == "4" %}{{ rating_counts.4 }}
+                        {% elif star == "3" %}{{ rating_counts.3 }}
+                        {% elif star == "2" %}{{ rating_counts.2 }}
+                        {% elif star == "1" %}{{ rating_counts.1 }}
+                        {% endif %}
+                      </span>
+                    </div>
+                  {% endwith %}
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="text-center py-4">
+                <i class="fa-regular fa-star text-4xl text-gray-200 mb-3 block"></i>
+                <p class="text-sm font-bold text-gray-400">No reviews yet.</p>
+                <p class="text-xs text-gray-300 mt-1">Be the first to share your experience!</p>
+              </div>
+            {% endif %}
+
+            <!-- Write / Edit Review Button -->
+            {% if request.user.is_authenticated %}
+              {% if user_has_purchased %}
+                <button id="open-review-modal"
+                  class="w-full border-2 border-emerald-950 text-emerald-950 text-xs font-black uppercase tracking-widest py-3 px-4 rounded-xl hover:bg-emerald-950 hover:text-white transition-all duration-200 text-center block">
+                  {% if user_existing_review %}
+                    <i class="fa-solid fa-pen-to-square mr-1"></i> Edit Your Review
+                  {% else %}
+                    <i class="fa-regular fa-pen-to-square mr-1"></i> Write a Review
+                  {% endif %}
+                </button>
+              {% else %}
+                <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+                  <i class="fa-solid fa-bag-shopping text-gray-300 text-xl mb-2 block"></i>
+                  <p class="text-xs font-bold text-gray-400">Only customers who have purchased and received this product can write a review.</p>
+                </div>
+              {% endif %}
+            {% else %}
+              <a href="{% url 'login' %}?next={{ request.path }}"
+                class="w-full border-2 border-emerald-950 text-emerald-950 text-xs font-black uppercase tracking-widest py-3 px-4 rounded-xl hover:bg-emerald-950 hover:text-white transition-all duration-200 text-center block">
+                <i class="fa-regular fa-user mr-1"></i> Login to Review
+              </a>
+            {% endif %}
           </div>
 
+          <!-- ===== RIGHT: Review Cards ===== -->
           <div class="lg:col-span-8 space-y-4">
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-2.5">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 bg-emerald-950 rounded-full text-white text-[10px] font-bold flex items-center justify-center uppercase">A</div>
-                  <div>
-                    <h4 class="text-xs font-black text-emerald-950">Amal K.</h4>
-                    <p class="text-[9px] text-gray-400 font-bold uppercase">2 days ago</p>
+            {% if reviews %}
+              {% for review in reviews %}
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-2.5">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                      <!-- Avatar Circle with first letter of username -->
+                      <div class="w-8 h-8 bg-emerald-950 rounded-full text-white text-xs font-black flex items-center justify-center uppercase flex-shrink-0">
+                        {{ review.user.first_name|first|default:review.user.username|first }}
+                      </div>
+                      <div>
+                        <h4 class="text-xs font-black text-emerald-950">
+                          {{ review.user.get_full_name|default:review.user.username }}
+                        </h4>
+                        <p class="text-[9px] text-gray-400 font-bold uppercase">{{ review.created_at|timesince }} ago</p>
+                      </div>
+                    </div>
+                    <!-- Verified Badge -->
+                    {% if review.is_verified_purchase %}
+                      <span class="bg-emerald-50 text-emerald-800 text-[9px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider flex items-center gap-1">
+                        <i class="fa-solid fa-circle-check"></i> Verified Purchase
+                      </span>
+                    {% else %}
+                      <span class="bg-gray-50 text-gray-400 text-[9px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider flex items-center gap-1">
+                        <i class="fa-regular fa-circle"></i> Unverified
+                      </span>
+                    {% endif %}
                   </div>
-                </div>
-                <span class="bg-emerald-50 text-emerald-800 text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider"><i class="fa-solid fa-circle-check"></i> Verified</span>
-              </div>
-              <div class="flex text-amber-400 text-[10px]">
-                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-              </div>
-              <h5 class="text-sm font-bold text-emerald-950">Perfect for Marathon Training</h5>
-              <p class="text-xs text-gray-600 leading-relaxed font-medium">The energy return remains consistent even after 20 miles, and the upper mesh feels like a second skin. Best investment this year!</p>
-            </div>
 
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-2.5">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 bg-emerald-950 rounded-full text-white text-[10px] font-bold flex items-center justify-center uppercase">R</div>
-                  <div>
-                    <h4 class="text-xs font-black text-emerald-950">Reshma S.</h4>
-                    <p class="text-[9px] text-gray-400 font-bold uppercase">1 week ago</p>
+                  <!-- Star Rating Display -->
+                  <div class="flex text-amber-400 text-xs gap-0.5">
+                    {% for i in "12345" %}
+                      {% if forloop.counter <= review.rating %}
+                        <i class="fa-solid fa-star"></i>
+                      {% else %}
+                        <i class="fa-regular fa-star text-gray-200"></i>
+                      {% endif %}
+                    {% endfor %}
+                    <span class="ml-1 text-gray-400 font-bold text-[10px]">{{ review.rating }}/5</span>
                   </div>
-                </div>
-                <span class="bg-emerald-50 text-emerald-800 text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider"><i class="fa-solid fa-circle-check"></i> Verified</span>
-              </div>
-              <div class="flex text-amber-400 text-[10px]">
-                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-              </div>
-              <h5 class="text-sm font-bold text-emerald-950">Incredible Cushioning</h5>
-              <p class="text-xs text-gray-600 leading-relaxed font-medium">Finally a shoe that supports high arches without looking clunky! The traction on wet pavements is also top-notch.</p>
-            </div>
 
-            <div class="text-center pt-2">
-              <button class="inline-flex items-center gap-1.5 text-xs font-black text-emerald-950 hover:text-emerald-800 transition uppercase tracking-wider border border-gray-200 px-4 py-2 rounded-xl bg-white shadow-sm">Load More Reviews <i class="fa-solid fa-chevron-down text-[10px]"></i></button>
-            </div>
+                  <!-- Review Title -->
+                  {% if review.review_title %}
+                    <h5 class="text-sm font-bold text-emerald-950">{{ review.review_title }}</h5>
+                  {% endif %}
+
+                  <!-- Review Text -->
+                  <p class="text-xs text-gray-600 leading-relaxed font-medium">{{ review.review_text }}</p>
+
+                  <!-- Edit button for own review -->
+                  {% if request.user == review.user %}
+                    <div class="pt-1">
+                      <button onclick="openEditReview()" class="text-[10px] font-bold text-emerald-800 hover:text-emerald-950 underline transition">
+                        <i class="fa-solid fa-pen-to-square text-[9px]"></i> Edit your review
+                      </button>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="bg-white p-10 rounded-2xl border border-gray-100 shadow-sm text-center">
+                <i class="fa-regular fa-comments text-4xl text-gray-200 mb-3 block"></i>
+                <p class="text-sm font-bold text-gray-400">No reviews yet for this product.</p>
+                <p class="text-xs text-gray-300 mt-1">Purchase and share your experience!</p>
+              </div>
+            {% endif %}
           </div>
         </div>
       </section>
+
+      <!-- =================== WRITE / EDIT REVIEW MODAL =================== -->
+      {% if request.user.is_authenticated %}
+      <div id="review-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-8 relative">
+
+          <!-- Close Button -->
+          <button id="close-review-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition text-lg">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+
+          <h3 id="modal-title" class="text-base font-black text-emerald-950 uppercase tracking-wider mb-1">
+            {% if user_existing_review %}Edit Your Review{% else %}Write a Review{% endif %}
+          </h3>
+          <p class="text-xs text-gray-400 font-medium mb-6">{{ product.product_name }}</p>
+
+          <form method="POST" action="{% url 'add_review' product.id %}" id="review-form">
+            {% csrf_token %}
+
+            <!-- Star Rating Picker -->
+            <div class="mb-6">
+              <label class="block text-xs font-black text-emerald-950 uppercase tracking-widest mb-3">Your Rating <span class="text-red-500">*</span></label>
+              
+              <style>
+                .star-rating {
+                  display: flex;
+                  flex-direction: row-reverse;
+                  justify-content: flex-end;
+                  gap: 4px;
+                }
+                .star-rating input {
+                  display: none;
+                }
+                .star-rating label {
+                  color: #d1d5db;
+                  font-size: 2.5rem;
+                  line-height: 1;
+                  cursor: pointer;
+                  transition: color 0.2s;
+                }
+                .star-rating input:checked ~ label,
+                .star-rating label:hover,
+                .star-rating label:hover ~ label {
+                  color: #fbbf24;
+                }
+              </style>
+              
+              <div class="star-rating">
+                <input type="radio" id="star5" name="rating" value="5" {% if not user_existing_review or user_existing_review.rating == 5 %}checked{% endif %} required>
+                <label for="star5" title="5 stars">&#9733;</label>
+                
+                <input type="radio" id="star4" name="rating" value="4" {% if user_existing_review.rating == 4 %}checked{% endif %}>
+                <label for="star4" title="4 stars">&#9733;</label>
+                
+                <input type="radio" id="star3" name="rating" value="3" {% if user_existing_review.rating == 3 %}checked{% endif %}>
+                <label for="star3" title="3 stars">&#9733;</label>
+                
+                <input type="radio" id="star2" name="rating" value="2" {% if user_existing_review.rating == 2 %}checked{% endif %}>
+                <label for="star2" title="2 stars">&#9733;</label>
+                
+                <input type="radio" id="star1" name="rating" value="1" {% if user_existing_review.rating == 1 %}checked{% endif %}>
+                <label for="star1" title="1 star">&#9733;</label>
+              </div>
+            </div>
+
+            <!-- Review Text -->
+            <div class="mb-6">
+              <label for="review_text" class="block text-xs font-black text-emerald-950 uppercase tracking-widest mb-2">Your Review <span class="text-red-500">*</span></label>
+              <textarea name="review_text" id="review_text" rows="4"
+                placeholder="Share your experience with this product..."
+                required
+                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition placeholder:text-gray-300 resize-none">{% if user_existing_review %}{{ user_existing_review.review_text }}{% endif %}</textarea>
+              <p class="text-[10px] text-gray-300 mt-1 font-medium">Minimum 10 characters required.</p>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit"
+              class="w-full bg-emerald-950 text-white text-xs font-black uppercase tracking-widest py-3.5 px-6 rounded-xl hover:bg-emerald-800 transition-all duration-200 shadow-md flex items-center justify-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i>
+              {% if user_existing_review %}Update Review{% else %}Submit Review{% endif %}
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <script>
+        // ===== Modal open/close =====
+        const modal = document.getElementById('review-modal');
+        const openBtn = document.getElementById('open-review-modal');
+        const closeBtn = document.getElementById('close-review-modal');
+
+        function openReviewModal() {
+          modal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+        }
+        function closeReviewModal() {
+          modal.classList.add('hidden');
+          document.body.style.overflow = '';
+        }
+        function openEditReview() {
+          openReviewModal();
+        }
+
+        if (openBtn) openBtn.addEventListener('click', openReviewModal);
+        if (closeBtn) closeBtn.addEventListener('click', closeReviewModal);
+
+        // Close on backdrop click
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) closeReviewModal();
+        });
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') closeReviewModal();
+        });
+
+
+
+        // ===== Form Validation =====
+        document.getElementById('review-form').addEventListener('submit', function(e) {
+          const text = document.getElementById('review_text').value.trim();
+          if (text.length < 10) {
+            e.preventDefault();
+            alert('Please write at least 10 characters in your review.');
+            document.getElementById('review_text').focus();
+          }
+        });
+      </script>
+      {% endif %}
     </main>
 
-    <footer class="bg-emerald-950 text-gray-300 pt-12 pb-6 border-t border-emerald-900/60">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-5 gap-8 text-xs mb-8">
-        <div class="col-span-2 space-y-3">
-          <h3 class="text-white text-base font-black tracking-widest uppercase">ShoeDrop</h3>
-          <p class="text-gray-400 leading-relaxed max-w-xs font-medium">Elevating daily movement with engineered performance and minimalist footwear aesthetics.</p>
-          <div class="flex gap-4 text-sm text-gray-400 pt-2">
-            <a href="#" class="hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#" class="hover:text-white transition"><i class="fa-brands fa-facebook-f"></i></a>
-            <a href="#" class="hover:text-white transition"><i class="fa-brands fa-x-twitter"></i></a>
-          </div>
-        </div>
-        <div class="space-y-2">
-          <h4 class="text-white font-black uppercase tracking-wider">Shop</h4>
-          <ul class="space-y-1.5 font-medium text-gray-400">
-            <li>
-              <a href="#" class="hover:text-white transition">All Shoes</a>
-            </li>
-            <li>
-              <a href="#" class="hover:text-white transition">New Arrivals</a>
-            </li>
-            <li>
-              <a href="#" class="hover:text-white transition">Running Gear</a>
-            </li>
-          </ul>
-        </div>
-        <div class="space-y-2">
-          <h4 class="text-white font-black uppercase tracking-wider">Support</h4>
-          <ul class="space-y-1.5 font-medium text-gray-400">
-            <li>
-              <a href="#" class="hover:text-white transition">Help Center</a>
-            </li>
-            <li>
-              <a href="#" class="hover:text-white transition">Returns & Exchanges</a>
-            </li>
-            <li>
-              <a href="#" class="hover:text-white transition">Contact Us</a>
-            </li>
-          </ul>
-        </div>
-        <div class="space-y-2">
-          <h4 class="text-white font-black uppercase tracking-wider">Company</h4>
-          <ul class="space-y-1.5 font-medium text-gray-400">
-            <li>
-              <a href="#" class="hover:text-white transition">Our Story</a>
-            </li>
-            <li>
-              <a href="#" class="hover:text-white transition">Sustainability</a>
-            </li>
-            <li>
-              <a href="#" class="hover:text-white transition">Careers</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 border-t border-emerald-900/40 flex flex-col sm:flex-row justify-between items-center gap-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
-        <p>© 2026 ShoeDrop Inc. All Rights Reserved.</p>
-        <div class="flex gap-4">
-          <a href="#" class="hover:text-white transition">Privacy Policy</a>
-          <a href="#" class="hover:text-white transition">Terms of Service</a>
-        </div>
-      </div>
-    </footer>
+    
 
     <script>
       // Zoom in at the exact cursor position on the image
@@ -440,5 +538,4 @@
         }
       }
     </script>
-  </body>
-</html>
+{% endblock %}

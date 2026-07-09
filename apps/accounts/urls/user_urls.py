@@ -27,6 +27,7 @@ urlpatterns=[
 ),
     path('resend-email-otp/', resend_email_otp, name='resend_email_otp'),
     path('resend-reset-otp/', resend_reset_otp, name='resend_reset_otp'),
+    path('refer-earn/', refer_earn, name='refer_earn'),
 
     
 

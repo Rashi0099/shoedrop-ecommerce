@@ -27,4 +27,4 @@ class CartItem(models.Model):
         return f"{self.user} - {self.variant}"
 
     def get_total_price(self):
-        return self.variant.price * self.quantity
+        return self.variant.get_offer_price() * self.quantity

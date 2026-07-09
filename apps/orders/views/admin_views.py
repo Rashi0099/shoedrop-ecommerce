@@ -135,7 +135,9 @@ def admin_update_order_status(request, order_id):
     if status in allowed_status:
         # If admin is cancelling the entire order
         if status == 'cancelled' and order.order_status != 'cancelled':
+            from decimal import Decimal
             active_items = order.items.filter(item_status='active')
+            refund_total = Decimal('0')
             for item in active_items:
                 item.item_status = 'cancelled'
                 item.save()
@@ -143,27 +145,35 @@ def admin_update_order_status(request, order_id):
                 variant = item.product_variant
                 variant.stock += item.quantity
                 variant.save()
-            
+                refund_total += Decimal(str(float(item.total) * 1.18))
+
             # Reset order total
             order.total_amount = 0
+
+            # Wallet refund for paid orders
+            if order.payment_status == 'paid' and order.payment_method in ['Wallet', 'Razorpay'] and refund_total > 0:
+                from apps.payments.models import Wallet, WalletTransaction
+                wallet, _ = Wallet.objects.get_or_create(user=order.user)
+                wallet.balance += refund_total
+                wallet.save()
+                WalletTransaction.objects.create(
+                    wallet=wallet,
+                    amount=refund_total,
+                    transaction_type='credit',
+                    description=f'Refund for Order #{order.id} cancelled by admin'
+                )
 
         order.order_status = status
         order.save()
 
         messages.success(
-
             request,
-
             'Order status updated.'
-
         )
 
     return redirect(
-
         'admin_order_details',
-
         order_id=order.id
-
     )
 
 
@@ -257,7 +267,6 @@ def admin_update_return_status(request, return_id):
     if status not in allowed:
         return redirect('admin_return_detail', return_id)
 
-    # Step 1: Save the return request status
     return_request.status = status
     return_request.save()
 
@@ -271,6 +280,20 @@ def admin_update_return_status(request, return_id):
     elif status == 'Rejected':
         item.item_status = 'return_rejected'
     item.save()
+
+    # Wallet refund when admin marks as Refunded
+    if status == 'Refunded' and return_request.refund_mode == 'Wallet':
+        from apps.payments.models import Wallet, WalletTransaction
+        refund_amount = return_request.order_item.total
+        wallet, _ = Wallet.objects.get_or_create(user=return_request.user)
+        wallet.balance += refund_amount
+        wallet.save()
+        WalletTransaction.objects.create(
+            wallet=wallet,
+            amount=refund_amount,
+            transaction_type='credit',
+            description=f'Refund for Return #{return_request.id} - Order #{order.id}'
+        )
 
     all_items = order.items.all()
 

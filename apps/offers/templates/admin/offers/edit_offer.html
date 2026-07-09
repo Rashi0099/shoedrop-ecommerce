@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Offer - ShoeDrop Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#0B0B0C] text-gray-400 min-h-screen flex items-center justify-center p-6 antialiased">
+
+    <!-- Form Container -->
+    <div class="bg-[#141416] w-full max-w-lg rounded-[2rem] border border-white/5 shadow-2xl p-10 relative">
+        
+        <a href="{% url 'offer_list' %}" class="absolute top-8 right-8 text-gray-500 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </a>
+
+        <h2 class="text-xl font-light tracking-[0.2em] text-white uppercase mb-10">Edit <span class="font-bold">Offer</span></h2>
+
+        {% include 'admin/_messages.html' %}
+
+        <form method="POST" action="{% url 'edit_offer' offer.id %}">
+            {% csrf_token %}
+            <div class="space-y-6">
+                
+                <!-- Offer Title -->
+                <div>
+                    <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">Offer Title</label>
+                    <input type="text" name="offer_title" required value="{{ offer.offer_title }}"
+                        class="w-full bg-[#1C1C1E] text-white text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors">
+                </div>
+
+                <!-- Discount -->
+                <div>
+                    <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">Discount (%)</label>
+                    <input type="number" name="discount_percentage" required step="0.01" max="100" value="{{ offer.discount_percentage }}"
+                        class="w-full bg-[#1C1C1E] text-white text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Start Date -->
+                    <div>
+                        <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">Start Date</label>
+                        <input type="datetime-local" name="start_date" value="{{ start_date_str }}"
+                            class="w-full bg-[#1C1C1E] text-white text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors">
+                    </div>
+                    <!-- End Date -->
+                    <div>
+                        <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">End Date</label>
+                        <input type="datetime-local" name="end_date" value="{{ end_date_str }}"
+                            class="w-full bg-[#1C1C1E] text-white text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors">
+                    </div>
+                </div>
+
+                <!-- Products -->
+                <div>
+                    <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">Products</label>
+                    <select name="products" multiple
+                        class="w-full bg-[#1C1C1E] text-white text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors h-32 custom-scrollbar">
+                        {% for product in products %}
+                        <option value="{{ product.id }}" {% if product in offer.products.all %}selected{% endif %}>{{ product.product_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <!-- Status -->
+                <div class="flex items-center gap-4 pt-2">
+                    <label class="text-[9px] font-bold uppercase tracking-widest text-gray-500">Status</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_active" class="sr-only peer" {% if offer.is_active %}checked{% endif %}>
+                        <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                        <span class="ml-3 text-xs font-bold text-gray-400">Active</span>
+                    </label>
+                </div>
+
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center justify-center gap-6 mt-12 pt-6 border-t border-white/5">
+                <a href="{% url 'offer_list' %}" class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors">Cancel</a>
+                <button type="submit" class="px-8 py-4 bg-[#114030] hover:bg-[#0d3024] text-[#86e2b5] rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-colors">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

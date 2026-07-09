@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Management - ShoeDrop Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-[#0B0B0C] text-gray-400 min-h-screen flex antialiased">
+
+    <!-- SIDEBAR -->
+    {% include 'admin/_sidebar.html' %}
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow p-8 lg:p-12 space-y-8 overflow-y-auto max-w-7xl">
+        {% include 'admin/_messages.html' %}
+
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-light tracking-widest text-white uppercase mb-2">Customer<br><span class="font-bold">Reviews</span></h1>
+                <p class="text-xs text-gray-500 leading-relaxed">Monitor and moderate customer reviews across all products.</p>
+            </div>
+            <div class="text-right">
+                <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Total: {{ reviews.count }} Reviews</span>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-[#141416] rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-white/5 text-[9px] font-bold uppercase tracking-[0.2em] text-gray-600 bg-[#1A1A1C]/30">
+                            <th class="py-5 px-8">Product / User</th>
+                            <th class="py-5 px-6">Rating</th>
+                            <th class="py-5 px-6">Review</th>
+                            <th class="py-5 px-6">Date</th>
+                            <th class="py-5 px-6">Status</th>
+                            <th class="py-5 px-8 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5 text-xs font-medium text-gray-400">
+                        {% for review in reviews %}
+                        <tr class="hover:bg-white/[0.02] transition-colors">
+                            <td class="py-6 px-8">
+                                <h3 class="text-sm font-bold text-gray-200 mb-1">{{ review.product.product_name }}</h3>
+                                <p class="text-[10px] text-gray-500">by {{ review.user.get_full_name|default:review.user.username }}</p>
+                                {% if review.is_verified_purchase %}
+                                <span class="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-[#114030] bg-[#0A1F17] text-[9px] font-bold uppercase text-[#86e2b5]">&#x2713; Verified Purchase</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-6 px-6">
+                                <div class="flex items-center gap-0.5 text-amber-400 text-sm">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= review.rating %}&#9733;{% else %}<span class="text-gray-700">&#9733;</span>{% endif %}
+                                    {% endfor %}
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1">{{ review.rating }}/5</p>
+                            </td>
+                            <td class="py-6 px-6 max-w-xs">
+                                {% if review.review_title %}
+                                <p class="text-xs font-bold text-gray-300 mb-1">{{ review.review_title }}</p>
+                                {% endif %}
+                                <p class="text-xs text-gray-500">{{ review.review_text|truncatewords:20 }}</p>
+                            </td>
+                            <td class="py-6 px-6 whitespace-nowrap">{{ review.created_at|date:"M d, Y" }}</td>
+                            <td class="py-6 px-6">
+                                {% if review.is_active %}
+                                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#114030] bg-[#0A1F17] text-[9px] font-bold uppercase tracking-widest text-[#86e2b5]">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#86e2b5]"></span> Active
+                                </span>
+                                {% else %}
+                                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-red-900/30 bg-red-950/20 text-[9px] font-bold uppercase tracking-widest text-red-400">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Hidden
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="py-6 px-8 text-right">
+                                <a href="{% url 'toggle_review_status' review.id %}"
+                                   class="{% if review.is_active %}text-red-500 hover:text-red-400{% else %}text-emerald-400 hover:text-emerald-300{% endif %} text-[10px] font-bold uppercase tracking-widest transition-colors">
+                                    {% if review.is_active %}Hide{% else %}Show{% endif %}
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-20">
+                                <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">No reviews yet</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Review your order | ShoeDrop</title>
-<script src="https://cdn.tailwindcss.com"></script>
+{% extends 'user/base.html' %}
+
+{% block content %}
 <script>
   tailwind.config = {
     theme: {
@@ -23,8 +19,6 @@
     }
   }
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
   .radio-dot:has(input:checked) {
@@ -38,39 +32,11 @@
     transform: scale(1) !important;
   }
 </style>
-</head>
-<body class="bg-[#FAF9F6] text-brand.ink">
+
+
 
 <!-- ===================== NAVBAR ===================== -->
-<header class="border-b border-gray-200">
-  <div class="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
-    <a href="#" class="text-xl font-bold tracking-wide">SHOEDROP</a>
 
-    <nav class="hidden md:flex items-center gap-10 text-sm font-medium tracking-wide text-gray-700">
-      <a href="#" class="hover:text-brand-dark transition-colors">MEN</a>
-      <a href="#" class="hover:text-brand-dark transition-colors">WOMEN</a>
-      <a href="#" class="hover:text-brand-dark transition-colors">KIDS</a>
-    </nav>
-
-    <div class="flex items-center gap-5 text-gray-800">
-      <a href="#" aria-label="Wishlist" class="hover:text-brand-dark transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-        </svg>
-      </a>
-      <a href="#" aria-label="Bag" class="hover:text-brand-dark transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 7.5V6a4.5 4.5 0 10-9 0v1.5M3.75 7.5h16.5l-1.07 11.78A2.25 2.25 0 0116.94 21H7.06a2.25 2.25 0 01-2.24-1.72L3.75 7.5z" />
-        </svg>
-      </a>
-      <a href="#" aria-label="Account" class="hover:text-brand-dark transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.964 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-      </a>
-    </div>
-  </div>
-</header>
 
 <!-- ===================== PAGE CONTENT ===================== -->
 <main class="max-w-7xl mx-auto px-6 lg:px-10 py-10">
@@ -92,7 +58,7 @@
   <h1 class="text-3xl font-bold mb-2">Checkout</h1>
   
   <!-- SINGLE MAIN FORM START (Wraps both columns) -->
-  <form method="POST" action="{% url 'place_order' %}">
+  <form id="place-order-form" method="POST" action="{% url 'place_order' %}">
     {% csrf_token %}
     
     {% if request.GET.buy_now %}
@@ -139,7 +105,14 @@
                   </p>
                 </div>
               </div>
-              <span class="col-span-2 text-right text-sm text-gray-700">₹{{ item.variant.price }}</span>
+              <span class="col-span-2 text-right text-sm text-gray-700">
+                {% if item.variant.get_discount_percentage > 0 %}
+                  <span class="text-[10px] text-gray-400 line-through block">₹{{ item.variant.price }}</span>
+                  <span class="text-emerald-600 font-bold">₹{{ item.variant.get_offer_price|floatformat:2 }}</span>
+                {% else %}
+                  ₹{{ item.variant.price }}
+                {% endif %}
+              </span>
               <span class="col-span-1 text-right text-sm text-gray-700">{{ item.quantity }}</span>
               <span class="col-span-3 text-right text-sm font-semibold">₹{{ item.get_total_price }}</span>
             </div>
@@ -259,11 +232,9 @@
         <div class="bg-white border border-gray-200 rounded-2xl p-6 sticky top-6">
           <div class="flex items-center justify-between mb-4">
             <h2 class="font-semibold text-base">Order Summary</h2>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
           </div>
 
+          <!-- Price Breakdown -->
           <div class="flex flex-col gap-3 text-sm">
             <div class="flex items-center justify-between">
               <span class="text-gray-500">Subtotal</span>
@@ -275,31 +246,91 @@
             </div>
             <div class="flex items-center justify-between">
               <span class="text-gray-500">Delivery Charges</span>
-              <span class="font-medium text-emerald-600">{% if delivery_charges > 0 %}₹{{ delivery_charges }}{% else %}Free{% endif %}</span>
+              <span class="font-medium text-emerald-600">
+                {% if delivery_charges > 0 %}₹{{ delivery_charges }}{% else %}Free{% endif %}
+              </span>
             </div>
-          </div>
-
-          <div class="border-t border-gray-100 mt-5 pt-5">
-            <p class="text-3xl font-bold">₹{{ grand_total }}</p>
-            <p class="text-xs text-gray-400 mt-1">Total</p>
-          </div>
-
-          <!-- Coupon code (Separate mini-form or handled inline if needed, but safe here) -->
-          <div class="border-t border-gray-100 mt-5 pt-5">
-            <p class="text-xs text-gray-500 mb-2">Have a coupon?</p>
-            <div class="flex items-center gap-2">
-              <input type="text" name="coupon_code" placeholder="ENTER CODE"
-                     class="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2.5 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-dark/30">
-              <button type="button"
-                      class="text-xs font-semibold tracking-wide bg-brand-dark text-white rounded-lg px-4 py-2.5 hover:bg-brand-darker transition-colors">
-                APPLY
-              </button>
+            {% if coupon_discount > 0 %}
+            <div class="flex items-center justify-between text-emerald-700 font-semibold">
+              <span class="flex items-center gap-1">
+                <i class="fa-solid fa-tag text-xs"></i> Coupon Discount
+              </span>
+              <span>- ₹{{ coupon_discount }}</span>
             </div>
+            {% endif %}
           </div>
 
-          <!-- CLEAN SUBMIT BUTTON -->
-          <button type="submit"
-             class="mt-6 w-full text-center bg-brand-dark text-white font-medium rounded-xl py-3.5 hover:bg-brand-darker transition-colors block">
+          <!-- Grand Total -->
+          <div class="border-t border-gray-100 mt-4 pt-4 flex items-end justify-between">
+            <div>
+              <p class="text-2xl font-bold">₹{{ grand_total }}</p>
+              <p class="text-xs text-gray-400 mt-0.5">Grand Total (incl. taxes)</p>
+            </div>
+            {% if coupon_discount > 0 %}
+              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-lg uppercase">You Save ₹{{ coupon_discount }}</span>
+            {% endif %}
+          </div>
+
+          <!-- ===== COUPON UI (no <form> tags here — forms are outside main form below) ===== -->
+          <div class="border-t border-gray-100 mt-5 pt-5">
+
+            {% if applied_coupon %}
+              <!-- Applied Coupon Badge -->
+              <div class="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
+                  <div>
+                    <p class="text-xs font-bold text-emerald-800 uppercase tracking-wide">{{ applied_coupon.coupon_code }}</p>
+                    <p class="text-[10px] text-emerald-600">{{ applied_coupon.coupon_name }} applied!</p>
+                  </div>
+                </div>
+                <!-- Triggers remove-coupon-form (outside main form) -->
+                <button id="remove-coupon-btn" type="button"
+                  class="text-[10px] font-bold text-red-500 hover:text-red-700 underline transition uppercase tracking-wide">
+                  Remove
+                </button>
+              </div>
+            {% else %}
+              <!-- Coupon Input Row -->
+              <p class="text-xs font-semibold text-gray-700 mb-2">Have a coupon?</p>
+              <div class="flex items-center gap-2 mb-3">
+                <input id="coupon-input-visible" type="text" placeholder="ENTER CODE" autocomplete="off"
+                  class="flex-1 text-xs border border-gray-200 rounded-lg px-3 py-2.5 font-semibold uppercase placeholder:normal-case placeholder:font-normal placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-800/30 tracking-widest">
+                <!-- Triggers apply-coupon-form (outside main form) -->
+                <button id="apply-coupon-btn" type="button"
+                  class="text-xs font-bold tracking-wide bg-[#0F2E25] text-white rounded-lg px-4 py-2.5 hover:bg-[#0A211A] transition-colors whitespace-nowrap">
+                  APPLY
+                </button>
+              </div>
+
+              {% if available_coupons %}
+                <p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-2">Available Coupons</p>
+                <div class="flex flex-col gap-2">
+                  {% for coupon in available_coupons %}
+                    <button type="button" onclick="applyCouponCode('{{ coupon.coupon_code }}')"
+                      class="group w-full flex items-center justify-between border border-dashed border-gray-200 hover:border-emerald-400 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-emerald-50/50">
+                      <div>
+                        <p class="text-[11px] font-black text-gray-800 uppercase tracking-wider">{{ coupon.coupon_code }}</p>
+                        <p class="text-[10px] text-gray-400 mt-0.5">
+                          {% if coupon.discount_type == 'percentage' %}
+                            {{ coupon.discount_value|floatformat:0 }}% off
+                          {% else %}
+                            ₹{{ coupon.discount_value|floatformat:0 }} flat off
+                          {% endif %}
+                          {% if coupon.min_cart_value > 0 %}&middot; Min ₹{{ coupon.min_cart_value|floatformat:0 }}{% endif %}
+                        </p>
+                      </div>
+                      <span class="text-[10px] font-bold text-emerald-700 group-hover:text-emerald-900 transition">Apply &rarr;</span>
+                    </button>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endif %}
+          </div>
+
+          <!-- Place Order — linked to main form via form="place-order-form" so it works outside a nested form -->
+          <button type="submit" form="place-order-form"
+            class="mt-5 w-full text-center bg-[#0F2E25] text-white font-semibold rounded-xl py-3.5 hover:bg-[#0A211A] transition-colors block text-sm tracking-wide">
             Place Order
           </button>
 
@@ -308,79 +339,63 @@
 
     </div>
   </form>
-  <!-- SINGLE MAIN FORM END -->
+  <!-- MAIN ORDER FORM END -->
+
+  <!-- ===== COUPON FORMS (outside main form to avoid nested form bug) ===== -->
+
+  {% if applied_coupon %}
+    <!-- Remove Coupon Form -->
+    <form id="remove-coupon-form" method="POST" action="{% url 'remove_coupon' %}" class="hidden">
+      {% csrf_token %}
+    </form>
+  {% else %}
+    <!-- Apply Coupon Form -->
+    <form id="apply-coupon-form" method="POST" action="{% url 'apply_coupon' %}" class="hidden">
+      {% csrf_token %}
+      {% if request.GET.buy_now %}
+        <input type="hidden" name="buy_now" value="{{ request.GET.buy_now }}">
+      {% endif %}
+      <input type="hidden" name="coupon_code" id="coupon-code-hidden">
+    </form>
+  {% endif %}
+
+  <script>
+    // ─── Coupon UI wiring ───────────────────────────────────────
+    const couponInput     = document.getElementById('coupon-input-visible');
+    const couponHidden    = document.getElementById('coupon-code-hidden');
+    const applyForm       = document.getElementById('apply-coupon-form');
+    const removeForm      = document.getElementById('remove-coupon-form');
+
+    // Apply button click
+    const applyBtn = document.getElementById('apply-coupon-btn');
+    if (applyBtn && applyForm) {
+      applyBtn.addEventListener('click', function () {
+        const code = couponInput ? couponInput.value.trim().toUpperCase() : '';
+        if (!code) { alert('Please enter a coupon code.'); return; }
+        couponHidden.value = code;
+        applyForm.submit();
+      });
+    }
+
+    // Click a coupon card → auto-fill + submit
+    function applyCouponCode(code) {
+      if (!code) return;
+      if (applyForm && couponHidden) {
+        couponHidden.value = code;
+        applyForm.submit();
+      }
+    }
+
+    // Remove button
+    const removeBtn = document.getElementById('remove-coupon-btn');
+    if (removeBtn && removeForm) {
+      removeBtn.addEventListener('click', function () {
+        removeForm.submit();
+      });
+    }
+  </script>
 
 </main>
 
 <!-- ===================== FOOTER ===================== -->
-<footer class="bg-brand-dark text-white mt-16">
-  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-14 grid grid-cols-1 md:grid-cols-5 gap-10">
-
-    <div class="md:col-span-2">
-      <h3 class="text-2xl font-bold mb-3">ShoeDrop</h3>
-      <p class="text-sm text-white/60 max-w-xs mb-6">Elevating your journey with engineered precision and minimalist design.</p>
-      <div class="flex items-center gap-4 text-white/70">
-        <a href="#" aria-label="Instagram" class="hover:text-white transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="5" />
-            <circle cx="12" cy="12" r="3.5" />
-            <circle cx="17" cy="7" r="0.8" fill="currentColor" />
-          </svg>
-        </a>
-        <a href="#" aria-label="Twitter" class="hover:text-white transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M22 5.92a8.2 8.2 0 01-2.36.65 4.1 4.1 0 001.8-2.27 8.22 8.22 0 01-2.6 1 4.1 4.1 0 00-7 3.74A11.65 11.65 0 013 4.6a4.1 4.1 0 001.27 5.47A4.07 4.07 0 012.8 9.5v.05a4.1 4.1 0 003.28 4.02 4.1 4.1 0 01-1.85.07 4.1 4.1 0 003.83 2.85A8.23 8.23 0 012 18.4a11.62 11.62 0 006.29 1.84c7.55 0 11.68-6.26 11.68-11.68 0-.18 0-.36-.01-.53A8.3 8.3 0 0022 5.92z" />
-          </svg>
-        </a>
-        <a href="#" aria-label="Facebook" class="hover:text-white transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M14 9h2.5V6.5H14c-1.93 0-3.5 1.57-3.5 3.5v2H9v2.5h1.5V20h2.5v-6h2l.5-2.5h-2.5V10c0-.55.45-1 1-1z" />
-          </svg>
-        </a>
-      </div>
-    </div>
-
-    <div>
-      <h4 class="text-xs font-semibold tracking-widest text-white/50 mb-4">SHOP</h4>
-      <ul class="flex flex-col gap-2.5 text-sm text-white/80">
-        <li><a href="#" class="hover:text-white transition-colors">New Arrivals</a></li>
-        <li><a href="#" class="hover:text-white transition-colors">Best Sellers</a></li>
-        <li><a href="#" class="hover:text-white transition-colors">Men</a></li>
-        <li><a href="#" class="hover:text-white transition-colors">Women</a></li>
-      </ul>
-    </div>
-
-    <div>
-      <h4 class="text-xs font-semibold tracking-widest text-white/50 mb-4">SUPPORT</h4>
-      <ul class="flex flex-col gap-2.5 text-sm text-white/80">
-        <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
-        <li><a href="#" class="hover:text-white transition-colors">Shipping</a></li>
-        <li><a href="#" class="hover:text-white transition-colors">Returns</a></li>
-        <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
-      </ul>
-    </div>
-
-    <div>
-      <h4 class="text-xs font-semibold tracking-widest text-white/50 mb-4">LEGAL</h4>
-      <ul class="flex flex-col gap-2.5 text-sm text-white/80">
-        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
-        <li><a href="#" class="hover:text-white transition-colors">Terms</a></li>
-        <li><a href="#" class="hover:text-white transition-colors">Cookies</a></li>
-      </ul>
-    </div>
-
-  </div>
-
-  <div class="border-t border-white/10">
-    <div class="max-w-7xl mx-auto px-6 lg:px-10 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-white/40">
-      <p>&copy; 2025 ShoeDrop. All rights reserved.</p>
-      <div class="flex items-center gap-6">
-        <a href="#" class="hover:text-white/70 transition-colors">Privacy Policy</a>
-        <a href="#" class="hover:text-white/70 transition-colors">Terms of Service</a>
-      </div>
-    </div>
-  </div>
-</footer>
-
-</body>
-</html>
+{% endblock %}

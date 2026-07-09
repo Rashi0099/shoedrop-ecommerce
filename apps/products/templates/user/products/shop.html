@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'user/base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShoeDrop - Performance Engineered</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+{% block extra_head %}
+<title>ShoeDrop - Performance Engineered</title>
+<style>
         /* Custom accent color setup matching the image */
         .bg-brand-dark {
             background-color: #032b1d;
@@ -25,37 +20,21 @@
             accent-color: #032b1d;
         }
     </style>
-</head>
+{% endblock %}
 
-<body class="bg-gray-50 font-sans text-gray-800 antialiased">
-
-    <header class="sticky top-0 z-50 bg-[#fafafa]/90 backdrop-blur-md border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <a href ="{%url 'landing_page'%}" class="flex items-center">
-                <span class="text-xl font-black tracking-widest text-brand-dark">SHOEDROP</span>
-            </a>
-            <div
-                class="hidden space-x-12 text-[11px] font-bold tracking-[0.2em] text-gray-900 md:flex items-center pl-10">
-                <a href="{%url 'shop'%}?category=Men" class="hover:opacity-70 transition-opacity duration-200">MEN</a>
-                <a href="{%url 'shop'%}?category=Woman" class="hover:opacity-70 transition-opacity duration-200">WOMEN</a>
-                <a href="{%url 'shop'%}?category=Kids" class="hover:opacity-70 transition-opacity duration-200">KIDS</a>
-            </div>
+{% block content %}
 
 
 
-            <div class="flex items-center space-x-4 text-gray-700">
-                <a href ="{%url 'wishlist'%}" class="hover:text-brand-dark p-1"><i class="fa-regular fa-heart text-lg"></i></a>
-                <a href ="{%url 'cart'%}" class="hover:text-brand-dark p-1 relative">
-                    <i class="fa-solid fa-bag-shopping text-lg"></i>
-                </a>
-                <a href="{%url 'profile'%}" class="hover:text-brand-dark p-1"><i class="fa-regular fa-user text-lg"></i></a>
-                
-            </div>
-           
-        </div>
-         
 
-    </header>
+
+
+
+
+
+
+
+    
 
     <!-- Messages -->
     {% if messages %}
@@ -218,9 +197,9 @@
 
                     <!-- Wishlist Icon at Top Right — filled red if already in wishlist -->
                     <a href="{% if first_variant %}{% url 'toggle_wishlist' first_variant.id %}{% else %}{% url 'wishlist' %}{% endif %}"
-                       class="absolute top-6 right-6 z-10 w-8 h-8 bg-white/80 backdrop-blur rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-sm
-                              {% if first_variant and first_variant.id in wishlist_variant_ids %}text-red-500{% else %}text-gray-400 hover:text-red-500{% endif %}">
-                        <i class="{% if first_variant and first_variant.id in wishlist_variant_ids %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                       class="absolute top-4 right-4 z-10 w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md border border-gray-100 transition-all hover:scale-110
+                              {% if first_variant and first_variant.id in wishlist_variant_ids %}text-red-500{% else %}text-gray-300 hover:text-red-400{% endif %}">
+                        <i class="{% if first_variant and first_variant.id in wishlist_variant_ids %}fa-solid{% else %}fa-regular{% endif %} fa-heart text-sm"></i>
                     </a>
 
                     <a href="{% url 'product_detail' product.id %}" class="block">
@@ -242,13 +221,18 @@
 
                     <div class="flex items-center justify-between mt-auto pt-2">
                         <span class="text-lg font-extrabold text-gray-900">
-                            ₹{{ first_variant.price }}
+                            {% if first_variant.get_discount_percentage > 0 %}
+                              <span class="text-xs text-gray-400 line-through font-medium mr-1">₹{{ first_variant.price }}</span>
+                              <span class="text-emerald-600">₹{{ first_variant.get_offer_price|floatformat:2 }}</span>
+                            {% else %}
+                              ₹{{ first_variant.price }}
+                            {% endif %}
                         </span>
 
-                        <!-- Cart Link at Bottom Right -->
+                        <!-- Cart Button at Bottom Right -->
                         <a href="{% if first_variant %}{% url 'add_to_cart' first_variant.id %}{% else %}#{% endif %}" 
-                           class="text-gray-400 hover:text-brand-dark transition-colors p-1">
-                            <i class="fa-solid fa-cart-plus text-lg"></i>
+                           class="w-9 h-9 rounded-full bg-[#032b1d] flex items-center justify-center text-white shadow-md hover:bg-[#021f15] transition-all hover:scale-110">
+                            <i class="fa-solid fa-cart-plus text-sm"></i>
                         </a>
                     </div>
 
@@ -290,32 +274,4 @@
 
     </main>
 
-    <footer class="bg-brand-dark text-white mt-20 pt-16 pb-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 border-b border-emerald-900 pb-12">
-
-                <div class="lg:col-span-2 space-y-4">
-                    <span class="text-2xl font-black tracking-widest text-white">ShoeDrop</span>
-                    <p class="text-gray-400 text-sm max-w-sm leading-relaxed">Elevating your journey with engineered
-                        precision and minimalist design.</p>
-                    <div class="flex space-x-4 pt-2 text-gray-400">
-                        <a href="#" class="hover:text-white transition text-lg"><i
-                                class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="hover:text-white transition text-lg"><i
-                                class="fa-brands fa-facebook"></i></a>
-                        <a href="#" class="hover:text-white transition text-lg"><i class="fa-brands fa-twitter"></i></a>
-                    </div>
-                </div>
-
-                <div>
-                    <h4 class="text-xs font-bold uppercase tracking-widest mb-4 text-emerald-400">Shop</h4>
-                    <ul class="space-y-2.5 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-white transition">New Arrivals</a></li>
-                        <li><a href="#" class="hover:text-white transition">Best Sellers</a></li>
-                        <li><a href="{%url 'shop'%}?category=Men" class="hover:text-white transition">Men</a></li>
-                        <li><a href="{%url 'shop'%}?category=Woman" class="hover:text-white transition">Women</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="text-xs
+{% endblock %}

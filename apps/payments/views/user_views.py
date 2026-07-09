@@ -46,11 +46,17 @@ def razorpay_payment(request):
 
     client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
-    payment = client.order.create({
-        'amount': totals['amount_paise'],
-        'currency': 'INR',
-        'payment_capture': 1
-    })
+    try:
+        payment = client.order.create({
+            'amount': totals['amount_paise'],
+            'currency': 'INR',
+            'payment_capture': 1
+        })
+    except Exception as e:
+        request.session.pop('address_id', None)
+        request.session.pop('buy_now_id', None)
+        messages.error(request, 'Payment gateway is currently unavailable. Please try again later.')
+        return redirect('checkout')
 
     context = {
         'razorpay_order_id': payment['id'],
@@ -126,11 +132,14 @@ def wallet_payment(request):
 
     grand_total = totals['grand_total']
 
+    from decimal import Decimal
+    grand_total_decimal = Decimal(str(grand_total))
+
     # Get or create the wallet for the user
     from apps.payments.models import Wallet, WalletTransaction
     wallet, created = Wallet.objects.get_or_create(user=request.user)
 
-    if wallet.balance < grand_total:
+    if wallet.balance < grand_total_decimal:
         messages.error(request, 'Insufficient wallet balance.')
         return redirect('checkout')
 
@@ -140,14 +149,29 @@ def wallet_payment(request):
         messages.error(request, 'Unable to place order.')
         return redirect('checkout')
 
-    wallet.balance -= grand_total
+    wallet.balance -= grand_total_decimal
     wallet.save()
 
     WalletTransaction.objects.create(
         wallet=wallet,
-        amount=grand_total,
+        amount=grand_total_decimal,
         transaction_type='debit',
         description=f'Order #{order.id} payment'
     )
 
     return redirect(f'/orders/order-success/?order_id={order.id}')
+
+@login_required(login_url='login')
+def wallet(request):
+    from apps.payments.models import Wallet, WalletTransaction
+    from django.core.paginator import Paginator
+    wallet_obj, _ = Wallet.objects.get_or_create(user=request.user)
+    all_transactions = WalletTransaction.objects.filter(wallet=wallet_obj).order_by('-created_at')
+    paginator = Paginator(all_transactions, 8)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'user/payments/wallet.html', {
+        'wallet': wallet_obj,
+        'transactions': page_obj,
+    })
+

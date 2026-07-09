@@ -1,48 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'user/base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart - ShoeDrop</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+{% block content %}
+<style>
         .bg-brand { background-color: #032b1d; }
         .text-brand { color: #032b1d; }
         .border-brand { border-color: #032b1d; }
     </style>
-</head>
 
-<body class="bg-gray-50 font-sans text-gray-800 antialiased">
 
-    <!-- HEADER -->
-    <header class="sticky top-0 z-50 bg-white border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
-            <span class="text-xl font-black tracking-widest text-brand">SHOEDROP</span>
-
-            <div class="hidden space-x-12 text-[11px] font-bold tracking-[0.2em] text-gray-900 md:flex items-center">
-                <a href="{% url 'shop' %}?category=Men" class="hover:opacity-70 transition">MEN</a>
-                <a href="{% url 'shop' %}?category=Woman" class="hover:opacity-70 transition">WOMEN</a>
-                <a href="{% url 'shop' %}?category=Kids" class="hover:opacity-70 transition">KIDS</a>
-            </div>
-
-            <div class="flex items-center space-x-4 text-gray-700">
-                <a href="{%url 'wishlist'%}" class="hover:text-brand p-1"><i class="fa-regular fa-heart text-lg"></i></a>
-                <a href="{% url 'cart' %}" class="hover:text-brand p-1 relative">
-                    <i class="fa-solid fa-bag-shopping text-lg"></i>
-                    {% if cart_items %}
-                    <span class="absolute -top-1 -right-1 bg-brand text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                        {{ cart_items|length }}
-                    </span>
-                    {% endif %}
-                </a>
-                <a href="#" class="hover:text-brand p-1"><i class="fa-regular fa-user text-lg"></i></a>
-            </div>
-
-        </div>
-    </header>
+<!-- HEADER -->
+    
 
     <!-- MAIN -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -142,9 +110,19 @@
                             </div>
 
                             <!-- Price -->
-                            <span class="text-base font-extrabold text-gray-900">
-                                ₹{{ item.get_total_price }}
-                            </span>
+                            <div class="text-right">
+                                {% if item.variant.get_discount_percentage > 0 %}
+                                    <!-- Original total (crossed out) if offer exists -->
+                                    <span class="text-[10px] text-gray-400 line-through block">₹{% widthratio item.variant.price 1 item.quantity %}</span>
+                                    <span class="text-base font-extrabold text-emerald-600">
+                                        ₹{{ item.get_total_price|floatformat:2 }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-base font-extrabold text-gray-900">
+                                        ₹{{ item.get_total_price }}
+                                    </span>
+                                {% endif %}
+                            </div>
 
                         </div>
 
@@ -252,8 +230,15 @@
                     <p class="text-xs text-gray-400 uppercase tracking-wider mt-0.5">
                         {{ product.subcategory.name }}
                     </p>
-                    <p class="text-sm font-extrabold text-gray-900 mt-2">
-                        {% if first_variant %}₹{{ first_variant.price }}{% endif %}
+                    <p class="text-sm font-extrabold text-gray-900 mt-2 flex items-baseline gap-2">
+                        {% if first_variant %}
+                            {% if first_variant.get_discount_percentage > 0 %}
+                                <span class="text-emerald-600">₹{{ first_variant.get_offer_price|floatformat:2 }}</span>
+                                <span class="text-[10px] text-gray-400 line-through">₹{{ first_variant.price }}</span>
+                            {% else %}
+                                ₹{{ first_variant.price }}
+                            {% endif %}
+                        {% endif %}
                     </p>
 
                 </a>
@@ -271,62 +256,4 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-brand text-white mt-20 pt-16 pb-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 border-b border-emerald-900 pb-12">
-
-                <div class="lg:col-span-2 space-y-4">
-                    <span class="text-2xl font-black tracking-widest text-white">ShoeDrop</span>
-                    <p class="text-gray-400 text-sm max-w-sm leading-relaxed">Elevating your journey with engineered precision and minimalist design.</p>
-                    <div class="flex space-x-4 pt-2 text-gray-400">
-                        <a href="#" class="hover:text-white transition text-lg"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="hover:text-white transition text-lg"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="#" class="hover:text-white transition text-lg"><i class="fa-brands fa-twitter"></i></a>
-                    </div>
-                </div>
-
-                <div>
-                    <h4 class="text-xs font-bold uppercase tracking-widest mb-4 text-emerald-400">Shop</h4>
-                    <ul class="space-y-2.5 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-white transition">New Arrivals</a></li>
-                        <li><a href="#" class="hover:text-white transition">Best Sellers</a></li>
-                        <li><a href="{% url 'shop' %}?category=Men" class="hover:text-white transition">Men</a></li>
-                        <li><a href="{% url 'shop' %}?category=Woman" class="hover:text-white transition">Women</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="text-xs font-bold uppercase tracking-widest mb-4 text-emerald-400">Support</h4>
-                    <ul class="space-y-2.5 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-white transition">Help Center</a></li>
-                        <li><a href="#" class="hover:text-white transition">Returns</a></li>
-                        <li><a href="#" class="hover:text-white transition">Contact</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="text-xs font-bold uppercase tracking-widest mb-4 text-emerald-400">Company</h4>
-                    <ul class="space-y-2.5 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-white transition">About</a></li>
-                        <li><a href="#" class="hover:text-white transition">Careers</a></li>
-                        <li><a href="#" class="hover:text-white transition">Stores</a></li>
-                    </ul>
-                </div>
-
-            </div>
-
-            <div class="pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
-                <p>© 2024 ShoeDrop. Performance Engineered.</p>
-                <div class="flex gap-4">
-                    <a href="#" class="hover:text-white transition">Privacy Policy</a>
-                    <a href="#" class="hover:text-white transition">Terms of Service</a>
-                    <a href="#" class="hover:text-white transition">Store Locator</a>
-                </div>
-            </div>
-
-        </div>
-    </footer>
-
-</body>
-
-</html>
+{% endblock %}

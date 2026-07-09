@@ -15,6 +15,7 @@ urlpatterns = [
 
 
     path('admin_logout/', admin_logout, name='admin_logout'),
+    path('analytics/', analytics_dashboard, name='analytics_dashboard'),
    
 
     

@@ -1,0 +1,160 @@
+{% extends 'user/base.html' %}
+
+{% block content %}
+<!-- MAIN CONTENT AREA -->
+  <main class="flex-grow flex flex-col items-center px-4 sm:px-6 lg:px-8 py-16 w-full max-w-6xl mx-auto">
+    
+    <!-- Title Section -->
+    <div class="text-center mb-16 max-w-2xl mx-auto">
+      <h1 class="text-4xl sm:text-5xl font-normal text-[#1d4638] tracking-wide mb-4">REFER & EARN</h1>
+      <p class="text-sm text-slate-400 leading-relaxed max-w-lg mx-auto">
+        Invite your inner circle to the world of curated luxury and unlock exclusive rewards for every successful discovery.
+      </p>
+    </div>
+
+    <!-- Referral Cards -->
+    <div class="flex flex-col lg:flex-row gap-8 w-full">
+      
+      <!-- Left Column (Code & Link) -->
+      <div class="w-full lg:w-1/2 flex flex-col gap-6">
+        
+        <!-- Invite Reward Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm flex items-start justify-between relative overflow-hidden group hover:border-[#1d4638]/30 transition-colors">
+          <div class="z-10 max-w-[80%]">
+            <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-3">The Referral Reward</p>
+            <h2 class="text-2xl sm:text-3xl font-light text-slate-800 leading-tight">
+              Invite friends and earn <br/> <span class="font-medium text-[#1d4638]">₹200 in wallet</span> when they sign up
+            </h2>
+          </div>
+          <div class="bg-slate-50 w-12 h-12 rounded-full flex items-center justify-center shrink-0 border border-slate-100 z-10 group-hover:bg-[#1d4638]/5 transition-colors">
+            <svg class="w-5 h-5 text-[#1d4638]" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Code & Link Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm flex flex-col sm:flex-row gap-6 hover:border-[#1d4638]/30 transition-colors">
+          
+          <!-- Your Unique Code -->
+          <div class="flex-1">
+            <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-2">Your Unique Code</p>
+            <div class="flex items-center">
+              <input type="text" readonly value="{{ request.user.referral_code }}" id="referralCode" class="w-full bg-slate-50 border border-r-0 border-slate-200 rounded-l-xl px-4 py-3 text-sm font-bold tracking-widest text-[#1d4638] focus:outline-none">
+              <button onclick="copyToClipboard('referralCode')" class="bg-[#1d4638] text-white text-[10px] font-bold uppercase tracking-widest px-5 py-3 rounded-r-xl border border-[#1d4638] hover:bg-[#153429] transition shrink-0 h-[46px]">
+                Copy Code
+              </button>
+            </div>
+          </div>
+
+          <!-- Direct Link -->
+          <div class="flex-1">
+            <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-2">Direct Link</p>
+            <div class="flex items-center">
+              <!-- Mock link for design -->
+              <input type="text" readonly value="{{ request.get_host }}/signup/?ref={{ request.user.referral_code }}" id="referralLink" class="w-full bg-slate-50 border border-r-0 border-slate-200 rounded-l-xl px-4 py-3 text-xs font-medium text-slate-400 focus:outline-none truncate">
+              <button onclick="copyToClipboard('referralLink')" class="bg-white text-slate-700 text-[10px] font-bold uppercase tracking-widest px-5 py-3 rounded-r-xl border border-slate-200 hover:bg-slate-50 transition shrink-0 h-[46px]">
+                Copy Link
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Right Column (History) -->
+      <div class="w-full lg:w-1/2">
+        <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm h-full hover:border-[#1d4638]/30 transition-colors">
+          <div class="flex items-center justify-between mb-8">
+            <h3 class="text-[10px] font-bold uppercase tracking-widest text-[#1d4638]">Referral History</h3>
+            <span class="bg-orange-50 text-orange-600 text-[8px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-orange-100">Live Activity</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse min-w-[400px]">
+              <thead>
+                <tr class="border-b border-slate-100">
+                  <th class="py-3 text-[9px] font-bold uppercase tracking-widest text-slate-400">Friend Name</th>
+                  <th class="py-3 text-[9px] font-bold uppercase tracking-widest text-slate-400 text-center">Status</th>
+                  <th class="py-3 text-[9px] font-bold uppercase tracking-widest text-slate-400 text-right">Reward</th>
+                </tr>
+              </thead>
+              <tbody class="text-xs font-semibold text-slate-700">
+                <!-- Static Sample Data based on image -->
+                <tr class="border-b border-slate-50/50">
+                  <td class="py-4 text-slate-800">Sarah Jenkins</td>
+                  <td class="py-4 text-center">
+                    <span class="inline-flex items-center justify-center bg-emerald-50 text-emerald-600 text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-md border border-emerald-100">Joined</span>
+                  </td>
+                  <td class="py-4 text-right text-slate-500 font-medium">₹200 Added</td>
+                </tr>
+                <tr class="border-b border-slate-50/50">
+                  <td class="py-4 text-slate-800">Michael Ross</td>
+                  <td class="py-4 text-center">
+                    <span class="inline-flex items-center justify-center bg-amber-50 text-amber-600 text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-md border border-amber-100">Pending</span>
+                  </td>
+                  <td class="py-4 text-right text-slate-400 font-medium">—</td>
+                </tr>
+                <tr>
+                  <td class="py-4 text-slate-800">Elena Rossi</td>
+                  <td class="py-4 text-center">
+                    <span class="inline-flex items-center justify-center bg-emerald-50 text-emerald-600 text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-md border border-emerald-100">Joined</span>
+                  </td>
+                  <td class="py-4 text-right text-slate-500 font-medium">₹200 Added</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Steps Section -->
+    <div class="mt-24 grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 w-full pt-10 border-t border-slate-100">
+      
+      <!-- Step 1 -->
+      <div>
+        <div class="text-6xl font-light text-slate-100 mb-4 tracking-tighter">01</div>
+        <h4 class="text-[10px] font-bold uppercase tracking-widest text-[#1d4638] mb-3">Share Your Code</h4>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Send your unique referral link or code to your friends and fashion enthusiasts via Whatsapp, Email, or Social Media.
+        </p>
+      </div>
+
+      <!-- Step 2 -->
+      <div>
+        <div class="text-6xl font-light text-slate-100 mb-4 tracking-tighter">02</div>
+        <h4 class="text-[10px] font-bold uppercase tracking-widest text-[#1d4638] mb-3">Friend Signs Up</h4>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          When they register for a new account using your referral link, they'll get access to curated luxury collections.
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div>
+        <div class="text-6xl font-light text-slate-100 mb-4 tracking-tighter">03</div>
+        <h4 class="text-[10px] font-bold uppercase tracking-widest text-[#1d4638] mb-3">Earn Rewards</h4>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Once they successfully join, ₹200 will be instantly credited to your wallet for your next premium purchase.
+        </p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- 4. PREMIUM BLACK LARGE FOOTER -->
+  
+
+  <script>
+    function copyToClipboard(elementId) {
+      const copyText = document.getElementById(elementId);
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(copyText.value);
+      alert("Copied: " + copyText.value);
+    }
+  </script>
+{% endblock %}

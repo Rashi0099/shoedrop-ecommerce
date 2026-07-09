@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offer Management - ShoeDrop Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        #deleteModal {
+            display: none; position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; padding: 1rem;
+        }
+        #deleteModal.active { display: flex; }
+    </style>
+</head>
+<body class="bg-[#0B0B0C] text-gray-400 min-h-screen flex antialiased">
+    <!-- LEFT SIDEBAR -->
+    {% include 'admin/_sidebar.html' %}
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow p-8 lg:p-12 space-y-8 overflow-y-auto max-w-7xl">
+        {% include 'admin/_messages.html' %}
+
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div class="max-w-xl">
+                <h1 class="text-3xl font-light tracking-widest text-white uppercase mb-2">Offer <span class="font-bold">Management</span></h1>
+            </div>
+            <div>
+                <a href="{% url 'add_offer' %}" class="px-6 py-3 bg-[#114030] hover:bg-[#0d3024] text-[#86e2b5] rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-colors inline-flex items-center gap-2">
+                    <span class="text-lg leading-none mb-0.5">+</span> Create Offer
+                </a>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-white/5 pb-4">
+            <div class="flex items-center gap-6 text-[10px] font-bold uppercase tracking-widest">
+                <a href="?status=" class="pb-4 {% if not status_filter %}text-white border-b border-white{% else %}text-gray-500 hover:text-gray-300{% endif %}">All Offers</a>
+                <a href="?status=active" class="pb-4 {% if status_filter == 'active' %}text-white border-b border-white{% else %}text-gray-500 hover:text-gray-300{% endif %}">Active</a>
+                <a href="?status=inactive" class="pb-4 {% if status_filter == 'inactive' %}text-white border-b border-white{% else %}text-gray-500 hover:text-gray-300{% endif %}">Inactive</a>
+            </div>
+            <div class="flex items-center gap-4 text-xs">
+                <form method="GET" class="flex items-center gap-3">
+                    <input type="text" name="search" value="{{ search }}" placeholder="Search offers..." class="bg-[#1C1C1E] text-white text-xs px-4 py-2.5 rounded-full border border-white/5 outline-none focus:border-white/20 transition-colors w-48">
+                    <button type="submit" class="hidden">Search</button>
+                    {% if search or status_filter %}
+                    <a href="{% url 'offer_list' %}" class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        Reset Filters
+                    </a>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-[#141416] rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-white/5 text-[9px] font-bold uppercase tracking-[0.2em] text-gray-600 bg-[#1A1A1C]/30">
+                            <th class="py-5 px-8">Offer Details</th>
+                            <th class="py-5 px-6">Discount</th>
+                            <th class="py-5 px-6">Validity</th>
+                            <th class="py-5 px-6">Status</th>
+                            <th class="py-5 px-8 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5 text-xs font-medium text-gray-400">
+                        {% for offer in offers %}
+                        <tr class="hover:bg-white/[0.02] transition-colors group">
+                            <td class="py-6 px-8 flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 shrink-0">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-200 mb-1">{{ offer.offer_title }}</h3>
+                                    <div class="text-[10px] text-gray-500 uppercase tracking-widest">
+                                        {{ offer.products.count }} Product{% if offer.products.count != 1 %}s{% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-6 px-6">
+                                <div class="inline-flex items-center px-3 py-1 rounded-full border border-gray-600 bg-gray-700/30 text-xs font-bold text-white">
+                                    {{ offer.discount_percentage|floatformat:0 }}% Off
+                                </div>
+                            </td>
+                            <td class="py-6 px-6">
+                                {% if offer.start_date or offer.end_date %}
+                                    <div class="text-xs text-gray-200">{{ offer.start_date|date:"M d, Y"|default:"Now" }} — {{ offer.end_date|date:"M d, Y"|default:"Forever" }}</div>
+                                {% else %}
+                                    <div class="text-xs text-gray-200">Ongoing</div>
+                                {% endif %}
+                            </td>
+                            <td class="py-6 px-6">
+                                {% with status=offer.get_status_display %}
+                                    {% if status == 'Active' %}
+                                    <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
+                                        Active
+                                    </div>
+                                    {% elif status == 'Inactive' or status == 'Expired' %}
+                                    <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-gray-500"></div>
+                                        {{ status }}
+                                    </div>
+                                    {% else %}
+                                    <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-blue-400">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)]"></div>
+                                        {{ status }}
+                                    </div>
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                            <td class="py-6 px-8 text-right space-x-4">
+                                <a href="{% url 'edit_offer' offer.id %}" class="inline-block text-emerald-500/70 hover:text-emerald-400 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                </a>
+                                <button onclick="openDeleteModal('{% url 'delete_offer' offer.id %}', '{{ offer.offer_title|escapejs }}')" class="inline-block text-red-900/50 hover:text-red-500 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-20">
+                                <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">No offers found</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if offers.has_other_pages or offers.count > 0 %}
+            <div class="p-6 border-t border-white/5 flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-gray-500">
+                <div>Showing {{ offers.count }} active offers</div>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Delete Modal -->
+    <div id="deleteModal">
+        <div style="width:100%;max-width:28rem;padding:2rem;background:#141416;border:1px solid rgba(255,255,255,0.05);border-radius:1.5rem;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
+            <h3 class="text-lg font-bold text-red-500 uppercase tracking-wider mb-4">Delete Offer</h3>
+            <p class="text-gray-300 text-sm mb-1">Are you sure you want to delete offer <span id="modalItemName" class="text-white font-bold"></span>?</p>
+            <p class="text-xs text-gray-500 mb-8">This action cannot be undone.</p>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeDeleteModal()" class="px-5 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 rounded-full hover:bg-white/5 transition-colors">Cancel</button>
+                <a id="modalConfirmBtn" href="#" class="bg-red-900/20 hover:bg-red-900/40 text-red-500 border border-red-900/30 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full transition-colors">Delete</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openDeleteModal(url, name) {
+            document.getElementById('modalItemName').textContent = name;
+            document.getElementById('modalConfirmBtn').href = url;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+        }
+    </script>
+</body>
+</html>

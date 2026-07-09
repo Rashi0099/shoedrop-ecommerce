@@ -1,18 +1,11 @@
 {% extends 'user/base.html' %}
+
+{% block extra_head %}
+<title>Add New Address - ShoeDrop</title>
+{% endblock %}
+
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add New Address - ShoeDrop</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-
-<body class="bg-white text-gray-800 min-h-screen flex flex-col justify-between antialiased">
-
-  <!-- MAIN CENTERED CONTAINER -->
+<!-- MAIN CENTERED CONTAINER -->
   <div class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 w-full">
     
     <!-- Max width control for the form card -->
@@ -21,7 +14,7 @@
       <!-- Breadcrumbs & Header -->
       <div>
         <nav class="text-[10px] font-bold text-gray-400 tracking-wider uppercase flex items-center gap-1">
-          <a href="#" class="hover:text-black">My Address</a>
+          <a href="{% url 'address_list' %}" class="hover:text-black">My Address</a>
           <span>/</span>
           <span class="text-gray-900">Add New Address</span>
         </nav>
@@ -136,54 +129,6 @@
       </form>
     </main>
   </div>
-
-  <!-- MIDDLE SUB-FOOTER BRANDING -->
-  <div class="w-full bg-white py-12 border-t border-gray-100 text-center space-y-4">
-    <span class="text-xs font-black tracking-[0.3em] text-black uppercase block">SHOEDROP</span>
-    <div class="flex justify-center items-center gap-6 text-[10px] font-bold tracking-wider uppercase text-gray-400">
-      <a href="#" class="hover:text-black transition-colors">Privacy Policy</a>
-      <a href="#" class="hover:text-black transition-colors">Terms of Service</a>
-      <a href="#" class="hover:text-black transition-colors">Shipping Info</a>
-      <a href="#" class="hover:text-black transition-colors">Contact Us</a>
-    </div>
-    <p class="text-[9px] font-bold tracking-widest text-gray-300 uppercase">© 2024 SHOEDROP. CURATED EXCELLENCE.</p>
+<p class="text-[9px] font-bold tracking-widest text-gray-300 uppercase">© 2024 SHOEDROP. CURATED EXCELLENCE.</p>
   </div>
-
-  <!-- DEEP MAIN FOOTER (Pure Black Theme #111111) -->
-  <footer class="bg-[#111] text-gray-400 text-xs w-full pt-16 pb-6 border-t border-white/5">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-      <!-- Main Branding Block -->
-      <div class="pb-12 border-b border-white/5">
-        <h2 class="text-3xl font-black tracking-tight text-white mb-4">ShoeDrop</h2>
-        <p class="max-w-md text-sm text-gray-400 leading-relaxed font-medium">
-          Elevating your journey with engineered precision and minimalist design.
-        </p>
-
-        <!-- Utility Icons Graphics placeholder -->
-        <div class="flex items-center space-x-4 mt-6 text-gray-500">
-          <span class="w-5 h-5 block border border-gray-700 rounded-sm opacity-50"></span>
-          <span class="w-5 h-5 block border border-gray-700 rounded-sm opacity-50"></span>
-          <span class="w-5 h-5 block border border-gray-700 rounded-sm opacity-50"></span>
-        </div>
-      </div>
-
-      <!-- Footer Meta Links -->
-      <div class="pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] font-semibold tracking-wider uppercase text-gray-500">
-        <div>
-          © 2024 ShoeDrop. Performance Engineered.
-        </div>
-        <div class="flex items-center space-x-8">
-          <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-          <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
-          <a href="#" class="hover:text-white transition-colors">Store Locator</a>
-        </div>
-      </div>
-
-    </div>
-  </footer>
-
-</body>
-
-</html>
 {% endblock %}

@@ -57,10 +57,11 @@ def shop(request):
     if color:
         products = products.filter(variants__color=color, variants__is_active=True)
 
+    from django.db.models import Min, Max
     if sort == 'price_low':
-        products = products.order_by('variants__price')
+        products = products.annotate(min_price=Min('variants__price')).order_by('min_price')
     elif sort == 'price_high':
-        products = products.order_by('-variants__price')
+        products = products.annotate(max_price=Max('variants__price')).order_by('-max_price')
     elif sort == 'name_az':
         products = products.order_by('product_name')
     elif sort == 'name_za':
@@ -153,6 +154,28 @@ def product_detail(request, product_id):
         is_deleted=False
     ).exclude(id=product.id).prefetch_related('variants__images')[:4]
 
+    from apps.reviews.models import Review
+    from apps.orders.models import OrderItem
+    from django.db.models import Avg, Count
+
+    reviews = Review.objects.filter(product=product, is_active=True).select_related('user')
+
+    # Rating stats
+    avg_rating = reviews.aggregate(avg=Avg('rating'))['avg'] or 0
+    total_reviews = reviews.count()
+    rating_counts = {i: reviews.filter(rating=i).count() for i in range(1, 6)}
+
+    # Check if logged-in user has purchased this product (for verified review badge)
+    user_has_purchased = False
+    user_existing_review = None
+    if request.user.is_authenticated:
+        user_has_purchased = OrderItem.objects.filter(
+            order__user=request.user,
+            product_variant__product=product,
+            order__order_status='delivered'
+        ).exists()
+        user_existing_review = reviews.filter(user=request.user).first()
+
     return render(request, 'user/products/product_detail.html', {
         'product': product,
         'variants': variants,
@@ -162,4 +185,10 @@ def product_detail(request, product_id):
         'current_color': current_color,
         'current_size': current_size,
         'related_products': related_products,
+        'reviews': reviews,
+        'avg_rating': round(avg_rating, 1),
+        'total_reviews': total_reviews,
+        'rating_counts': rating_counts,
+        'user_has_purchased': user_has_purchased,
+        'user_existing_review': user_existing_review,
     })

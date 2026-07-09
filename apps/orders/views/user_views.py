@@ -8,6 +8,7 @@ from apps.addresses.models import Address
 from apps.cart.models import CartItem
 from apps.products.models import ProductVariant
 from apps.orders.models import Order, OrderItem
+from apps.coupons.models import Coupon
 from apps.orders.models import Return, ReturnImage
 from django.contrib import messages
 
@@ -35,10 +36,10 @@ def checkout(request):
         checkout_items.append({
             'variant': variant,
             'quantity': 1,
-            'get_total_price': variant.price
+            'get_total_price': variant.get_offer_price()
         })
 
-        subtotal = variant.price
+        subtotal = float(variant.get_offer_price())
 
     else:
 
@@ -64,8 +65,29 @@ def checkout(request):
     gst = float(subtotal) * 0.18
 
     delivery_fee = 0
+    
+    coupon_discount = 0
+    applied_coupon = None
+    if 'applied_coupon' in request.session:
+        try:
+            coupon = Coupon.objects.get(coupon_code=request.session['applied_coupon'], is_active=True)
+            if coupon.is_valid() and float(subtotal) >= float(coupon.min_cart_value):
+                applied_coupon = coupon
+                if coupon.discount_type == 'percentage':
+                    coupon_discount = (float(subtotal) * float(coupon.discount_value)) / 100
+                else:
+                    coupon_discount = float(coupon.discount_value)
+            else:
+                del request.session['applied_coupon']
+        except Coupon.DoesNotExist:
+            del request.session['applied_coupon']
 
-    grand_total = float(subtotal) + gst + delivery_fee
+    grand_total = float(subtotal) + gst + delivery_fee - coupon_discount
+    if grand_total < 0:
+        grand_total = 0
+    
+    coupons = Coupon.objects.filter(is_active=True)
+    available_coupons = [c for c in coupons if c.is_valid()]
 
     context = {
         'addresses': user_addresses,
@@ -73,7 +95,10 @@ def checkout(request):
         'subtotal': subtotal,
         'gst': round(gst, 2),
         'delivery_charges': delivery_fee,
-        'grand_total': round(grand_total, 2)
+        'coupon_discount': round(coupon_discount, 2),
+        'applied_coupon': applied_coupon,
+        'grand_total': round(grand_total, 2),
+        'available_coupons': available_coupons,
     }
 
     return render(request, 'user/orders/checkout.html', context)
@@ -125,10 +150,10 @@ def calculate_order_amount(request, buy_now_id=None):
         items.append({
             'variant': variant,
             'quantity': 1,
-            'price': float(variant.price)
+            'price': float(variant.get_offer_price())
         })
 
-        subtotal = float(variant.price)
+        subtotal = float(variant.get_offer_price())
 
     else:
 
@@ -145,17 +170,34 @@ def calculate_order_amount(request, buy_now_id=None):
             items.append({
                 'variant': item.variant,
                 'quantity': item.quantity,
-                'price': float(item.variant.price)
+                'price': float(item.variant.get_offer_price())
             })
 
             subtotal += float(item.get_total_price())
 
     gst = subtotal * 0.18
-    grand_total = subtotal + gst
+    
+    coupon_discount = 0
+    if 'applied_coupon' in request.session:
+        try:
+            from apps.coupons.models import Coupon
+            coupon = Coupon.objects.get(coupon_code=request.session['applied_coupon'], is_active=True)
+            if coupon.is_valid() and subtotal >= float(coupon.min_cart_value):
+                if coupon.discount_type == 'percentage':
+                    coupon_discount = (subtotal * float(coupon.discount_value)) / 100
+                else:
+                    coupon_discount = float(coupon.discount_value)
+        except Coupon.DoesNotExist:
+            pass
+
+    grand_total = subtotal + gst - coupon_discount
+    if grand_total < 0:
+        grand_total = 0
 
     return {
         'subtotal': round(subtotal, 2),
         'gst': round(gst, 2),
+        'coupon_discount': round(coupon_discount, 2),
         'grand_total': round(grand_total, 2),
         'amount_paise': int(grand_total * 100),
         'items': items
@@ -183,7 +225,8 @@ def create_order(request, payment_method, payment_status):
         payment_method=payment_method,
         payment_status=payment_status,
         order_status='pending',
-        total_amount=totals['grand_total']
+        total_amount=totals['grand_total'],
+        coupon_discount=totals.get('coupon_discount', 0)
     )
 
     for item in totals['items']:
@@ -201,6 +244,10 @@ def create_order(request, payment_method, payment_status):
 
     if not buy_now_id:
         CartItem.objects.filter(user=request.user).delete()
+
+    # Clear the applied coupon from session after order is placed
+    if 'applied_coupon' in request.session:
+        del request.session['applied_coupon']
 
     return order
 
@@ -248,8 +295,13 @@ def order_list(request):
                 items__product_variant__product__product_name__icontains=search
             ).distinct()
 
+    from django.core.paginator import Paginator
+    paginator = Paginator(orders, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        'orders': orders,
+        'orders': page_obj,
         'search': search,
     }
 
@@ -358,20 +410,22 @@ def cancel_order(request, order_id):
             messages.error(request, 'Selected items cannot be cancelled.')
             return redirect('order_details', order_id=order.id)
             
+        refund_total = 0
+
         for item in items_to_cancel:
             item.item_status = 'cancelled'
             item.save()
-            
+
             # Restore stock
             variant = item.product_variant
             variant.stock += item.quantity
             variant.save()
-            
+
             # Deduct from order total (including 18% GST)
             deduction = float(item.total) * 1.18
             order.total_amount = float(order.total_amount) - deduction
-            
-        # Ensure total_amount doesn't go below 0 (due to floating point issues or coupons)
+            refund_total += deduction
+
         if order.total_amount < 0:
             order.total_amount = 0
 
@@ -379,11 +433,25 @@ def cancel_order(request, order_id):
         if not order.items.filter(item_status='active').exists():
             order.order_status = 'cancelled'
             order.total_amount = 0
-            
+
         order.save()
-            
+
+        # Wallet refund for paid orders (Wallet or Razorpay)
+        if order.payment_status == 'paid' and order.payment_method in ['Wallet', 'Razorpay'] and refund_total > 0:
+            from apps.payments.models import Wallet, WalletTransaction
+            from decimal import Decimal
+            wallet, _ = Wallet.objects.get_or_create(user=request.user)
+            wallet.balance += Decimal(str(round(refund_total, 2)))
+            wallet.save()
+            WalletTransaction.objects.create(
+                wallet=wallet,
+                amount=Decimal(str(round(refund_total, 2))),
+                transaction_type='credit',
+                description=f'Refund for cancelled items in Order #{order.id}'
+            )
+
         messages.success(request, 'Selected items have been cancelled successfully.')
-        
+
     return redirect('order_details', order_id=order.id)
 @login_required(login_url='login')
 def return_order(request, order_id):
@@ -480,19 +548,32 @@ def cancel_item(request, item_id):
         variant.stock += item.quantity
         variant.save()
 
-        # Deduct from order total (including 18% GST)
         deduction = float(item.total) * 1.18
         order.total_amount = float(order.total_amount) - deduction
-        
+
         if order.total_amount < 0:
             order.total_amount = 0
 
-        # If ALL items are now cancelled → cancel the whole order
         if not order.items.filter(item_status='active').exists():
             order.order_status = 'cancelled'
             order.total_amount = 0
-            
+
         order.save()
+
+        # Wallet refund for paid orders
+        if order.payment_status == 'paid' and order.payment_method in ['Wallet', 'Razorpay']:
+            from apps.payments.models import Wallet, WalletTransaction
+            from decimal import Decimal
+            refund_amount = Decimal(str(round(deduction, 2)))
+            wallet, _ = Wallet.objects.get_or_create(user=request.user)
+            wallet.balance += refund_amount
+            wallet.save()
+            WalletTransaction.objects.create(
+                wallet=wallet,
+                amount=refund_amount,
+                transaction_type='credit',
+                description=f'Refund for cancelled item in Order #{order.id}'
+            )
 
         messages.success(request, 'Item cancelled successfully.')
     else:

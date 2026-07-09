@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Coupon - ShoeDrop Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#0B0B0C] text-gray-400 min-h-screen flex items-center justify-center p-6 antialiased">
+
+    <!-- Form Container -->
+    <div class="bg-[#141416] w-full max-w-3xl rounded-[2rem] border border-white/5 shadow-2xl p-10 relative">
+        
+        <a href="{% url 'coupon_list' %}" class="absolute top-8 right-8 text-gray-500 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </a>
+
+        <h2 class="text-xl font-light tracking-[0.2em] text-white uppercase mb-10">Edit <span class="font-bold">Coupon</span></h2>
+
+        {% include 'admin/_messages.html' %}
+
+        <form method="POST" action="{% url 'edit_coupon' coupon.id %}">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                
+                <!-- Coupon Name -->
+                <div>
+                    <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">Coupon Name</label>
+                    <input type="text" name="coupon_name" required value="{{ coupon.coupon_name }}"
+                        class="w-full bg-[#1C1C1E] text-white text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors">
+                </div>
+
+                <!-- Coupon Code -->
+                <div>
+                    <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">Coupon Code</label>
+                    <div class="relative flex items-center">
+                        <input type="text" name="coupon_code" id="coupon_code" required value="{{ coupon.coupon_code }}"
+                            class="w-full bg-[#1C1C1E] text-white font-mono text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors uppercase">
+                    </div>
+                </div>
+
+                <!-- Discount Type -->
+                <div>
+                    <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">Discount Type</label>
+                    <select name="discount_type" required
+                        class="w-full bg-[#1C1C1E] text-white text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors appearance-none">
+                        <option value="percentage" {% if coupon.discount_type == 'percentage' %}selected{% endif %}>Percentage (%)</option>
+                        <option value="flat" {% if coupon.discount_type == 'flat' %}selected{% endif %}>Flat Amount (₹)</option>
+                    </select>
+                </div>
+
+                <!-- Discount Value -->
+                <div>
+                    <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">Discount Value</label>
+                    <input type="number" name="discount_value" required step="0.01" value="{{ coupon.discount_value }}"
+                        class="w-full bg-[#1C1C1E] text-white text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors">
+                </div>
+
+                <!-- Min Cart Value -->
+                <div>
+                    <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">Min Cart Value (₹)</label>
+                    <input type="number" name="min_cart_value" required min="0" value="{{ coupon.min_cart_value }}"
+                        class="w-full bg-[#1C1C1E] text-white text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors">
+                </div>
+
+                <!-- User Usage Limit -->
+                <div>
+                    <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">User Usage Limit</label>
+                    <input type="number" name="usage_limit" required min="1" value="{{ coupon.usage_limit }}"
+                        class="w-full bg-[#1C1C1E] text-white text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors">
+                </div>
+
+                <!-- Applicable Category -->
+                <div class="md:col-span-2">
+                    <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">Applicable Category</label>
+                    <select name="applicable_category"
+                        class="w-full bg-[#1C1C1E] text-white text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors appearance-none">
+                        <option value="">-- Apply to All Categories --</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if coupon.applicable_category and coupon.applicable_category.id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Valid From -->
+                <div>
+                    <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">Valid From</label>
+                    <input type="datetime-local" name="valid_from" value="{{ valid_from_str }}"
+                        class="w-full bg-[#1C1C1E] text-white text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors style-date">
+                </div>
+
+                <!-- Valid Till -->
+                <div>
+                    <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-2">Valid Till</label>
+                    <input type="datetime-local" name="valid_till" value="{{ valid_till_str }}"
+                        class="w-full bg-[#1C1C1E] text-white text-sm px-5 py-4 rounded-xl border border-white/5 outline-none focus:border-white/20 transition-colors style-date">
+                </div>
+
+                <!-- Status -->
+                <div class="md:col-span-2 flex items-center gap-4">
+                    <label class="text-[9px] font-bold uppercase tracking-widest text-gray-500">Status</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_active" class="sr-only peer" {% if coupon.is_active %}checked{% endif %}>
+                        <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                        <span class="ml-3 text-xs font-bold text-gray-400">Active</span>
+                    </label>
+                </div>
+
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center justify-end gap-6 mt-12 pt-6 border-t border-white/5">
+                <a href="{% url 'coupon_list' %}" class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors">Cancel</a>
+                <button type="submit" class="px-8 py-4 bg-[#114030] hover:bg-[#0d3024] text-[#86e2b5] rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-colors">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

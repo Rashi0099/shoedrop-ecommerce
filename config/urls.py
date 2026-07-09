@@ -33,11 +33,11 @@ urlpatterns = [
     path('category/',include('apps.category.urls.user_urls')),
     path('category-managment/',include('apps.category.urls.admin_urls')),
 
-    path('dashboard/',include('apps.dashboard.urls.user_urls')),
-    path('dashboard-managment/',include('apps.dashboard.urls.admin_urls')),
-
     path('offers/',include('apps.offers.urls.user_urls')),
-    path('offers-managment/',include('apps.offers.urls.admin_urls')),
+    path('offers-management/',include('apps.offers.urls.admin_urls')),
+
+    path('coupons/',include('apps.coupons.urls.user_urls')),
+    path('coupons-management/',include('apps.coupons.urls.admin_urls')),
 
     path('orders/',include('apps.orders.urls.user_urls')),
     path('orders-managment/',include('apps.orders.urls.admin_urls')),

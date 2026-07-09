@@ -87,6 +87,20 @@ class ProductVariant(models.Model):
         auto_now=True
     )
 
+    def get_offer_price(self):
+        max_discount = self.get_discount_percentage()
+        if max_discount > 0:
+            discount_amount = (self.price * max_discount) / 100
+            return self.price - discount_amount
+        return self.price
+
+    def get_discount_percentage(self):
+        max_discount = 0
+        for offer in self.product.offers.filter(is_active=True):
+            if offer.is_valid() and offer.discount_percentage > max_discount:
+                max_discount = offer.discount_percentage
+        return max_discount
+
 class VariantImage(models.Model):
 
     variant = models.ForeignKey(

@@ -16,36 +16,7 @@
 
 <body class="bg-[#0b0b0b] text-[#ddd] font-sans flex min-h-screen">
 
-    <aside class="w-64 bg-[#111111] border-r border-[#1a1a1a] p-6 flex flex-col justify-between shrink-0">
-        <div>
-            <div class="mb-10 px-2">
-                <h2 class="text-white font-black tracking-[0.2em] text-lg uppercase">Shoedrop</h2>
-                <p class="text-[#555] text-[10px] font-bold uppercase tracking-[0.1em] mt-0.5">Admin Console</p>
-            </div>
-            
-            <nav class="space-y-1">
-                <a href="{% url 'admin_dashboard' %}" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Dashboard</a>
-                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Products</a>
-                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Categories</a>
-                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Orders</a>
-                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Returns</a>
-                <a href="{% url 'customer_list' %}" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Customers</a>
-                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Reviews</a>
-                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Analytics</a>
-                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Coupons</a>
-                <a href="#" class="flex items-center px-4 py-3 text-[#777] hover:text-[#bbb] text-xs font-semibold tracking-widest uppercase transition-colors rounded-lg">Banner</a>
-                <a href="{% url 'admin_profile' %}" class="flex items-center px-4 py-3 bg-[#1a1a1a] text-white text-xs font-semibold tracking-widest uppercase rounded-xl border border-[#222]">Settings</a>
-            </nav>
-        </div>
-
-        <div class="p-3.5 rounded-xl border border-[#1e1e1e] bg-[#141414] flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-[#192a20] text-[#4ea8de] border border-[#1e3328] flex items-center justify-center font-bold text-xs">AD</div>
-            <div>
-                <p class="text-white font-bold text-[11px] tracking-wider uppercase">{{ request.user.username }}</p>
-                <p class="text-[#555] text-[9px] uppercase tracking-wider font-semibold mt-0.5">Master Access</p>
-            </div>
-        </div>
-    </aside>
+    {% include 'admin/_sidebar.html' %}
 
     <main class="flex-1 p-12 space-y-10">
         {% include 'admin/_messages.html' %}

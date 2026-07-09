@@ -51,14 +51,16 @@ def signup(request):
 
         email=request.POST.get('email').strip()
 
-
         password=request.POST.get('password')
 
         confirm_password=request.POST.get('confirm_password')
 
+        referral_code=request.POST.get('referral_code', '').strip().upper()
+
         context={
             'username':username,
             'email':email,
+            'referral_code': referral_code,
         }
         if not username:
             messages.error(request,'User name is required')
@@ -116,17 +118,11 @@ def signup(request):
         otp = str(random.randint(1000,9999))
 
         request.session['otp'] = otp
-        
-
         request.session['username'] = username
-
         request.session['email'] = email
-
         request.session['password'] = password
-
         request.session['otp_created_at'] = datetime.now().timestamp()
-        
-            
+        request.session['referral_code'] = referral_code
 
         send_mail(
             'Shoedrop OTP Verification',
@@ -176,21 +172,55 @@ def verify_otp(request):
 
         if entered_otp == session_otp:
 
-            User.objects.create_user(
+            new_user = User.objects.create_user(
                 username=request.session.get('username'),
                 email=request.session.get('email'),
                 password=request.session.get('password')
             )
 
+            # Referral reward logic
+            from apps.payments.models import Wallet, WalletTransaction
+
+            referral_code = request.session.get('referral_code', '').strip().upper()
+
+            # Give new user ₹300 welcome bonus if they used a referral code
+            if referral_code:
+                referrer = User.objects.filter(referral_code=referral_code).exclude(id=new_user.id).first()
+
+                if referrer:
+                    from decimal import Decimal
+                    # New user gets ₹300
+                    new_wallet, _ = Wallet.objects.get_or_create(user=new_user)
+                    new_wallet.balance += Decimal('300')
+                    new_wallet.save()
+                    WalletTransaction.objects.create(
+                        wallet=new_wallet,
+                        amount=Decimal('300'),
+                        transaction_type='credit',
+                        description=f'Welcome bonus for joining via referral'
+                    )
+
+                    # Referrer gets ₹100
+                    referrer_wallet, _ = Wallet.objects.get_or_create(user=referrer)
+                    referrer_wallet.balance += Decimal('100')
+                    referrer_wallet.save()
+                    WalletTransaction.objects.create(
+                        wallet=referrer_wallet,
+                        amount=Decimal('100'),
+                        transaction_type='credit',
+                        description=f'Referral reward for inviting {new_user.username}'
+                    )
+
             request.session.pop('otp', None)
             request.session.pop('username', None)
             request.session.pop('email', None)
             request.session.pop('password', None)
-            request.session.pop('otp_created_at',None)
+            request.session.pop('otp_created_at', None)
+            request.session.pop('referral_code', None)
 
-            
-
+            messages.success(request, 'Account created successfully. Please login.')
             return redirect('login')
+
         messages.error(
         request,
         'Invalid OTP'
@@ -768,7 +798,11 @@ def edit_profile(request):
         
         return redirect(
             'profile'
-)
+        )
+
+@login_required(login_url='login')
+def refer_earn(request):
+    return render(request, 'user/accounts/refer_earn.html')
        
 
     return render(

@@ -1,47 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShoeDrop - My Profile</title>
-  <!-- Tailwind CSS Play CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-white font-sans text-gray-900 antialiased flex flex-col min-h-screen relative">
+{% extends 'user/base.html' %}
 
-  <!-- 1. NAVIGATION BAR -->
-  <nav class="sticky top-0 z-40 bg-[#f3f3f3] border-t border-b border-gray-300">
-    <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
-      <!-- Logo -->
-      <div class="flex items-center">
-        <a href="#" class="text-xl font-black tracking-[0.15em] text-black sm:text-2xl uppercase">
-          SHOEDROP
-        </a>
-      </div>
-      <!-- Center Links -->
-      <div class="hidden space-x-8 text-[11px] font-bold tracking-wider text-gray-600 lg:flex">
-        <a href="#" class="hover:text-gray-950 transition">LADIES</a>
-        <a href="#" class="hover:text-gray-950 transition">KIDS</a>
-        <a href="#" class="hover:text-gray-950 transition">WESTERN WEAR</a>
-        <a href="#" class="hover:text-gray-950 transition">INDIAN WEAR</a>
-        <a href="#" class="hover:text-gray-950 transition">WINTER WEAR</a>
-      </div>
-      <!-- Icons Right -->
-      <div class="flex items-center space-x-5 text-black">
-        <button class="p-1 hover:opacity-70 transition">
-          <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        </button>
-        <button class="p-1 hover:opacity-70 transition">
-          <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
-        </button>
-        <button class="p-1 hover:opacity-70 transition">
-          <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
-        </button>
-      </div>
-    </div>
-  </nav>
-
-  <!-- MAIN WRAPPER -->
+{% block content %}
+<!-- MAIN WRAPPER -->
   <div class="mx-auto max-w-7xl w-full md:flex md:px-6 lg:px-8 py-8 flex-grow">
     
     <!-- 2. SIDEBAR NAVIGATION MENU -->
@@ -52,23 +12,23 @@
       </div>
       
       <nav class="flex space-x-2 overflow-x-auto pb-2 scrollbar-none md:block md:space-x-0 md:space-y-1.5 md:pb-0">
-        <a href="#" class="flex items-center gap-3 rounded-full bg-gray-100 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-900 transition whitespace-nowrap md:w-full shadow-sm">
+        <a href="{% url 'profile' %}" class="flex items-center gap-3 rounded-full bg-gray-100 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-900 transition whitespace-nowrap md:w-full shadow-sm">
           <svg class="h-4 w-4 text-gray-900" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
           <span>Profile</span>
         </a>
-        <a href="#" class="flex items-center gap-3 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:bg-gray-50 transition whitespace-nowrap md:w-full">
+        <a href="{% url 'address_list' %}" class="flex items-center gap-3 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:bg-gray-50 transition whitespace-nowrap md:w-full">
           <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>
           <span>Address</span>
         </a>
-        <a href="#" class="flex items-center gap-3 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:bg-gray-50 transition whitespace-nowrap md:w-full">
+        <a href="{% url 'order_list' %}" class="flex items-center gap-3 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:bg-gray-50 transition whitespace-nowrap md:w-full">
           <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
           <span>My Orders</span>
         </a>
-        <a href="#" class="flex items-center gap-3 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:bg-gray-50 transition whitespace-nowrap md:w-full">
+        <a href="{% url 'wishlist' %}" class="flex items-center gap-3 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:bg-gray-50 transition whitespace-nowrap md:w-full">
           <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
           <span>Wishlist</span>
         </a>
-        <a href="#" class="flex items-center gap-3 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:bg-gray-50 transition whitespace-nowrap md:w-full">
+        <a href="{% url 'wallet' %}" class="flex items-center gap-3 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:bg-gray-50 transition whitespace-nowrap md:w-full">
           <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 0 0-2.25-2.25H15a3 3 0 1 1-6 0H5.25A2.25 2.25 0 0 0 3 12m18 0v6A2.25 2.25 0 0 1 18.75 20.25H5.25A2.25 2.25 0 0 1 3 18v-6m18 0V9A2.25 2.25 0 0 0 18.75 6.75H5.25A2.25 2.25 0 0 0 3 9v3M16.25 12.75h.008v.008h-.008v-.008Z" /></svg>
           <span>Wallet</span>
         </a>
@@ -168,71 +128,7 @@
   </div>
 
   <!-- 4. PREMIUM BLACK LARGE FOOTER WITH NEWSLETTER -->
-  <footer class="bg-black text-white w-full mt-auto">
-    <div class="mx-auto max-w-7xl px-6 py-12 sm:px-8 lg:px-12">
-      
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 border-b border-white/10 pb-10 text-left items-start">
-        
-        <!-- Brand identity details -->
-        <div class="md:col-span-4 space-y-3">
-          <span class="text-2xl font-black tracking-tight text-white uppercase block">
-            Shoe<span class="text-gray-300">Drop</span>
-          </span>
-          <p class="text-xs text-gray-300 max-w-xs leading-relaxed font-medium">
-            Premium footwear and fashion at your fingertips. Discover the best styles curated for you.
-          </p>
-        </div>
-
-        <!-- Links Box Area 1 -->
-        <div class="md:col-span-2 space-y-3">
-          <h4 class="text-xs font-black uppercase tracking-widest text-white/90">Shop</h4>
-          <ul class="space-y-2 text-xs text-gray-300 font-medium">
-            <li><a href="#" class="hover:text-white transition">New Arrivals</a></li>
-            <li><a href="#" class="hover:text-white transition">Bestsellers</a></li>
-            <li><a href="#" class="hover:text-white transition">Sale</a></li>
-          </ul>
-        </div>
-
-        <!-- Links Box Area 2 -->
-        <div class="md:col-span-2 space-y-3">
-          <h4 class="text-xs font-black uppercase tracking-widest text-white/90">Support</h4>
-          <ul class="space-y-2 text-xs text-gray-300 font-medium">
-            <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
-            <li><a href="#" class="hover:text-white transition">Returns</a></li>
-            <li><a href="#" class="hover:text-white transition">Shipping Info</a></li>
-          </ul>
-        </div>
-
-        <!-- Newsletter Section -->
-        <div class="md:col-span-4 space-y-3">
-          <h4 class="text-xs font-black uppercase tracking-widest text-white/90">Newsletter</h4>
-          <form class="flex w-full relative max-w-sm" action="#" method="POST">
-            <input 
-              type="email" 
-              placeholder="Email" 
-              required
-              class="w-full bg-transparent border-b border-white/20 pb-2 pt-1 text-xs text-white placeholder-white/40 focus:outline-none focus:border-white transition pr-16"
-            >
-            <button type="submit" class="absolute right-0 top-0 bottom-1 rounded-full bg-white px-4 text-[10px] font-black uppercase text-gray-900 tracking-wider shadow-md hover:bg-gray-100 transition">
-              Join
-            </button>
-          </form>
-        </div>
-
-      </div>
-
-      <!-- Bottom baseline link -->
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 text-[10px] text-white/40 tracking-wide uppercase font-bold">
-        <p>© 2026 SHOEDROP. ALL RIGHTS RESERVED.</p>
-        <div class="flex space-x-6">
-          <a href="#" class="hover:text-white/60 transition">Privacy Policy</a>
-          <a href="#" class="hover:text-white/60 transition">Terms of Service</a>
-          <a href="#" class="hover:text-white/60 transition">Store Locator</a>
-        </div>
-      </div>
-
-    </div>
-  </footer>
+  
 
   <!-- 5. LOGOUT CONFIRMATION POPUP MODAL (Pops up directly as visible 'flex') -->
   <div id="logoutModal" class="flex fixed inset-0 z-50 items-center justify-center p-4">
@@ -267,7 +163,7 @@
         </button>
         <!-- Button background color updated to bg-black -->
         <a 
-          href="#" 
+          href="{% url 'logout' %}" 
           class="rounded-full bg-black py-2.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-md hover:bg-neutral-800 transition text-center block"
         >
           Log Out
@@ -284,6 +180,4 @@
       modal.classList.toggle('hidden');
     }
   </script>
-
-</body>
-</html>
+{% endblock %}
