@@ -43,8 +43,10 @@
                 <!-- Product Name -->
                 <div class="space-y-2">
                     <label for="product_name" class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Product Name</label>
-                    <input type="text" id="product_name" name="product_name" placeholder="e.g. Air Max 270" required
-                        class="w-full bg-[#1C1C1E] border border-white/5 text-white text-xs px-4 py-3 rounded-xl outline-none focus:border-white/20 transition-colors placeholder-gray-600">
+                    <input type="text" id="product_name" name="product_name"
+                           placeholder="e.g. Air Max 270"
+                           value="{{ request.POST.product_name }}"
+                           class="w-full bg-[#1C1C1E] border border-white/5 text-white text-xs px-4 py-3 rounded-xl outline-none focus:border-white/20 transition-colors placeholder-gray-600">
                 </div>
 
                 <!-- Category & Subcategory -->
@@ -52,11 +54,11 @@
                     <div class="space-y-2">
                         <label for="category" class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Category</label>
                         <div class="relative">
-                            <select id="category" name="category" required
+                            <select id="category" name="category"
                                 class="w-full bg-[#1C1C1E] border border-white/5 text-white text-xs px-4 py-3 rounded-xl outline-none focus:border-white/20 transition-colors cursor-pointer appearance-none">
-                                <option value="" disabled selected>Select category</option>
+                                <option value="" disabled {% if not request.POST.category %}selected{% endif %}>Select category</option>
                                 {% for cat in categories %}
-                                <option value="{{ cat.id }}" data-id="{{ cat.id }}">{{ cat.name }}</option>
+                                <option value="{{ cat.id }}" {% if request.POST.category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
                                 {% endfor %}
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
@@ -68,11 +70,15 @@
                     <div class="space-y-2">
                         <label for="subcategory" class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Subcategory</label>
                         <div class="relative">
-                            <select id="subcategory" name="subcategory" required
+                            <select id="subcategory" name="subcategory"
                                 class="w-full bg-[#1C1C1E] border border-white/5 text-white text-xs px-4 py-3 rounded-xl outline-none focus:border-white/20 transition-colors cursor-pointer appearance-none">
-                                <option value="" disabled selected>Select subcategory</option>
+                                <option value="" disabled {% if not request.POST.subcategory %}selected{% endif %}>Select subcategory</option>
                                 {% for subcat in subcategories %}
-                                <option value="{{ subcat.id }}" data-category="{{ subcat.category_id }}">{{ subcat.name }}</option>
+                                <option value="{{ subcat.id }}"
+                                        data-category="{{ subcat.category_id }}"
+                                        {% if request.POST.subcategory == subcat.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ subcat.name }}
+                                </option>
                                 {% endfor %}
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
@@ -85,15 +91,17 @@
                 <!-- Description -->
                 <div class="space-y-2">
                     <label for="description" class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Description</label>
-                    <textarea id="description" name="description" rows="4" required placeholder="Product description..."
-                        class="w-full bg-[#1C1C1E] border border-white/5 text-white text-xs px-4 py-3 rounded-xl outline-none focus:border-white/20 transition-colors resize-none placeholder-gray-600"></textarea>
+                    <textarea id="description" name="description" rows="4"
+                              placeholder="Product description..."
+                              class="w-full bg-[#1C1C1E] border border-white/5 text-white text-xs px-4 py-3 rounded-xl outline-none focus:border-white/20 transition-colors resize-none placeholder-gray-600">{{ request.POST.description }}</textarea>
                 </div>
 
                 <!-- Features -->
                 <div class="space-y-2">
-                    <label for="features" class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Product Features</label>
-                    <textarea id="features" name="features" rows="4" placeholder="• Feature one&#10;• Feature two"
-                        class="w-full bg-[#1C1C1E] border border-white/5 text-white text-xs px-4 py-3 rounded-xl outline-none focus:border-white/20 transition-colors resize-none placeholder-gray-600"></textarea>
+                    <label for="features" class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Product Features <span class="text-gray-600 normal-case font-normal">(optional)</span></label>
+                    <textarea id="features" name="features" rows="4"
+                              placeholder="• Feature one&#10;• Feature two"
+                              class="w-full bg-[#1C1C1E] border border-white/5 text-white text-xs px-4 py-3 rounded-xl outline-none focus:border-white/20 transition-colors resize-none placeholder-gray-600">{{ request.POST.features }}</textarea>
                 </div>
 
                 <!-- Actions -->
@@ -110,27 +118,26 @@
     </main>
 
 <script>
-    const categorySelect = document.getElementById('category');
+    // Subcategory filter — show only subcategories matching selected category
+    const categorySelect    = document.getElementById('category');
     const subcategorySelect = document.getElementById('subcategory');
-    const allOptions = Array.from(subcategorySelect.querySelectorAll('option[data-category]'));
+    const allSubOpts        = Array.from(subcategorySelect.querySelectorAll('option[data-category]'));
 
     function filterSubcategories() {
         const selectedCat = categorySelect.value;
-        // hide all
-        allOptions.forEach(opt => opt.style.display = 'none');
-        // reset
-        subcategorySelect.value = '';
-        // show matching
-        allOptions.forEach(opt => {
-            if (opt.dataset.category === selectedCat) {
-                opt.style.display = '';
-            }
+        allSubOpts.forEach(opt => {
+            opt.style.display = (opt.dataset.category === selectedCat) ? '' : 'none';
         });
+        // Only reset if current selection doesn't belong to this category
+        const currentOpt = subcategorySelect.options[subcategorySelect.selectedIndex];
+        if (currentOpt && currentOpt.dataset.category !== selectedCat) {
+            subcategorySelect.value = '';
+        }
     }
 
     categorySelect.addEventListener('change', filterSubcategories);
 
-    // Run on page load in case category is pre-selected (edit form)
+    // Run on load to restore state after a failed POST redirect
     if (categorySelect.value) filterSubcategories();
 </script>
 

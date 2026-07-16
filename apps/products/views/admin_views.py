@@ -106,7 +106,6 @@ def add_product(request):
 
     return render(request, 'admin/products/add_product.html', context)
 
-
 @staff_member_required(login_url='admin_login')
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id, is_deleted=False)
@@ -249,8 +248,8 @@ def add_variant(request, product_id):
                 # Skip duplicates that already exist for this product
                 if ProductVariant.objects.filter(
                     product=product,
-                    color=color,
-                    size=size,
+                    color__iexact=color,
+                    size__iexact=size,
                     is_deleted=False
                 ).exists():
                     skipped_count += 1
@@ -305,6 +304,16 @@ def edit_variant(request, variant_id):
 
         if not all([size, color, price, stock]):
             messages.error(request, 'All fields are required.')
+            return redirect('edit_variant', variant_id=variant.id)
+
+        # Prevent duplicate variants
+        if ProductVariant.objects.filter(
+            product=product,
+            size__iexact=size,
+            color__iexact=color,
+            is_deleted=False
+        ).exclude(id=variant.id).exists():
+            messages.error(request, f'A variant with color "{color}" and size "{size}" already exists for this product.')
             return redirect('edit_variant', variant_id=variant.id)
 
         try:

@@ -196,15 +196,26 @@ def calculate_order_amount(request, buy_now_id=None):
     if 'applied_coupon' in request.session:
         try:
             from apps.coupons.models import Coupon
+            from apps.orders.models import Order
             coupon = Coupon.objects.get(coupon_code=request.session['applied_coupon'], is_active=True)
+            
             if coupon.is_valid() and subtotal >= float(coupon.min_cart_value):
-                if coupon.discount_type == 'percentage':
-                    coupon_discount = (subtotal * float(coupon.discount_value)) / 100
+                # Check if user already used this coupon (exclude cancelled orders)
+                user_used_coupon = Order.objects.filter(
+                    user=request.user,
+                    coupon=coupon
+                ).exclude(order_status='cancelled').exists()
+
+                if user_used_coupon:
+                    del request.session['applied_coupon']
                 else:
-                    coupon_discount = float(coupon.discount_value)
-                applied_coupon_obj = coupon
+                    if coupon.discount_type == 'percentage':
+                        coupon_discount = (subtotal * float(coupon.discount_value)) / 100
+                    else:
+                        coupon_discount = float(coupon.discount_value)
+                    applied_coupon_obj = coupon
         except Coupon.DoesNotExist:
-            pass
+            del request.session['applied_coupon']
 
     grand_total = subtotal + gst - coupon_discount
     if grand_total < 0:

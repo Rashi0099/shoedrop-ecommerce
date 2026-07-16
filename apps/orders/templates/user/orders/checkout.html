@@ -41,17 +41,7 @@
 <!-- ===================== PAGE CONTENT ===================== -->
 <main class="max-w-7xl mx-auto px-6 lg:px-10 py-10">
 {% if messages %}
-
-    {% for i in messages %}
-
-        <div class="mb-4 p-3 rounded-bg bg-red-100 text-red-700 text-sm">
-
-            {{ i }}
-
-        </div>
-
-    {% endfor %}
-
+    {% include 'user/_messages.html' %}
 {% endif %}
 
 

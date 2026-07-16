@@ -76,10 +76,11 @@ def admin_dashboard(request):
     
     orders_today = today_paid_orders.count()
     
-    today_gross = today_paid_orders.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    # total_amount is already the final paid amount (gross - coupon already applied at order creation).
+    # Subtracting coupon_discount again would double-count it and produce negative revenue.
+    revenue_today = today_paid_orders.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
     today_discount = today_paid_orders.aggregate(Sum('coupon_discount'))['coupon_discount__sum'] or 0
-    revenue_today = today_gross - today_discount
-    
+
     avg_order_today = today_paid_orders.aggregate(Avg('total_amount'))['total_amount__avg'] or 0
     
     refunds_today = today_orders.filter(order_status='returned').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
@@ -90,7 +91,7 @@ def admin_dashboard(request):
     
     gross_all = all_paid_orders.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
     discount_all = all_paid_orders.aggregate(Sum('coupon_discount'))['coupon_discount__sum'] or 0
-    net_all = gross_all - discount_all
+    net_all = gross_all  # total_amount is already post-discount; discount_all kept for display only
     
     avg_order_all = all_paid_orders.aggregate(Avg('total_amount'))['total_amount__avg'] or 0
     
@@ -102,7 +103,7 @@ def admin_dashboard(request):
     month_paid_orders = Order.objects.filter(created_at__date__gte=first_day_of_month, payment_status='paid')
     month_gross = month_paid_orders.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
     month_discount = month_paid_orders.aggregate(Sum('coupon_discount'))['coupon_discount__sum'] or 0
-    month_revenue = month_gross - month_discount
+    month_revenue = month_gross  # total_amount already reflects coupon deduction
     
     pending_orders = Order.objects.filter(order_status='pending').count()
     delivered_orders = Order.objects.filter(order_status='delivered').count()
