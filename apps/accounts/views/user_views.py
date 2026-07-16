@@ -40,10 +40,11 @@ def landing_page(request):
 def signup(request):
 
     if request.user.is_authenticated:
-
         return redirect('profile')
     
-    context={}
+    context={
+        'referral_code': request.GET.get('ref', '').strip().upper()
+    }
 
     if request.method =='POST':
         
@@ -683,6 +684,8 @@ def edit_profile(request):
                 request,
                 'Username can contain only letters, numbers and underscore'
             )
+            return redirect('edit_profile')
+        
         if len(username)<3:
             messages.error(request,'username must contain at least 3 caractors')
             return redirect('edit_profile')
@@ -803,6 +806,7 @@ def edit_profile(request):
         return redirect(
             'profile'
         )
+    return render(request,'user/accounts/edit_profile.html')
 
 @login_required(login_url='login')
 def refer_earn(request):

@@ -5,7 +5,8 @@ from apps.payments.views.user_views import (
     razorpay_payment,
     verify_razorpay_payment,
     wallet_payment,
-    wallet
+    wallet,
+    payment_failed
 )
 
 urlpatterns = [
@@ -14,6 +15,7 @@ urlpatterns = [
     path('razorpay/',razorpay_payment,name='razorpay_payment'),
     path('verify/',verify_razorpay_payment,name='verify_razorpay_payment'),
     path('wallet_payment/',wallet_payment,name='wallet_payment'),
-    path('wallet/',wallet,name='wallet')
+    path('wallet/',wallet,name='wallet'),
+    path('payment-failed/', payment_failed, name='payment_failed'),
 
 ]

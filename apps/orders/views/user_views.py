@@ -7,7 +7,7 @@ from decimal import Decimal
 from apps.addresses.models import Address
 from apps.cart.models import CartItem
 from apps.products.models import ProductVariant
-from apps.orders.models import Order, OrderItem
+from apps.orders.models import Order, OrderItem, OrderAddress
 from apps.coupons.models import Coupon
 from apps.orders.models import Return, ReturnImage
 from django.contrib import messages
@@ -29,6 +29,10 @@ def checkout(request):
 
         variant = get_object_or_404(ProductVariant, id=buy_now_id)
 
+        if not variant.is_active or not variant.product.is_active or not variant.product.category.is_active:
+            messages.error(request, 'Sorry, this product is currently unavailable.')
+            return redirect('shop')
+
         if variant.stock < 1:
             messages.error(request, 'Sorry, this item is currently out of stock.')
             return redirect('shop')
@@ -49,6 +53,10 @@ def checkout(request):
             return redirect('shop')
 
         for item in cart_items:
+
+            if item.variant.is_deleted or not item.variant.is_active or item.variant.product.is_deleted or not item.variant.product.is_active or not item.variant.product.category.is_active:
+                messages.error(request, f'"{item.variant.product.product_name}" is currently unavailable. Please remove it from your cart.')
+                return redirect('cart')
 
             if item.variant.stock < item.quantity:
                 messages.error(request, f'"{item.variant.product.product_name}" has insufficient stock. Please adjust your cart.')
@@ -144,6 +152,9 @@ def calculate_order_amount(request, buy_now_id=None):
 
         variant = get_object_or_404(ProductVariant, id=buy_now_id)
 
+        if not variant.is_active or not variant.product.is_active or not variant.product.category.is_active:
+            return None
+
         if variant.stock < 1:
             return None
 
@@ -164,6 +175,9 @@ def calculate_order_amount(request, buy_now_id=None):
 
         for item in cart_items:
 
+            if not item.variant.is_active or not item.variant.product.is_active or not item.variant.product.category.is_active:
+                return None
+
             if item.variant.stock < item.quantity:
                 return None
 
@@ -178,6 +192,7 @@ def calculate_order_amount(request, buy_now_id=None):
     gst = subtotal * 0.18
     
     coupon_discount = 0
+    applied_coupon_obj = None
     if 'applied_coupon' in request.session:
         try:
             from apps.coupons.models import Coupon
@@ -187,6 +202,7 @@ def calculate_order_amount(request, buy_now_id=None):
                     coupon_discount = (subtotal * float(coupon.discount_value)) / 100
                 else:
                     coupon_discount = float(coupon.discount_value)
+                applied_coupon_obj = coupon
         except Coupon.DoesNotExist:
             pass
 
@@ -200,7 +216,8 @@ def calculate_order_amount(request, buy_now_id=None):
         'coupon_discount': round(coupon_discount, 2),
         'grand_total': round(grand_total, 2),
         'amount_paise': int(grand_total * 100),
-        'items': items
+        'items': items,
+        'coupon': applied_coupon_obj
     }
 
 
@@ -212,7 +229,8 @@ def create_order(request, payment_method, payment_status):
     if not address_id:
         return None
 
-    address = get_object_or_404(Address, id=address_id, user=request.user)
+    live_address = get_object_or_404(Address, id=address_id, user=request.user)
+    address = OrderAddress.from_address(live_address)
 
     totals = calculate_order_amount(request, buy_now_id)
 
@@ -226,7 +244,8 @@ def create_order(request, payment_method, payment_status):
         payment_status=payment_status,
         order_status='pending',
         total_amount=totals['grand_total'],
-        coupon_discount=totals.get('coupon_discount', 0)
+        coupon_discount=totals.get('coupon_discount', 0),
+        coupon=totals.get('coupon')
     )
 
     for item in totals['items']:
@@ -316,30 +335,32 @@ from apps.orders.utils import render_to_pdf
 @login_required(login_url='login')
 def download_invoice(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
-    
-    # Calculate subtotal and GST specifically for the invoice display
-    subtotal = sum(item.total for item in order.items.all())
-    gst = subtotal * Decimal("0.18")
+
+    # Only include non-cancelled / non-returned items in the invoice totals.
+    # Cancelled items have already been deducted from order.total_amount, but
+    # we recalculate here so subtotal and GST are shown correctly per line.
+    billable_items = order.items.exclude(item_status__in=['cancelled', 'returned', 'return_rejected'])
+    subtotal = sum(item.total for item in billable_items)
+    gst = subtotal * Decimal('0.18')
 
     context = {
         'order': order,
-        'items': order.items.all(),
+        'items': order.items.select_related(
+            'product_variant__product'
+        ).all(),
         'subtotal': round(subtotal, 2),
         'gst': round(gst, 2),
     }
-    
-    # Render the PDF
-    pdf = render_to_pdf('user/orders/invoice_pdf.html', context)
-    
-    if pdf:
-        response = HttpResponse(pdf, content_type='application/pdf')
-        filename = f"Invoice_{order.id}.pdf"
-        # attachment; to download, inline; to view in browser
-        content = f"inline; filename={filename}"
-        response['Content-Disposition'] = content
+
+    pdf_bytes = render_to_pdf('user/orders/invoice_pdf.html', context)
+
+    if pdf_bytes:
+        filename = f'ShoeDrop_Invoice_{order.id}.pdf'
+        response = HttpResponse(pdf_bytes, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
         return response
-        
-    messages.error(request, 'Invoice not found or error generating PDF.')
+
+    messages.error(request, 'Could not generate invoice. Please try again.')
     return redirect('order_details', order_id=order.id)
 
 @login_required(login_url='login')
@@ -410,29 +431,43 @@ def cancel_order(request, order_id):
             messages.error(request, 'Selected items cannot be cancelled.')
             return redirect('order_details', order_id=order.id)
             
-        refund_total = 0
+        # Check if we are cancelling all remaining active items
+        active_items_count = order.items.filter(item_status='active').count()
+        cancelling_all_remaining = (active_items_count == items_to_cancel.count())
 
-        for item in items_to_cancel:
-            item.item_status = 'cancelled'
-            item.save()
+        if cancelling_all_remaining:
+            refund_total = float(order.total_amount)
+            
+            for item in items_to_cancel:
+                item.item_status = 'cancelled'
+                item.save()
+                variant = item.product_variant
+                variant.stock += item.quantity
+                variant.save()
 
-            # Restore stock
-            variant = item.product_variant
-            variant.stock += item.quantity
-            variant.save()
-
-            # Deduct from order total (including 18% GST)
-            deduction = float(item.total) * 1.18
-            order.total_amount = float(order.total_amount) - deduction
-            refund_total += deduction
-
-        if order.total_amount < 0:
             order.total_amount = 0
-
-        # If all items are cancelled, mark order as cancelled
-        if not order.items.filter(item_status='active').exists():
             order.order_status = 'cancelled'
-            order.total_amount = 0
+        else:
+            refund_total = 0
+            for item in items_to_cancel:
+                item.item_status = 'cancelled'
+                item.save()
+
+                # Restore stock
+                variant = item.product_variant
+                variant.stock += item.quantity
+                variant.save()
+
+                # Deduct from order total using proper prorated amount
+                from apps.orders.utils import calculate_item_refund_amount
+                deduction_decimal = calculate_item_refund_amount(order, item)
+                deduction_float = float(deduction_decimal)
+                
+                order.total_amount = float(order.total_amount) - deduction_float
+                refund_total += deduction_float
+
+            if order.total_amount < 0:
+                order.total_amount = 0
 
         order.save()
 
@@ -474,10 +509,12 @@ def return_order(request, order_id):
             messages.error(request, 'No items selected for return.')
             return redirect('order_details', order.id)
 
-        pickup_address = get_object_or_404(Address, id=address_id, user=request.user)
+        live_pickup = get_object_or_404(Address, id=address_id, user=request.user)
+        pickup_address = OrderAddress.from_address(live_pickup)
 
         items_to_return = order.items.filter(id__in=selected_item_ids, item_status='active')
 
+        from apps.orders.utils import calculate_item_refund_amount
         for item in items_to_return:
             return_request = Return.objects.create(
                 order=order,
@@ -487,7 +524,8 @@ def return_order(request, order_id):
                 reason=reason,
                 comments=comments,
                 refund_mode=refund_mode,
-                pickup_address=pickup_address
+                pickup_address=pickup_address,
+                refund_amount=calculate_item_refund_amount(order, item)
             )
 
             for image in images:
@@ -516,7 +554,8 @@ def return_order(request, order_id):
         return redirect('order_details', order.id)
 
     addresses = Address.objects.filter(user=request.user)
-    refund_total = sum(item.unit_price for item in items_to_return)
+    from apps.orders.utils import calculate_item_refund_amount
+    refund_total = sum(float(calculate_item_refund_amount(order, item)) for item in items_to_return)
     context = {
         'order': order,
         'addresses': addresses,
@@ -548,15 +587,21 @@ def cancel_item(request, item_id):
         variant.stock += item.quantity
         variant.save()
 
-        deduction = float(item.total) * 1.18
-        order.total_amount = float(order.total_amount) - deduction
+        cancelling_last_item = (order.items.filter(item_status='active').count() == 0)
 
-        if order.total_amount < 0:
+        if cancelling_last_item:
+            deduction_float = float(order.total_amount)
             order.total_amount = 0
-
-        if not order.items.filter(item_status='active').exists():
             order.order_status = 'cancelled'
-            order.total_amount = 0
+        else:
+            from apps.orders.utils import calculate_item_refund_amount
+            deduction_decimal = calculate_item_refund_amount(order, item)
+            deduction_float = float(deduction_decimal)
+            
+            order.total_amount = float(order.total_amount) - deduction_float
+
+            if order.total_amount < 0:
+                order.total_amount = 0
 
         order.save()
 
@@ -564,7 +609,7 @@ def cancel_item(request, item_id):
         if order.payment_status == 'paid' and order.payment_method in ['Wallet', 'Razorpay']:
             from apps.payments.models import Wallet, WalletTransaction
             from decimal import Decimal
-            refund_amount = Decimal(str(round(deduction, 2)))
+            refund_amount = Decimal(str(round(deduction_float, 2)))
             wallet, _ = Wallet.objects.get_or_create(user=request.user)
             wallet.balance += refund_amount
             wallet.save()
@@ -607,8 +652,10 @@ def return_item(request, item_id):
         address_id   = request.POST.get('pickup_address')
         images       = request.FILES.getlist('images')
 
-        pickup_address = get_object_or_404(Address, id=address_id, user=request.user)
+        live_pickup = get_object_or_404(Address, id=address_id, user=request.user)
+        pickup_address = OrderAddress.from_address(live_pickup)
 
+        from apps.orders.utils import calculate_item_refund_amount
         return_request = Return.objects.create(
             order=order,
             order_item=item,
@@ -618,6 +665,7 @@ def return_item(request, item_id):
             comments=comments,
             refund_mode=refund_mode,
             pickup_address=pickup_address,
+            refund_amount=calculate_item_refund_amount(order, item)
         )
 
         for image in images:

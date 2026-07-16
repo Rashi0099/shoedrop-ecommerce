@@ -183,7 +183,7 @@ def toggle_product_status(request, product_id):
 @staff_member_required(login_url='admin_login')
 def variant_list(request, product_id):
     product = get_object_or_404(Product, id=product_id, is_deleted=False)
-    variants = ProductVariant.objects.filter(product=product).order_by('-created_at')
+    variants = ProductVariant.objects.filter(product=product, is_deleted=False).order_by('-created_at')
 
     context = {
         'product': product,
@@ -198,14 +198,23 @@ def add_variant(request, product_id):
     product = get_object_or_404(Product, id=product_id, is_deleted=False)
 
     if request.method == 'POST':
-        size = request.POST.get('size', '').strip()
-        color = request.POST.get('color', '').strip()
+        colors = request.POST.getlist('colors')
+        sizes = request.POST.getlist('sizes')
         price = request.POST.get('price')
         stock = request.POST.get('stock')
         is_active = request.POST.get('is_active') == 'True'
 
-        if not all([size, color, price, stock]):
-            messages.error(request, 'All fields are required.')
+        # ── Validate selection ──
+        if not colors:
+            messages.error(request, 'Please select at least one color.')
+            return redirect('add_variant', product_id=product.id)
+
+        if not sizes:
+            messages.error(request, 'Please select at least one size.')
+            return redirect('add_variant', product_id=product.id)
+
+        if not price or not stock:
+            messages.error(request, 'Price and stock are required.')
             return redirect('add_variant', product_id=product.id)
 
         try:
@@ -227,36 +236,64 @@ def add_variant(request, product_id):
             return redirect('add_variant', product_id=product.id)
 
         images = request.FILES.getlist('images')
-
         if len(images) < 3:
             messages.error(request, 'Please upload at least 3 images for this variant.')
             return redirect('add_variant', product_id=product.id)
 
-        variant = ProductVariant.objects.create(
-            product=product,
-            size=size,
-            color=color,
-            price=price,
-            stock=stock,
-            is_active=is_active
-        )
+        # ── Create one variant per color-size combination ──
+        created_count = 0
+        skipped_count = 0
 
-        for i, image_file in enumerate(images):
-            VariantImage.objects.create(
-                variant=variant,
-                image=image_file,
-                is_primary=(i == 0)
-            )
+        for color in colors:
+            for size in sizes:
+                # Skip duplicates that already exist for this product
+                if ProductVariant.objects.filter(
+                    product=product,
+                    color=color,
+                    size=size,
+                    is_deleted=False
+                ).exists():
+                    skipped_count += 1
+                    continue
 
-        messages.success(request, 'Variant added successfully.')
+                variant = ProductVariant.objects.create(
+                    product=product,
+                    size=size,
+                    color=color,
+                    price=price,
+                    stock=stock,
+                    is_active=is_active
+                )
+
+                # Attach images to each variant
+                for i, image_file in enumerate(images):
+                    # Seek back to start of file for each variant
+                    image_file.seek(0)
+                    VariantImage.objects.create(
+                        variant=variant,
+                        image=image_file,
+                        is_primary=(i == 0)
+                    )
+
+                created_count += 1
+
+        if created_count > 0:
+            msg = f'{created_count} variant(s) created successfully.'
+            if skipped_count > 0:
+                msg += f' {skipped_count} duplicate(s) were skipped.'
+            messages.success(request, msg)
+        else:
+            messages.warning(request, 'No new variants were created. All selected combinations already exist.')
+
         return redirect('variant_list', product_id=product.id)
 
     return render(request, 'admin/products/add_variant.html', {'product': product})
 
 
+
 @staff_member_required(login_url='admin_login')
 def edit_variant(request, variant_id):
-    variant = get_object_or_404(ProductVariant, id=variant_id)
+    variant = get_object_or_404(ProductVariant, id=variant_id, is_deleted=False)
     product = variant.product
 
     if request.method == 'POST':
@@ -322,9 +359,13 @@ def edit_variant(request, variant_id):
 
 @staff_member_required(login_url='admin_login')
 def delete_variant(request, variant_id):
-    variant = get_object_or_404(ProductVariant, id=variant_id)
+    variant = get_object_or_404(ProductVariant, id=variant_id, is_deleted=False)
     product_id = variant.product.id
-    variant.delete()
+    
+    # Soft delete — mark as deleted and deactivate
+    variant.is_deleted = True
+    variant.is_active = False
+    variant.save()
     messages.success(request, 'Variant deleted successfully.')
     return redirect('variant_list', product_id=product_id)
 

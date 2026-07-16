@@ -30,8 +30,13 @@ def cart_view(request):
         variants__cartitem__user=request.user
     ).distinct()[:4]
 
-    # Check if any cart item has insufficient stock
-    has_out_of_stock = any(item.variant.stock < item.quantity for item in cart_items)
+    has_out_of_stock = False
+    has_unavailable = False
+    for item in cart_items:
+        if item.variant.stock < item.quantity:
+            has_out_of_stock = True
+        if not item.variant.is_active or not item.variant.product.is_active or not item.variant.product.category.is_active:
+            has_unavailable = True
 
     context = {
         'cart_items': cart_items,
@@ -40,6 +45,7 @@ def cart_view(request):
         'total': total,
         'suggested_products': suggested_products,
         'has_out_of_stock': has_out_of_stock,
+        'has_unavailable': has_unavailable,
     }
 
     return render(request, 'user/cart/cart.html', context)
@@ -50,7 +56,7 @@ def add_to_cart(request, variant_id):
 
     variant = get_object_or_404(ProductVariant, id=variant_id)
 
-    if not variant.product.is_active or not variant.is_active:
+    if not variant.product.is_active or not variant.is_active or not variant.product.category.is_active:
         messages.error(request, 'Sorry, this product is not available.')
         return redirect('shop')
 

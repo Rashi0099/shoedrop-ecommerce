@@ -89,8 +89,16 @@
             </div>
           </div>
         </div>
-
         
+        <div>
+          <label for="referral-code" class="block text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+            Referral Code (Optional)
+          </label>
+          <div class="mt-1 relative">
+            <input id="referral-code" name="referral_code" type="text" value="{{ referral_code|default:'' }}" placeholder="e.g. A1B2C3D4"
+              class="block w-full rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-2.5 text-white placeholder-gray-500 text-xs transition duration-200 focus:border-emerald-400 focus:bg-emerald-500/10 focus:outline-none focus:ring-1 focus:ring-emerald-400/50 uppercase" />
+          </div>
+        </div>
 
         <div class="pt-2">
           <button type="submit"

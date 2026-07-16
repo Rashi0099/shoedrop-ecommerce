@@ -89,10 +89,23 @@ def verify_razorpay_payment(request):
         })
 
     except razorpay.errors.SignatureVerificationError:
+        mutable_post = request.POST.copy()
+        mutable_post['address_id'] = request.session.get('address_id')
+        buy_now_session = request.session.get('buy_now_id', '')
+        mutable_post['buy_now'] = buy_now_session if buy_now_session else None
+        request.POST = mutable_post
+        
+        # Create a failed order record
+        order = create_order(request, payment_method='Razorpay', payment_status='failed')
+        
         request.session.pop('address_id', None)
         request.session.pop('buy_now_id', None)
-        messages.error(request, 'Payment verification failed. Please contact support.')
-        return redirect('checkout')
+        
+        if order:
+            return redirect(f'/payments/payment-failed/?order_id={order.id}')
+        else:
+            messages.error(request, 'Payment verification failed and order could not be created.')
+            return redirect('checkout')
 
     mutable_post = request.POST.copy()
     mutable_post['address_id'] = request.session.get('address_id')
@@ -112,6 +125,19 @@ def verify_razorpay_payment(request):
         return redirect('checkout')
 
     return redirect(f'/orders/order-success/?order_id={order.id}')
+
+
+@login_required(login_url='login')
+def payment_failed(request):
+    order_id = request.GET.get('order_id')
+    from apps.orders.models import Order
+    order = None
+    if order_id:
+        try:
+            order = Order.objects.get(id=order_id, user=request.user)
+        except Order.DoesNotExist:
+            pass
+    return render(request, 'user/payments/payment_failed.html', {'order': order})
 
 
 @login_required(login_url='login')

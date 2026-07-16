@@ -130,7 +130,12 @@
             <p class="text-sm font-black text-slate-950 mt-1">₹{{ item.variant.price }}</p>
 
             <!-- Stock Check -->
-            {% if item.variant.stock > 0 %}
+            {% if not item.variant.is_active or not item.variant.product.is_active or not item.variant.product.category.is_active %}
+            <button disabled
+              class="mt-3 w-full block text-center bg-red-50 text-red-700 border border-red-200 text-[10px] font-bold uppercase tracking-widest py-2.5 rounded-xl cursor-not-allowed">
+              Unavailable
+            </button>
+            {% elif item.variant.stock > 0 %}
             <a href="{% url 'add_to_cart' item.variant.id %}"
               class="mt-3 w-full block text-center bg-slate-950 text-white text-[10px] font-bold uppercase tracking-widest py-2.5 rounded-xl hover:bg-slate-800 transition-colors">
               Add to Bag

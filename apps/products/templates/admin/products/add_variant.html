@@ -13,6 +13,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .color-swatch input:checked + .swatch-inner { outline: 3px solid #10b981; outline-offset: 3px; }
+        .size-chip input:checked + .chip-label { background: #10b981; color: #0a1a12; border-color: #10b981; }
     </style>
 </head>
 
@@ -22,7 +24,7 @@
     {% include 'admin/_sidebar.html' %}
 
     <!-- MAIN -->
-    <main class="flex-grow p-8 lg:p-12 space-y-8 overflow-y-auto max-w-2xl">
+    <main class="flex-grow p-8 lg:p-12 space-y-8 overflow-y-auto max-w-3xl">
         {% include 'admin/_messages.html' %}
 
         <!-- Breadcrumb & Header -->
@@ -35,73 +37,123 @@
                 <span class="text-white">Add Variant</span>
             </div>
             <h1 class="text-3xl font-black text-white tracking-tight uppercase">Add Variant</h1>
+            <p class="text-[11px] text-gray-500">Select multiple colors and sizes. One variant will be created for each combination.</p>
         </div>
 
         <!-- Form Card -->
         <div class="bg-[#141416] border border-white/5 rounded-2xl p-6 sm:p-8 shadow-xl">
-            <form method="POST" enctype="multipart/form-data" class="space-y-6" id="variant_form">
+            <form method="POST" enctype="multipart/form-data" class="space-y-8" id="variant_form">
                 {% csrf_token %}
 
-                <!-- Color -->
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Color</label>
-                    <div class="flex items-center gap-4">
-                        <label class="cursor-pointer relative">
-                            <input type="radio" name="color" value="Black" class="peer sr-only" required>
-                            <div class="w-8 h-8 rounded-full bg-black border-2 border-white/10 peer-checked:border-emerald-500 peer-checked:ring-2 peer-checked:ring-emerald-500/50 transition-all"></div>
+                <!-- ── Color ── -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Color <span class="text-emerald-400">(select one or more)</span></label>
+                        <span id="color_count" class="text-[10px] text-gray-600">0 selected</span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-4" id="color_grid">
+                        <label class="color-swatch cursor-pointer" title="Black">
+                            <input type="checkbox" name="colors" value="Black" class="sr-only" onchange="updateColorCount()">
+                            <div class="swatch-inner w-9 h-9 rounded-full border-2 border-white/10 transition-all" style="background-color: black;"></div>
                         </label>
-                        <label class="cursor-pointer relative">
-                            <input type="radio" name="color" value="Gray" class="peer sr-only" required>
-                            <div class="w-8 h-8 rounded-full bg-gray-500 border-2 border-white/10 peer-checked:border-emerald-500 peer-checked:ring-2 peer-checked:ring-emerald-500/50 transition-all"></div>
+                        <label class="color-swatch cursor-pointer" title="White">
+                            <input type="checkbox" name="colors" value="White" class="sr-only" onchange="updateColorCount()">
+                            <div class="swatch-inner w-9 h-9 rounded-full border-2 border-white/30 transition-all" style="background-color: white;"></div>
                         </label>
-                        <label class="cursor-pointer relative">
-                            <input type="radio" name="color" value="White" class="peer sr-only" required>
-                            <div class="w-8 h-8 rounded-full bg-white border-2 border-white/10 peer-checked:border-emerald-500 peer-checked:ring-2 peer-checked:ring-emerald-500/50 transition-all"></div>
+                        <label class="color-swatch cursor-pointer" title="Gray">
+                            <input type="checkbox" name="colors" value="Gray" class="sr-only" onchange="updateColorCount()">
+                            <div class="swatch-inner w-9 h-9 rounded-full border-2 border-white/10 transition-all" style="background-color: gray;"></div>
                         </label>
                     </div>
+                    <p id="color_error" class="hidden text-xs text-red-400">Please select at least one color.</p>
                 </div>
 
-                <!-- Size & Stock -->
+                <!-- ── Size ── -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Size <span class="text-emerald-400">(select one or more)</span></label>
+                        <span id="size_count" class="text-[10px] text-gray-600">0 selected</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2" id="size_grid">
+                        <label class="size-chip cursor-pointer">
+                            <input type="checkbox" name="sizes" value="EU 36" class="sr-only" onchange="updateSizeCount()">
+                            <span class="chip-label block px-4 py-2 border border-white/10 rounded-full text-xs font-bold text-gray-400 transition-all hover:border-white/30">EU 36</span>
+                        </label>
+                        <label class="size-chip cursor-pointer">
+                            <input type="checkbox" name="sizes" value="EU 37" class="sr-only" onchange="updateSizeCount()">
+                            <span class="chip-label block px-4 py-2 border border-white/10 rounded-full text-xs font-bold text-gray-400 transition-all hover:border-white/30">EU 37</span>
+                        </label>
+                        <label class="size-chip cursor-pointer">
+                            <input type="checkbox" name="sizes" value="EU 38" class="sr-only" onchange="updateSizeCount()">
+                            <span class="chip-label block px-4 py-2 border border-white/10 rounded-full text-xs font-bold text-gray-400 transition-all hover:border-white/30">EU 38</span>
+                        </label>
+                        <label class="size-chip cursor-pointer">
+                            <input type="checkbox" name="sizes" value="EU 39" class="sr-only" onchange="updateSizeCount()">
+                            <span class="chip-label block px-4 py-2 border border-white/10 rounded-full text-xs font-bold text-gray-400 transition-all hover:border-white/30">EU 39</span>
+                        </label>
+                        <label class="size-chip cursor-pointer">
+                            <input type="checkbox" name="sizes" value="EU 40" class="sr-only" onchange="updateSizeCount()">
+                            <span class="chip-label block px-4 py-2 border border-white/10 rounded-full text-xs font-bold text-gray-400 transition-all hover:border-white/30">EU 40</span>
+                        </label>
+                        <label class="size-chip cursor-pointer">
+                            <input type="checkbox" name="sizes" value="EU 41" class="sr-only" onchange="updateSizeCount()">
+                            <span class="chip-label block px-4 py-2 border border-white/10 rounded-full text-xs font-bold text-gray-400 transition-all hover:border-white/30">EU 41</span>
+                        </label>
+                        <label class="size-chip cursor-pointer">
+                            <input type="checkbox" name="sizes" value="EU 42" class="sr-only" onchange="updateSizeCount()">
+                            <span class="chip-label block px-4 py-2 border border-white/10 rounded-full text-xs font-bold text-gray-400 transition-all hover:border-white/30">EU 42</span>
+                        </label>
+                        <label class="size-chip cursor-pointer">
+                            <input type="checkbox" name="sizes" value="EU 43" class="sr-only" onchange="updateSizeCount()">
+                            <span class="chip-label block px-4 py-2 border border-white/10 rounded-full text-xs font-bold text-gray-400 transition-all hover:border-white/30">EU 43</span>
+                        </label>
+                        <label class="size-chip cursor-pointer">
+                            <input type="checkbox" name="sizes" value="EU 44" class="sr-only" onchange="updateSizeCount()">
+                            <span class="chip-label block px-4 py-2 border border-white/10 rounded-full text-xs font-bold text-gray-400 transition-all hover:border-white/30">EU 44</span>
+                        </label>
+                        <label class="size-chip cursor-pointer">
+                            <input type="checkbox" name="sizes" value="EU 45" class="sr-only" onchange="updateSizeCount()">
+                            <span class="chip-label block px-4 py-2 border border-white/10 rounded-full text-xs font-bold text-gray-400 transition-all hover:border-white/30">EU 45</span>
+                        </label>
+                        <label class="size-chip cursor-pointer">
+                            <input type="checkbox" name="sizes" value="EU 46" class="sr-only" onchange="updateSizeCount()">
+                            <span class="chip-label block px-4 py-2 border border-white/10 rounded-full text-xs font-bold text-gray-400 transition-all hover:border-white/30">EU 46</span>
+                        </label>
+                        <label class="size-chip cursor-pointer">
+                            <input type="checkbox" name="sizes" value="EU 47" class="sr-only" onchange="updateSizeCount()">
+                            <span class="chip-label block px-4 py-2 border border-white/10 rounded-full text-xs font-bold text-gray-400 transition-all hover:border-white/30">EU 47</span>
+                        </label>
+                        <label class="size-chip cursor-pointer">
+                            <input type="checkbox" name="sizes" value="EU 48" class="sr-only" onchange="updateSizeCount()">
+                            <span class="chip-label block px-4 py-2 border border-white/10 rounded-full text-xs font-bold text-gray-400 transition-all hover:border-white/30">EU 48</span>
+                        </label>
+                    </div>
+                    <p id="size_error" class="hidden text-xs text-red-400">Please select at least one size.</p>
+                </div>
+
+                <!-- ── Price & Stock ── -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div class="space-y-2">
-                        <label for="size" class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Size</label>
-                        <div class="relative">
-                            <select id="size" name="size" required
-                                class="w-full bg-[#1C1C1E] border border-white/5 text-white text-xs px-4 py-3 rounded-xl outline-none focus:border-white/20 transition-colors cursor-pointer appearance-none">
-                                <option value="" disabled selected>Choose size</option>
-                                <option value="EU 38">EU 38</option>
-                                <option value="EU 39">EU 39</option>
-                                <option value="EU 40">EU 40</option>
-                                <option value="EU 41">EU 41</option>
-                                <option value="EU 42">EU 42</option>
-                                <option value="EU 43">EU 43</option>
-                                <option value="EU 44">EU 44</option>
-                                <option value="EU 45">EU 45</option>
-                                <option value="EU 46">EU 46</option>
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                            </div>
-                        </div>
+                        <label for="price" class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Price (₹)</label>
+                        <input type="number" id="price" name="price" step="0.01" min="0" placeholder="0.00" required
+                            class="w-full bg-[#1C1C1E] border border-white/5 text-white text-xs px-4 py-3 rounded-xl outline-none focus:border-white/20 transition-colors placeholder-gray-600">
                     </div>
-
                     <div class="space-y-2">
-                        <label for="stock" class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Stock</label>
+                        <label for="stock" class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Stock per Variant</label>
                         <input type="number" id="stock" name="stock" min="0" placeholder="0" required
                             class="w-full bg-[#1C1C1E] border border-white/5 text-white text-xs px-4 py-3 rounded-xl outline-none focus:border-white/20 transition-colors placeholder-gray-600">
                     </div>
                 </div>
 
-                <!-- Price -->
-                <div class="space-y-2">
-                    <label for="price" class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Price (₹)</label>
-                    <input type="number" id="price" name="price" step="0.01" min="0" placeholder="0.00" required
-                        class="w-full bg-[#1C1C1E] border border-white/5 text-white text-xs px-4 py-3 rounded-xl outline-none focus:border-white/20 transition-colors placeholder-gray-600">
+                <!-- ── Preview of combinations ── -->
+                <div id="combo_preview" class="hidden space-y-2">
+                    <label class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Variants to be Created</label>
+                    <div id="combo_list" class="flex flex-wrap gap-2"></div>
                 </div>
 
-                <!-- Images -->
+                <!-- ── Images ── -->
                 <div class="space-y-2">
-                    <label class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Images (Min 3)</label>
+                    <label class="block text-[10px] font-bold tracking-widest text-gray-500 uppercase">Images (Min 3 — shared across all variants)</label>
                     <div class="p-4 border-2 border-dashed border-white/10 rounded-xl text-center bg-[#1C1C1E]/50">
                         <input type="file" id="image_upload" accept="image/*" class="hidden">
                         <label for="image_upload" class="cursor-pointer inline-block px-4 py-2 bg-[#1C1C1E] border border-white/5 rounded-lg text-xs font-bold text-white hover:bg-white/5 transition-colors">
@@ -111,14 +163,13 @@
                     </div>
                     
                     <!-- Previews -->
-                    <div id="image_previews" class="grid grid-cols-3 sm:grid-cols-4 gap-4 mt-4">
-                    </div>
+                    <div id="image_previews" class="grid grid-cols-3 sm:grid-cols-5 gap-4 mt-4"></div>
                     
                     <!-- Real input for form submission -->
                     <input type="file" name="images" id="final_images" multiple class="hidden">
                 </div>
 
-                <!-- Active Status Toggle -->
+                <!-- ── Active Status Toggle ── -->
                 <div class="flex items-center gap-4 py-2">
                     <button type="button" id="toggle_btn" onclick="toggleStatus()"
                         class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-emerald-500">
@@ -127,14 +178,14 @@
                     <input type="hidden" name="is_active" id="is_active_input" value="True">
                     <div>
                         <span class="block text-xs font-bold text-white uppercase tracking-wider">Active Status</span>
-                        <span class="text-[10px] text-gray-500 mt-0.5 block">This variant will be available for purchase</span>
+                        <span class="text-[10px] text-gray-500 mt-0.5 block">All created variants will be available for purchase</span>
                     </div>
                 </div>
 
-                <!-- Actions -->
+                <!-- ── Actions ── -->
                 <div class="flex items-center gap-3 pt-4 border-t border-white/5">
                     <button type="submit" class="px-6 py-3 bg-white text-black rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors cursor-pointer">
-                        Create Variant
+                        Create Variants
                     </button>
                     <a href="{% url 'variant_list' product.id %}" class="px-6 py-3 bg-zinc-800 text-white border border-white/10 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-zinc-700 transition-colors">
                         Cancel
@@ -162,12 +213,12 @@
     </div>
 
     <script>
+        // ─── Toggle Status ───
         function toggleStatus() {
             const btn = document.getElementById('toggle_btn');
             const knob = document.getElementById('toggle_knob');
             const input = document.getElementById('is_active_input');
             const isActive = input.value === 'True';
-
             if (isActive) {
                 btn.classList.replace('bg-emerald-500', 'bg-zinc-800');
                 knob.classList.replace('translate-x-5', 'translate-x-0');
@@ -179,47 +230,71 @@
             }
         }
 
-        // Image Cropping Logic
+        // ─── Color & Size Counters + Combo Preview ───
+        function updateColorCount() {
+            const checked = document.querySelectorAll('input[name="colors"]:checked');
+            document.getElementById('color_count').textContent = checked.length + ' selected';
+            updateComboPreview();
+        }
+        function updateSizeCount() {
+            const checked = document.querySelectorAll('input[name="sizes"]:checked');
+            document.getElementById('size_count').textContent = checked.length + ' selected';
+            updateComboPreview();
+        }
+        function updateComboPreview() {
+            const colors = [...document.querySelectorAll('input[name="colors"]:checked')].map(el => el.value);
+            const sizes = [...document.querySelectorAll('input[name="sizes"]:checked')].map(el => el.value);
+            const preview = document.getElementById('combo_preview');
+            const list = document.getElementById('combo_list');
+            list.innerHTML = '';
+            if (colors.length && sizes.length) {
+                preview.classList.remove('hidden');
+                colors.forEach(c => {
+                    sizes.forEach(s => {
+                        const chip = document.createElement('span');
+                        chip.className = 'px-3 py-1 bg-emerald-900/20 border border-emerald-500/20 text-emerald-400 rounded-full text-[10px] font-bold';
+                        chip.textContent = `${c} / ${s}`;
+                        list.appendChild(chip);
+                    });
+                });
+            } else {
+                preview.classList.add('hidden');
+            }
+        }
+
+        // ─── Custom Color ───
+        // (Removed per request - only Black, White, Gray available)
+
+        // ─── Image Cropping ───
         let cropper = null;
         let croppedFiles = [];
-        
+
         document.getElementById('image_upload').addEventListener('change', function(e) {
             if (e.target.files && e.target.files.length > 0) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     document.getElementById('crop_image').src = event.target.result;
                     document.getElementById('crop_modal').classList.remove('hidden');
-                    
-                    if (cropper) {
-                        cropper.destroy();
-                    }
-                    
+                    if (cropper) { cropper.destroy(); }
                     cropper = new Cropper(document.getElementById('crop_image'), {
-                        aspectRatio: 1, // 1:1 square for variant images
+                        aspectRatio: 1,
                         viewMode: 2,
                         autoCropArea: 1,
                     });
                 };
                 reader.readAsDataURL(e.target.files[0]);
-                e.target.value = ''; // Reset input
+                e.target.value = '';
             }
         });
 
         function closeCropModal() {
             document.getElementById('crop_modal').classList.add('hidden');
-            if (cropper) {
-                cropper.destroy();
-                cropper = null;
-            }
+            if (cropper) { cropper.destroy(); cropper = null; }
         }
 
         function saveCrop() {
             if (!cropper) return;
-            
-            cropper.getCroppedCanvas({
-                width: 800,
-                height: 800
-            }).toBlob(function(blob) {
+            cropper.getCroppedCanvas({ width: 800, height: 800 }).toBlob(function(blob) {
                 const file = new File([blob], "variant_image_" + Date.now() + ".jpg", { type: "image/jpeg" });
                 croppedFiles.push(file);
                 updatePreviews();
@@ -227,17 +302,16 @@
                 closeCropModal();
             }, 'image/jpeg', 0.9);
         }
-        
+
         function removeImage(index) {
             croppedFiles.splice(index, 1);
             updatePreviews();
             updateFileInput();
         }
-        
+
         function updatePreviews() {
             const container = document.getElementById('image_previews');
             container.innerHTML = '';
-            
             croppedFiles.forEach((file, index) => {
                 const url = URL.createObjectURL(file);
                 const div = document.createElement('div');
@@ -247,23 +321,44 @@
                     <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <button type="button" onclick="removeImage(${index})" class="text-red-400 hover:text-red-300 font-bold text-[10px] uppercase tracking-wider bg-black/50 px-2 py-1 rounded cursor-pointer">Remove</button>
                     </div>
+                    ${index === 0 ? '<span class="absolute top-1 left-1 bg-emerald-500 text-black text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">Primary</span>' : ''}
                 `;
                 container.appendChild(div);
             });
         }
-        
+
         function updateFileInput() {
             const dt = new DataTransfer();
             croppedFiles.forEach(file => dt.items.add(file));
             document.getElementById('final_images').files = dt.files;
         }
-        
-        // Form validation
+
+        // ─── Form Validation ───
         document.getElementById('variant_form').addEventListener('submit', function(e) {
-            if (croppedFiles.length < 3) {
-                e.preventDefault();
-                alert('Please upload and crop at least 3 images for this variant.');
+            let valid = true;
+
+            const colors = document.querySelectorAll('input[name="colors"]:checked');
+            if (colors.length === 0) {
+                document.getElementById('color_error').classList.remove('hidden');
+                valid = false;
+            } else {
+                document.getElementById('color_error').classList.add('hidden');
             }
+
+            const sizes = document.querySelectorAll('input[name="sizes"]:checked');
+            if (sizes.length === 0) {
+                document.getElementById('size_error').classList.remove('hidden');
+                valid = false;
+            } else {
+                document.getElementById('size_error').classList.add('hidden');
+            }
+
+            if (croppedFiles.length < 3) {
+                alert('Please upload and crop at least 3 images for this variant.');
+                valid = false;
+            }
+
+            if (!valid) e.preventDefault();
         });
     </script>
 </body>

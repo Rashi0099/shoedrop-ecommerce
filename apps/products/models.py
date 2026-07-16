@@ -79,6 +79,10 @@ class ProductVariant(models.Model):
         default=False
     )
 
+    is_deleted = models.BooleanField(
+        default=False
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True
     )

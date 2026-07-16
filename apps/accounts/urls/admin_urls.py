@@ -13,12 +13,12 @@ urlpatterns = [
 
     path('edit-profile/', admin_edit_profile, name='admin_edit_profile'),
 
-
     path('admin_logout/', admin_logout, name='admin_logout'),
     path('analytics/', analytics_dashboard, name='analytics_dashboard'),
-   
 
-    
+    # Analytics Exports
+    path('analytics/pdf/', analytics_pdf, name='analytics_pdf'),
+    path('analytics/excel/', analytics_excel, name='analytics_excel'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

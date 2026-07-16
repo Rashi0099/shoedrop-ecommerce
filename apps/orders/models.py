@@ -5,6 +5,38 @@ from apps.addresses.models import Address
 from apps.products.models import ProductVariant
 
 
+class OrderAddress(models.Model):
+    
+
+    full_name = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=10)
+    address = models.TextField()
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    postal_code = models.CharField(max_length=6)
+    country = models.CharField(max_length=100, default='India')
+    address_type = models.CharField(max_length=20, default='HOME')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @classmethod
+    def from_address(cls, address: Address) -> 'OrderAddress':
+        """Create and persist a snapshot from a live Address instance."""
+        return cls.objects.create(
+            full_name=address.full_name,
+            phone_number=address.phone_number,
+            address=address.address or '',
+            city=address.city,
+            state=address.state,
+            postal_code=address.postal_code,
+            country=address.country,
+            address_type=address.address_type,
+        )
+
+    def __str__(self):
+        return f'{self.full_name}, {self.city}'
+
+
 class Order(models.Model):
 
     PAYMENT_STATUS = (
@@ -63,7 +95,7 @@ class Order(models.Model):
 
     address = models.ForeignKey(
 
-        Address,
+        OrderAddress,
 
         on_delete=models.PROTECT,
 
@@ -117,6 +149,13 @@ class Order(models.Model):
 
         default=0
 
+    )
+
+    coupon = models.ForeignKey(
+        'coupons.Coupon',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
     )
 
     created_at = models.DateTimeField(
@@ -321,7 +360,7 @@ class Return(models.Model):
 
     pickup_address = models.ForeignKey(
 
-        Address,
+        OrderAddress,
 
         on_delete=models.SET_NULL,
 

@@ -81,7 +81,7 @@
                                 <div>
                                     <h3 class="text-sm font-bold text-gray-200 mb-1">{{ offer.offer_title }}</h3>
                                     <div class="text-[10px] text-gray-500 uppercase tracking-widest">
-                                        {{ offer.products.count }} Product{% if offer.products.count != 1 %}s{% endif %}
+                                        {{ offer.active_product_count }} Product{% if offer.active_product_count != 1 %}s{% endif %}
                                         {% if offer.categories.count > 0 %} | {{ offer.categories.count }} Category{% if offer.categories.count != 1 %}s{% endif %}{% endif %}
                                     </div>
                                 </div>
@@ -138,9 +138,9 @@
                 </table>
             </div>
             
-            {% if offers.has_other_pages or offers.count > 0 %}
+            {% if offers %}
             <div class="p-6 border-t border-white/5 flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-gray-500">
-                <div>Showing {{ offers.count }} active offers</div>
+                <div>Showing {{ offers|length }} offer{% if offers|length != 1 %}s{% endif %}</div>
             </div>
             {% endif %}
         </div>

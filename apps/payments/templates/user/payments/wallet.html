@@ -107,7 +107,7 @@
             </div>
             <p class="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-2">Your Unique Code</p>
             <div class="flex items-center bg-white/10 rounded-lg p-1 border border-white/10">
-              <input type="text" readonly value="{{ request.user.referral_code }}" id="walletReferralCode" class="w-full bg-transparent text-white px-3 text-sm font-bold tracking-widest focus:outline-none">
+              <input type="text" readonly value="{{ request.user.referral_code }}" id="walletReferralCode" class="w-full bg-transparent text-white px-3 text-sm font-bold tracking-widest focus:outline-none truncate">
               <button onclick="copyToClipboard('walletReferralCode')" class="bg-[#1d4638] text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-md hover:bg-[#2a5948] transition shrink-0">
                 Copy
               </button>

@@ -41,7 +41,7 @@
           <div class="flex-1">
             <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-2">Your Unique Code</p>
             <div class="flex items-center">
-              <input type="text" readonly value="{{ request.user.referral_code }}" id="referralCode" class="w-full bg-slate-50 border border-r-0 border-slate-200 rounded-l-xl px-4 py-3 text-sm font-bold tracking-widest text-[#1d4638] focus:outline-none">
+              <input type="text" readonly value="{{ request.user.referral_code }}" id="referralCode" class="w-full bg-slate-50 border border-r-0 border-slate-200 rounded-l-xl px-4 py-3 text-sm font-bold tracking-widest text-[#1d4638] focus:outline-none truncate">
               <button onclick="copyToClipboard('referralCode')" class="bg-[#1d4638] text-white text-[10px] font-bold uppercase tracking-widest px-5 py-3 rounded-r-xl border border-[#1d4638] hover:bg-[#153429] transition shrink-0 h-[46px]">
                 Copy Code
               </button>
@@ -100,7 +100,7 @@
         <div class="text-6xl font-light text-slate-100 mb-4 tracking-tighter">01</div>
         <h4 class="text-[10px] font-bold uppercase tracking-widest text-[#1d4638] mb-3">Share Your Code</h4>
         <p class="text-xs text-slate-400 leading-relaxed">
-          Send your unique referral link or code to your friends and fashion enthusiasts via Whatsapp, Email, or Social Media.
+          Send your unique referral code to your friends and fashion enthusiasts via Whatsapp, Email, or Social Media.
         </p>
       </div>
 
@@ -109,7 +109,7 @@
         <div class="text-6xl font-light text-slate-100 mb-4 tracking-tighter">02</div>
         <h4 class="text-[10px] font-bold uppercase tracking-widest text-[#1d4638] mb-3">Friend Signs Up</h4>
         <p class="text-xs text-slate-400 leading-relaxed">
-          When they register for a new account using your referral link, they'll get access to curated luxury collections.
+          When they register for a new account using your referral code, they'll get access to curated luxury collections.
         </p>
       </div>
 

@@ -285,11 +285,11 @@
                         <div class="flex flex-col gap-4 text-xs font-medium text-[#aaa] mb-6 border-b border-[#2A2A2A] pb-6">
                             <div class="flex justify-between items-center">
                                 <span>Subtotal</span>
-                                <span class="text-[#ddd]">₹{{ order.total_amount }}</span>
+                                <span class="text-[#ddd]">₹{{ subtotal|default:"0.00" }}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span>Tax (18% GST)</span>
-                                <span class="text-[#ddd]">Included</span>
+                                <span class="text-[#ddd]">₹{{ tax|default:"0.00" }}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span>Discount</span>

@@ -214,9 +214,11 @@
                             {{ product.product_name }}
                         </h4>
 
-                        <p class="text-xs text-gray-400">
-                            {{ product.category.name }}
-                        </p>
+                        <div class="flex items-center justify-between">
+                            <p class="text-xs text-gray-400">
+                                {{ product.category.name }}
+                            </p>
+                        </div>
                     </a>
 
                     <div class="flex items-center justify-between mt-auto pt-2">
@@ -229,11 +231,7 @@
                             {% endif %}
                         </span>
 
-                        <!-- Cart Button at Bottom Right -->
-                        <a href="{% if first_variant %}{% url 'add_to_cart' first_variant.id %}{% else %}#{% endif %}" 
-                           class="w-9 h-9 rounded-full bg-[#032b1d] flex items-center justify-center text-white shadow-md hover:bg-[#021f15] transition-all hover:scale-110">
-                            <i class="fa-solid fa-cart-plus text-sm"></i>
-                        </a>
+                        <!-- Removed Cart Button due to size selection requirement -->
                     </div>
 
                 </div>

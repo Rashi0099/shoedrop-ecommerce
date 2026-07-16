@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shoedrop Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -55,24 +56,13 @@
                             <p class="text-[#777] text-[10px] font-bold uppercase tracking-wider mb-1">Today's Performance</p>
                             <h2 class="text-lg font-semibold text-white">Hour-by-Hour (0-23)</h2>
                         </div>
-                        <div class="flex bg-[#222] rounded-full p-1 border border-[#333]">
-                            <button class="px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[#333] text-white rounded-full">Revenue</button>
-                            <button class="px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#888] hover:text-white rounded-full">Orders</button>
+                        <div class="flex gap-4 text-[9px] font-bold uppercase tracking-widest">
+                            <span class="flex items-center gap-1.5 text-[#2ecc71]"><span class="w-2.5 h-2.5 rounded-full bg-[#2ecc71]"></span>Revenue</span>
+                            <span class="flex items-center gap-1.5 text-blue-500"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>Orders</span>
                         </div>
                     </div>
-                    <div class="flex-1 border-b border-[#2a2a2a] relative flex items-center justify-center">
-                        <div class="absolute inset-0 flex flex-col justify-between">
-                            <div class="w-full h-px bg-[#222]"></div>
-                            <div class="w-full h-px bg-[#222]"></div>
-                            <div class="w-full h-px bg-[#222]"></div>
-                            <div class="w-full h-px bg-[#222]"></div>
-                        </div>
-                        <p class="text-[#555] text-xs z-10 relative">Waiting for traffic...</p>
-                    </div>
-                    <div class="flex justify-between text-[#555] text-[9px] mt-3 px-2">
-                        <span>0:00</span><span>2:00</span><span>4:00</span><span>6:00</span><span>8:00</span>
-                        <span>10:00</span><span>12:00</span><span>14:00</span><span>16:00</span><span>18:00</span>
-                        <span>20:00</span><span>22:00</span>
+                    <div class="flex-1 relative w-full h-[200px]">
+                        <canvas id="todayChart"></canvas>
                     </div>
                 </div>
                 <div class="bg-[#1A1A1A] p-6 rounded-3xl border border-[#262626] flex flex-col">
@@ -155,5 +145,82 @@
             </div>
         </div>
     </main>
+
+    <script>
+        const chartRevenue = {{ today_chart_revenue|safe }};
+        const chartOrders = {{ today_chart_orders|safe }};
+        const labels = Array.from({length: 24}, (_, i) => i + ':00');
+
+        const ctx = document.getElementById('todayChart').getContext('2d');
+        
+        let grad = ctx.createLinearGradient(0, 0, 0, 200);
+        grad.addColorStop(0, 'rgba(46, 204, 113, 0.2)');
+        grad.addColorStop(1, 'rgba(46, 204, 113, 0)');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Revenue (₹)',
+                        data: chartRevenue,
+                        backgroundColor: grad,
+                        borderColor: '#2ecc71',
+                        borderWidth: 2,
+                        borderRadius: 4,
+                        yAxisID: 'yRev',
+                    },
+                    {
+                        label: 'Orders',
+                        data: chartOrders,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        type: 'line',
+                        tension: 0.4,
+                        pointBackgroundColor: '#111',
+                        pointBorderColor: '#3b82f6',
+                        pointRadius: 3,
+                        yAxisID: 'yOrd',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#222',
+                        titleColor: '#888',
+                        bodyColor: '#fff',
+                        borderColor: '#333',
+                        borderWidth: 1,
+                        padding: 10,
+                        callbacks: {
+                            label: ctx => ctx.datasetIndex === 0 
+                                ? '₹' + ctx.parsed.y.toLocaleString() 
+                                : ctx.parsed.y + ' orders'
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#555', font: { size: 9 } } },
+                    yRev: {
+                        position: 'left',
+                        grid: { color: '#222' },
+                        ticks: { color: '#555', font: { size: 9 }, callback: v => '₹' + v }
+                    },
+                    yOrd: {
+                        position: 'right',
+                        grid: { display: false },
+                        ticks: { color: '#555', font: { size: 9 }, callback: v => v + ' ord', stepSize: 1 }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>

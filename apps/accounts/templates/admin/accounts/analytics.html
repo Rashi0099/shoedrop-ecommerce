@@ -29,16 +29,19 @@
             <div>
                 <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Admin Panel / Sales Analytics</p>
                 <h1 class="text-2xl font-light text-white tracking-widest uppercase mb-1">Shoedrop <span class="font-bold">Admin</span></h1>
+                <p class="text-[10px] text-gray-500 mt-1">
+                    Showing data from <span class="text-gray-300 font-bold">{{ date_from }}</span> to <span class="text-gray-300 font-bold">{{ date_to }}</span>
+                </p>
             </div>
             <div class="flex gap-3">
-                <button class="px-4 py-2 bg-[#1A1A1C] hover:bg-[#222] border border-white/5 rounded-full text-[9px] font-bold text-gray-400 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2">
+                <a href="{% url 'analytics_excel' %}?period={{ period }}&date_from={{ date_from|date:'Y-m-d' }}&date_to={{ date_to|date:'Y-m-d' }}" class="px-4 py-2 bg-[#1A1A1C] hover:bg-[#222] border border-white/5 rounded-full text-[9px] font-bold text-gray-400 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     Excel
-                </button>
-                <button class="px-4 py-2 bg-emerald-900/20 hover:bg-emerald-900/40 border border-emerald-900/30 rounded-full text-[9px] font-bold text-emerald-400 uppercase tracking-widest transition-colors flex items-center gap-2">
+                </a>
+                <a href="{% url 'analytics_pdf' %}?period={{ period }}&date_from={{ date_from|date:'Y-m-d' }}&date_to={{ date_to|date:'Y-m-d' }}" class="px-4 py-2 bg-emerald-900/20 hover:bg-emerald-900/40 border border-emerald-900/30 rounded-full text-[9px] font-bold text-emerald-400 uppercase tracking-widest transition-colors flex items-center gap-2">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                     PDF
-                </button>
+                </a>
             </div>
         </div>
 
@@ -249,6 +252,64 @@
                     <p class="text-xs text-gray-500">No category data in this period.</p>
                     {% endfor %}
                 </div>
+            </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="mt-6 bg-[#141416] rounded-2xl border border-white/5 overflow-hidden">
+            <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+                <h3 class="text-sm font-bold text-white">Order Details</h3>
+                <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">{{ orders_list|length }} Orders Shown</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-white/5 text-[9px] font-bold uppercase tracking-widest text-gray-600 bg-[#1A1A1C]/30">
+                            <th class="py-4 px-6">Order ID</th>
+                            <th class="py-4 px-6">Date</th>
+                            <th class="py-4 px-6">Customer</th>
+                            <th class="py-4 px-6">Payment</th>
+                            <th class="py-4 px-6">Discount</th>
+                            <th class="py-4 px-6">Status</th>
+                            <th class="py-4 px-6 text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5 text-xs text-gray-400">
+                        {% for order in orders_list %}
+                        <tr class="hover:bg-white/[0.02] transition-colors">
+                            <td class="py-4 px-6 font-bold text-white">
+                                <a href="{% url 'admin_order_details' order.id %}" class="hover:text-[#86e2b5] transition-colors">#SV-{{ order.id|stringformat:"04d" }}</a>
+                            </td>
+                            <td class="py-4 px-6 text-gray-500">{{ order.created_at|date:"M d, Y" }}</td>
+                            <td class="py-4 px-6">{{ order.user.username|default:"-" }}</td>
+                            <td class="py-4 px-6">
+                                <span class="px-2 py-0.5 rounded bg-white/5 text-[9px] font-bold uppercase tracking-wider text-gray-400">{{ order.payment_method }}</span>
+                            </td>
+                            <td class="py-4 px-6 text-red-400 font-bold">
+                                {% if order.coupon_discount %}-₹{{ order.coupon_discount }}{% else %}-{% endif %}
+                            </td>
+                            <td class="py-4 px-6">
+                                {% if order.order_status == 'delivered' %}
+                                    <span class="px-2 py-0.5 rounded bg-[#10b981]/20 text-[#10b981] text-[9px] font-bold uppercase tracking-wider">Delivered</span>
+                                {% elif order.order_status == 'cancelled' %}
+                                    <span class="px-2 py-0.5 rounded bg-[#ef4444]/20 text-[#ef4444] text-[9px] font-bold uppercase tracking-wider">Cancelled</span>
+                                {% elif order.order_status == 'returned' %}
+                                    <span class="px-2 py-0.5 rounded bg-[#3b82f6]/20 text-[#3b82f6] text-[9px] font-bold uppercase tracking-wider">Returned</span>
+                                {% elif order.order_status == 'shipped' %}
+                                    <span class="px-2 py-0.5 rounded bg-[#f59e0b]/20 text-[#f59e0b] text-[9px] font-bold uppercase tracking-wider">Shipped</span>
+                                {% else %}
+                                    <span class="px-2 py-0.5 rounded bg-white/5 text-gray-400 text-[9px] font-bold uppercase tracking-wider">{{ order.order_status|title }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-4 px-6 text-right font-bold text-white">₹{{ order.total_amount }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="py-16 text-center text-gray-600 text-xs">No orders found for the selected period.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
 

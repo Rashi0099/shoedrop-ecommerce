@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.db.models import Prefetch
 
 from apps.products.models import Product, ProductVariant
 from apps.category.models import Category, SubCategory
@@ -8,10 +9,17 @@ from apps.category.models import Category, SubCategory
 
 def shop(request):
 
+    from django.db.models import Prefetch
+    
+    active_variants = ProductVariant.objects.filter(is_active=True, is_deleted=False)
+    
     products = Product.objects.filter(
         is_active=True,
         is_deleted=False
-    ).prefetch_related('variants__images')
+    ).prefetch_related(
+        Prefetch('variants', queryset=active_variants),
+        'variants__images'
+    )
 
     categories = Category.objects.filter(is_active=True)
 
@@ -109,7 +117,8 @@ def product_detail(request, product_id):
 
     variants = ProductVariant.objects.filter(
         product=product,
-        is_active=True
+        is_active=True,
+        is_deleted=False
     ).prefetch_related('images')
 
     selected_color = request.GET.get('color')
@@ -143,16 +152,25 @@ def product_detail(request, product_id):
             selected_variant = v
 
     colors = variants.values_list('color', flat=True).distinct()
-    sizes = variants.values_list('size', flat=True).distinct()
 
     current_color = selected_variant.color if selected_variant else None
     current_size = selected_variant.size if selected_variant else None
 
+    if current_color:
+        sizes = variants.filter(color=current_color).values_list('size', flat=True).distinct()
+    else:
+        sizes = variants.values_list('size', flat=True).distinct()
+
+    active_variants = ProductVariant.objects.filter(is_active=True, is_deleted=False)
+    
     related_products = Product.objects.filter(
         category=product.category,
         is_active=True,
         is_deleted=False
-    ).exclude(id=product.id).prefetch_related('variants__images')[:4]
+    ).exclude(id=product.id).prefetch_related(
+        Prefetch('variants', queryset=active_variants),
+        'variants__images'
+    )[:4]
 
     from apps.reviews.models import Review
     from apps.orders.models import OrderItem

@@ -83,18 +83,19 @@ def admin_order_details(request, order_id):
 
     )
 
+    # Calculate subtotal based ONLY on active items
+    active_items = order.items.filter(item_status='active')
+    subtotal = sum(item.total for item in active_items)
+    tax = round(float(subtotal) * 0.18, 2)
+
     return render(
-
         request,
-
         'admin/orders/order_detail.html',
-
         {
-
-            'order': order
-
+            'order': order,
+            'subtotal': subtotal,
+            'tax': tax
         }
-
     )
 
 
@@ -137,7 +138,7 @@ def admin_update_order_status(request, order_id):
         if status == 'cancelled' and order.order_status != 'cancelled':
             from decimal import Decimal
             active_items = order.items.filter(item_status='active')
-            refund_total = Decimal('0')
+            refund_total = Decimal(str(order.total_amount))
             for item in active_items:
                 item.item_status = 'cancelled'
                 item.save()
@@ -145,7 +146,6 @@ def admin_update_order_status(request, order_id):
                 variant = item.product_variant
                 variant.stock += item.quantity
                 variant.save()
-                refund_total += Decimal(str(float(item.total) * 1.18))
 
             # Reset order total
             order.total_amount = 0
@@ -282,10 +282,18 @@ def admin_update_return_status(request, return_id):
     item.save()
 
     # Wallet refund when admin marks as Refunded
-    if status == 'Refunded' and return_request.refund_mode == 'Wallet':
-        from apps.payments.models import Wallet, WalletTransaction
-        refund_amount = return_request.order_item.total
-        wallet, _ = Wallet.objects.get_or_create(user=return_request.user)
+    if status == 'Refunded':
+        from apps.orders.utils import calculate_item_refund_amount
+        refund_amount = calculate_item_refund_amount(order, return_request.order_item)
+        
+        # Critical: Deduct from order total to prevent over-refunding subsequent cancellations
+        order.total_amount = float(order.total_amount) - float(refund_amount)
+        if order.total_amount < 0:
+            order.total_amount = 0
+            
+        if return_request.refund_mode == 'Wallet':
+            from apps.payments.models import Wallet, WalletTransaction
+            wallet, _ = Wallet.objects.get_or_create(user=return_request.user)
         wallet.balance += refund_amount
         wallet.save()
         WalletTransaction.objects.create(

@@ -25,6 +25,17 @@ def apply_coupon(request):
             messages.error(request, 'This coupon is no longer valid.')
             return HttpResponseRedirect(referer)
 
+        # Check if user has already used this coupon in a valid order
+        from apps.orders.models import Order
+        user_used_coupon = Order.objects.filter(
+            user=request.user,
+            coupon=coupon
+        ).exclude(order_status='cancelled').exists()
+
+        if user_used_coupon:
+            messages.error(request, 'You have already used this coupon.')
+            return HttpResponseRedirect(referer)
+
         buy_now_id = request.POST.get('buy_now') or request.GET.get('buy_now')
         totals = calculate_order_amount(request, buy_now_id)
 

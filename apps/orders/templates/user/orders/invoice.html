@@ -74,7 +74,8 @@
         <div class="text-[11px] text-gray-500 leading-relaxed font-medium">
           <p>{{ order.address.address }}</p>
           <p>{{ order.address.city }}, {{ order.address.state }} {{ order.address.postal_code }}</p>
-          <p>India</p> <!-- Assuming India based on previous addresses -->
+          <p>{{ order.address.country }}</p>
+          <p>{{ order.address.phone_number }}</p>
         </div>
       </div>
 
@@ -171,7 +172,7 @@
         <div class="flex flex-col gap-3 text-[11px] font-medium text-gray-500 mb-6 pb-6 border-b border-gray-200">
           <div class="flex justify-between items-center">
             <span>Subtotal</span>
-            <span class="font-bold text-gray-900">₹{{ order.total_amount }}</span>
+            <span class="font-bold text-gray-900">₹{{ subtotal }}</span>
           </div>
           <div class="flex justify-between items-center">
             <span>Shipping</span>

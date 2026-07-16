@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Count, Q
 
 from apps.offers.models import Offer
 from apps.products.models import Product
@@ -12,7 +13,12 @@ def offer_list(request):
     search = request.GET.get('search', '')
     status = request.GET.get('status', '')
 
-    offers = Offer.objects.all().order_by('-created_at')
+    offers = Offer.objects.annotate(
+        active_product_count=Count(
+            'products',
+            filter=Q(products__is_active=True, products__is_deleted=False)
+        )
+    ).order_by('-created_at')
 
     if search:
         offers = offers.filter(offer_title__icontains=search)
@@ -56,7 +62,7 @@ def add_offer(request):
         messages.success(request, 'Offer created successfully.')
         return redirect('offer_list')
 
-    products = Product.objects.all()
+    products = Product.objects.filter(is_active=True, is_deleted=False)
     categories = Category.objects.all()
     return render(request, 'admin/offers/add_offer.html', {'products': products, 'categories': categories})
 
@@ -91,7 +97,7 @@ def edit_offer(request, offer_id):
         messages.success(request, 'Offer updated successfully.')
         return redirect('offer_list')
 
-    products = Product.objects.all()
+    products = Product.objects.filter(is_active=True, is_deleted=False)
     categories = Category.objects.all()
     context = {
         'offer': offer,
