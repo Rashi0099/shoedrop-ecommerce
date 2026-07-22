@@ -1,44 +1,121 @@
-  <nav class="bg-white border-b border-gray-100/80 sticky top-0 z-50">
-    <div class="mx-auto flex max-w-7xl items-center justify-between px-8 py-5 lg:px-12">
+<nav class="bg-white border-b border-gray-100/80 sticky top-0 z-50">
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-8 py-4 lg:px-12">
 
-      <!-- Logo -->
-      <div class="flex items-center">
-        <a href="{%url 'landing_page'%}" class="text-xl font-black tracking-[0.25em] text-[#11261f] uppercase">
-          SHOEDROP
-        </a>
-      </div>
-
-      <!-- Center Navigation Links -->
-      <div class="hidden space-x-12 text-[11px] font-bold tracking-[0.2em] text-gray-900 md:flex items-center pl-10">
-        <a href="{%url 'shop'%}?category=Men" class="hover:opacity-70 transition-opacity duration-200">MEN</a>
-        <a href="{%url 'shop'%}?category=Woman" class="hover:opacity-70 transition-opacity duration-200">WOMEN</a>
-        <a href="{%url 'shop'%}?category=Kids" class="hover:opacity-70 transition-opacity duration-200">KIDS</a>
-      </div>
-
-      <!-- Quick Action Icons -->
-      <div class="flex items-center space-x-6 text-gray-700">
-        <a href="{% url 'wishlist' %}" class="p-1 hover:text-black transition-colors">
-          <svg class="h-[19px] w-[19px]" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-          </svg>
-        </a>
-
-        <a href ="{%url 'cart'%}"
-          class="p-1 hover:text-black transition-colors">
-          <svg class="h-[19px] w-[19px]" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-          </svg>
-          </a>
-        
-        <a href="{%url 'profile'%}" class="p-1 hover:text-black transition-colors">
-          <svg class="h-[19px] w-[19px]" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-          </svg>
-        </a>
-        {% if not user.is_authenticated %}
-      <a href="{%url 'login'%}">Login</a>
-      {% endif %}
-       
-      </div>
+    <!-- Logo -->
+    <div class="flex items-center">
+      <a href="{% url 'landing_page' %}" class="text-xl font-black tracking-[0.25em] text-[#11261f] uppercase">
+        SHOEDROP
+      </a>
     </div>
-  </nav>
+
+    <!-- Center Navigation Links (Desktop) -->
+    <div class="hidden space-x-10 text-[11px] font-bold tracking-[0.2em] text-gray-900 md:flex items-center">
+      <a href="{% url 'shop' %}?category=Men" class="hover:opacity-70 transition-opacity duration-200">MEN</a>
+      <a href="{% url 'shop' %}?category=Woman" class="hover:opacity-70 transition-opacity duration-200">WOMEN</a>
+      <a href="{% url 'shop' %}?category=Kids" class="hover:opacity-70 transition-opacity duration-200">KIDS</a>
+    </div>
+
+    <!-- Quick Action Icons (Desktop) -->
+    <div class="hidden md:flex items-center space-x-5 text-gray-700">
+      <a href="{% url 'wishlist' %}" class="p-1 hover:text-black transition-colors" title="Wishlist">
+        <svg class="h-[19px] w-[19px]" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+        </svg>
+      </a>
+
+      <a href="{% url 'cart' %}" class="p-1 hover:text-black transition-colors" title="Cart">
+        <svg class="h-[19px] w-[19px]" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+        </svg>
+      </a>
+
+      <a href="{% url 'profile' %}" class="p-1 hover:text-black transition-colors" title="Profile">
+        <svg class="h-[19px] w-[19px]" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+        </svg>
+      </a>
+
+      {% if not user.is_authenticated %}
+      <a href="{% url 'login' %}" class="text-[11px] font-bold tracking-widest hover:text-black transition-colors">Login</a>
+      {% endif %}
+    </div>
+
+    <!-- Mobile: Icons + Hamburger -->
+    <div class="flex items-center gap-3 md:hidden text-gray-700">
+      
+      <a href="{% url 'wishlist' %}" class="p-1 hover:text-black transition-colors" title="Wishlist">
+        <svg class="h-[19px] w-[19px]" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+        </svg>
+      </a>
+
+      <a href="{% url 'cart' %}" class="p-1 hover:text-black transition-colors" title="Cart">
+        <svg class="h-[19px] w-[19px]" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+        </svg>
+      </a>
+
+      <a href="{% url 'profile' %}" class="p-1 hover:text-black transition-colors" title="Profile">
+        <svg class="h-[19px] w-[19px]" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+        </svg>
+      </a>
+
+      <!-- Hamburger -->
+      <button id="mobile-menu-btn" aria-label="Open menu" class="p-1 hover:text-black transition-colors focus:outline-none">
+        <svg id="hamburger-icon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+        <svg id="close-icon" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Mobile Menu Drawer -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 bg-white">
+    <div class="max-w-7xl mx-auto px-5 py-4 space-y-1">
+      <!-- Category Links -->
+      <p class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 px-3 pt-1 pb-2">Shop</p>
+      <a href="{% url 'shop' %}?category=Men" class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
+        <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>
+        Men
+      </a>
+      <a href="{% url 'shop' %}?category=Woman" class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
+        <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>
+        Women
+      </a>
+      <a href="{% url 'shop' %}?category=Kids" class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
+        <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>
+        Kids
+      </a>
+
+      {% if not user.is_authenticated %}
+      <div class="h-px bg-gray-100 my-2"></div>
+      <p class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 px-3 pb-2">Account</p>
+      
+      <div class="pt-2 pb-1">
+        <a href="{% url 'login' %}" class="block w-full text-center bg-[#11261f] text-white text-xs font-bold uppercase tracking-widest py-3 rounded-xl hover:opacity-90 transition">
+          Login
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<script>
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const hamburgerIcon = document.getElementById('hamburger-icon');
+  const closeIcon = document.getElementById('close-icon');
+
+  mobileMenuBtn.addEventListener('click', () => {
+    const isOpen = !mobileMenu.classList.contains('hidden');
+    mobileMenu.classList.toggle('hidden', isOpen);
+    hamburgerIcon.classList.toggle('hidden', !isOpen);
+    closeIcon.classList.toggle('hidden', isOpen);
+  });
+</script>

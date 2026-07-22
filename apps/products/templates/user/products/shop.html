@@ -3,273 +3,344 @@
 {% block extra_head %}
 <title>ShoeDrop - Performance Engineered</title>
 <style>
-        /* Custom accent color setup matching the image */
-        .bg-brand-dark {
-            background-color: #032b1d;
-        }
+  .bg-brand-dark { background-color: #032b1d; }
+  .text-brand-dark { color: #032b1d; }
+  .border-brand-dark { border-color: #032b1d; }
+  .accent-brand { accent-color: #032b1d; }
 
-        .text-brand-dark {
-            color: #032b1d;
-        }
-
-        .border-brand-dark {
-            border-color: #032b1d;
-        }
-
-        .accent-brand {
-            accent-color: #032b1d;
-        }
-    </style>
+  /* Filter drawer transition */
+  #filter-drawer {
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  #filter-overlay {
+    transition: opacity 0.3s ease;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 
+<!-- Messages -->
+{% if messages %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+  {% for message in messages %}
+  <div class="p-4 mb-2 text-sm rounded-xl font-bold {% if message.tags == 'error' %}bg-red-50 text-red-800 border border-red-200{% else %}bg-emerald-50 text-emerald-800 border border-emerald-200{% endif %} shadow-sm flex items-center justify-between" role="alert">
+    <span>{{ message }}</span>
+    <button type="button" class="ml-auto text-gray-500 hover:text-gray-900 transition-colors" onclick="this.parentElement.style.display='none';">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
 
+<!-- Mobile Filter Overlay -->
+<div id="filter-overlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden" onclick="closeFilterDrawer()"></div>
 
-
-
-
-
-
-
-
-
-    
-
-    <!-- Messages -->
-    {% if messages %}
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        {% for message in messages %}
-        <div class="p-4 mb-2 text-sm rounded-xl font-bold {% if message.tags == 'error' %}bg-red-50 text-red-800 border-red-200{% else %}bg-emerald-50 text-emerald-800 border-emerald-200{% endif %} border shadow-sm flex items-center justify-between" role="alert">
-            <span>{{ message }}</span>
-            <button type="button" class="ml-auto text-gray-500 hover:text-gray-900 transition-colors" onclick="this.parentElement.style.display='none';">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        {% endfor %}
+<!-- Mobile Filter Drawer (slides from left) -->
+<div id="filter-drawer" class="fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-white z-50 shadow-2xl overflow-y-auto transform -translate-x-full lg:hidden">
+  <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+    <h2 class="text-sm font-black text-gray-900 uppercase tracking-widest">Filters</h2>
+    <button onclick="closeFilterDrawer()" class="p-1 text-gray-400 hover:text-gray-700 transition-colors">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+  <div class="p-5">
+    <!-- Mobile Filter Form (mirrors desktop) -->
+    <div class="flex items-center justify-between mb-4">
+      <a href="{% url 'shop' %}" class="text-[10px] font-bold text-red-400 hover:text-red-600 uppercase tracking-widest transition-colors">Clear All</a>
     </div>
-    {% endif %}
+    <form method="GET" id="mobile-filter-form">
+      {% if request.GET.category %}
+      <input type="hidden" name="category" value="{{ request.GET.category }}">
+      {% endif %}
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  
-  
-        <div class="flex items-center justify-between my-6">
-            <div class="text-sm text-gray-600 font-medium">
-                <span class="text-gray-900 font-bold">
-                    {{ page_obj.paginator.count }}
-                </span>
-                Products Found
-            </div>
-                        <a href ="{%url 'shop'%} ">All Category</a>
+      <div class="mb-4">
+        <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">Search</h3>
+        <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search..."
+          class="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#032b1d] transition-colors">
+      </div>
+      <hr class="border-gray-100 my-4">
 
-            
-           
+      <div class="mb-4">
+        <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">Subcategory</h3>
+        <div class="space-y-1.5">
+          {% for subcategory in subcategories %}
+          <label class="flex items-center text-xs font-medium text-gray-600 cursor-pointer">
+            <input type="radio" name="subcategory" value="{{ subcategory }}"
+              class="h-3.5 w-3.5 mr-2.5 accent-[#032b1d]" {% if request.GET.subcategory == subcategory %}checked{% endif %}>
+            {{ subcategory }}
+          </label>
+          {% endfor %}
         </div>
+      </div>
+      <hr class="border-gray-100 my-4">
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-
-            <aside class="lg:col-span-1 bg-white p-4 lg:p-5 rounded-2xl border border-gray-100 shadow-sm sticky top-20 h-fit">
-
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-sm font-black text-gray-900 uppercase tracking-widest">Filters</h2>
-                    <a href="{% url 'shop' %}" class="text-[10px] font-bold text-red-400 hover:text-red-600 uppercase tracking-widest transition-colors">Clear All</a>
-                </div>
-
-                <form method="GET">
-
-                    {% if request.GET.category %}
-                    <input type="hidden" name="category" value="{{ request.GET.category }}">
-                    {% endif %}
-
-                    <!-- Search -->
-
-                    <div>
-                        <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">
-                            Search
-                        </h3>
-
-                        <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search..."
-                            class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none">
-                    </div>
-
-                    <hr class="border-gray-100 my-4">
-
-                    <!-- Subcategory -->
-
-                    <div>
-                        <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">
-                            Subcategory
-                        </h3>
-
-                        <div class="space-y-1.5">
-
-                            {% for subcategory in subcategories %}
-
-                            <label class="flex items-center text-xs font-medium text-gray-600 cursor-pointer">
-
-                                <input type="radio" name="subcategory" value="{{ subcategory }}"
-                                    class="accent-brand h-3.5 w-3.5 mr-2.5" {% if request.GET.subcategory == subcategory %}checked{% endif %}>
-
-                                {{ subcategory }}
-
-                            </label>
-
-                            {% endfor %}
-
-                        </div>
-                    </div>
-
-                    <hr class="border-gray-100 my-4">
-
-              
-                    
-
-                    <hr class="border-gray-100 my-4">
-
-                    <!-- Size -->
-
-                    <div class="grid grid-cols-4 gap-1.5 text-center text-xs font-semibold">
-                        {% for size in sizes %}
-                        <label class="cursor-pointer">
-                            <input type="radio" name="size" value="{{ size }}" class="peer sr-only" {% if request.GET.size == size %}checked{% endif %}>
-                            <div class="py-1.5 rounded-lg border text-center text-[11px] font-semibold transition-colors peer-checked:bg-brand-dark peer-checked:text-white peer-checked:border-brand-dark border-gray-200 text-gray-400 hover:border-brand-dark">
-                                {{ size }}
-                            </div>
-                        </label>
-                        {% endfor %}
-                    </div>
-                    
-                    <hr class="border-gray-100 my-4">
-
-                    <!-- Color -->
-                    <div>
-                        <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">Color</h3>
-                        <div class="flex space-x-2">
-                            {% for color in colors %}
-                            <label class="cursor-pointer">
-                                <input type="radio" name="color" value="{{ color }}" class="peer sr-only" {% if request.GET.color == color %}checked{% endif %}>
-                                <div class="w-5 h-5 rounded-full border-2 transition-all peer-checked:border-brand-dark peer-checked:ring-2 peer-checked:ring-brand-dark/50 border-gray-300 hover:scale-110" 
-                                     style="background-color: {{ color|lower }};" title="{{ color }}">
-                                </div>
-                            </label>
-                            {% endfor %}
-                        </div>
-                    </div>
-
-                    <hr class="border-gray-100 my-4">
-
-                    <!-- Sort -->
-                    <div>
-                        <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2.5">Sort</h3>
-                        <div class="relative group">
-                            <select name="sort" class="w-full appearance-none bg-white border border-gray-200 hover:border-brand-dark/50 text-gray-700 text-xs font-semibold rounded-xl px-3.5 py-2.5 pr-10 outline-none focus:border-brand-dark focus:ring-1 focus:ring-brand-dark transition-all cursor-pointer shadow-sm">
-                                <option value="-created_at" {% if request.GET.sort == '-created_at' or not request.GET.sort %}selected{% endif %}>New Arrivals</option>
-                                <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
-                                <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
-                                <option value="name_az" {% if request.GET.sort == 'name_az' %}selected{% endif %}>Name: A to Z</option>
-                                <option value="name_za" {% if request.GET.sort == 'name_za' %}selected{% endif %}>Name: Z to A</option>
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-gray-400 group-hover:text-brand-dark transition-colors">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-5">
-                        <button type="submit" class="w-full bg-brand-dark hover:bg-[#021f15] transition-colors text-white py-2 rounded-xl text-xs font-semibold tracking-wide">
-                            Apply Filters
-                        </button>
-                    </div>
-
-                </form>
-
-            </aside>
-
-
-            <section class="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-
-                {% for product in products %}
-
-                {% with first_variant=product.variants.first %}
-
-                <div class="bg-white rounded-3xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col justify-between group relative">
-
-                    <!-- Wishlist Icon at Top Right — filled red if already in wishlist -->
-                    <a href="{% if first_variant %}{% url 'toggle_wishlist' first_variant.id %}{% else %}{% url 'wishlist' %}{% endif %}"
-                       class="absolute top-4 right-4 z-10 w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md border border-gray-100 transition-all hover:scale-110
-                              {% if first_variant and first_variant.id in wishlist_variant_ids %}text-red-500{% else %}text-gray-300 hover:text-red-400{% endif %}">
-                        <i class="{% if first_variant and first_variant.id in wishlist_variant_ids %}fa-solid{% else %}fa-regular{% endif %} fa-heart text-sm"></i>
-                    </a>
-
-                    <a href="{% url 'product_detail' product.id %}" class="block">
-                        <div class="relative bg-gray-100 rounded-2xl overflow-hidden aspect-[4/3] mb-4">
-                            {% if first_variant and first_variant.images.first %}
-                            <img src="{{ first_variant.images.first.image.url }}" alt="{{ product.product_name }}"
-                                class="object-cover w-full h-full group-hover:scale-105 transition duration-300">
-                            {% endif %}
-                        </div>
-
-                        <h4 class="font-bold text-base text-gray-900">
-                            {{ product.product_name }}
-                        </h4>
-
-                        <div class="flex items-center justify-between">
-                            <p class="text-xs text-gray-400">
-                                {{ product.category.name }}
-                            </p>
-                        </div>
-                    </a>
-
-                    <div class="flex items-center justify-between mt-auto pt-2">
-                        <span class="text-lg font-extrabold text-gray-900">
-                            {% if first_variant.get_discount_percentage > 0 %}
-                              <span class="text-xs text-gray-400 line-through font-medium mr-1">₹{{ first_variant.price }}</span>
-                              <span class="text-emerald-600">₹{{ first_variant.get_offer_price|floatformat:2 }}</span>
-                            {% else %}
-                              ₹{{ first_variant.price }}
-                            {% endif %}
-                        </span>
-
-                        <!-- Removed Cart Button due to size selection requirement -->
-                    </div>
-
-                </div>
-                {% endwith %}
-
-                {% empty %}
-
-                <div class="col-span-3 text-center py-12">
-                    No Products Found
-                </div>
-
-                {% endfor %}
-
-            </section>
+      <div class="mb-4">
+        <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">Size</h3>
+        <div class="grid grid-cols-4 gap-1.5">
+          {% for size in sizes %}
+          <label class="cursor-pointer">
+            <input type="radio" name="size" value="{{ size }}" class="peer sr-only" {% if request.GET.size == size %}checked{% endif %}>
+            <div class="py-1.5 rounded-lg border text-center text-[11px] font-semibold transition-colors peer-checked:bg-[#032b1d] peer-checked:text-white peer-checked:border-[#032b1d] border-gray-200 text-gray-400">{{ size }}</div>
+          </label>
+          {% endfor %}
         </div>
+      </div>
+      <hr class="border-gray-100 my-4">
 
-        <!-- Pagination -->
-        {% if page_obj.has_other_pages or page_obj.paginator.count > 0 %}
-        <div class="p-4 mt-8 bg-white border border-gray-100 rounded-2xl flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-gray-500 shadow-sm">
-            <div>Showing {{ page_obj.start_index|default:0 }} to {{ page_obj.end_index|default:0 }} of {{ page_obj.paginator.count }} results</div>
-            <div class="flex items-center gap-3">
-                {% if page_obj.has_previous %}
-                <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.subcategory %}subcategory={{ request.GET.subcategory }}&{% endif %}{% if request.GET.size %}size={{ request.GET.size }}&{% endif %}{% if request.GET.color %}color={{ request.GET.color }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}"
-                   class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-700 flex items-center justify-center hover:bg-gray-100 transition-colors">&lt;</a>
-                {% else %}
-                <button class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-400 flex items-center justify-center opacity-50" disabled>&lt;</button>
-                {% endif %}
-                <span class="text-gray-900">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-                {% if page_obj.has_next %}
-                <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.subcategory %}subcategory={{ request.GET.subcategory }}&{% endif %}{% if request.GET.size %}size={{ request.GET.size }}&{% endif %}{% if request.GET.color %}color={{ request.GET.color }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.next_page_number }}"
-                   class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-700 flex items-center justify-center hover:bg-gray-100 transition-colors">&gt;</a>
-                {% else %}
-                <button class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-400 flex items-center justify-center opacity-50" disabled>&gt;</button>
-                {% endif %}
-            </div>
+      <div class="mb-4">
+        <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">Color</h3>
+        <div class="flex flex-wrap gap-2">
+          {% for color in colors %}
+          <label class="cursor-pointer" title="{{ color }}">
+            <input type="radio" name="color" value="{{ color }}" class="peer sr-only" {% if request.GET.color == color %}checked{% endif %}>
+            <div class="w-6 h-6 rounded-full border-2 transition-all peer-checked:border-[#032b1d] peer-checked:ring-2 peer-checked:ring-[#032b1d]/40 border-gray-300"
+              style="background-color: {{ color|lower }};"></div>
+          </label>
+          {% endfor %}
         </div>
+      </div>
+      <hr class="border-gray-100 my-4">
+
+      <div class="mb-5">
+        <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2.5">Sort</h3>
+        <select name="sort" class="w-full appearance-none bg-white border border-gray-200 text-gray-700 text-xs font-semibold rounded-xl px-3.5 py-2.5 outline-none focus:border-[#032b1d] cursor-pointer shadow-sm">
+          <option value="-created_at" {% if request.GET.sort == '-created_at' or not request.GET.sort %}selected{% endif %}>New Arrivals</option>
+          <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+          <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+          <option value="name_az" {% if request.GET.sort == 'name_az' %}selected{% endif %}>Name: A to Z</option>
+          <option value="name_za" {% if request.GET.sort == 'name_za' %}selected{% endif %}>Name: Z to A</option>
+        </select>
+      </div>
+
+      <button type="submit" class="w-full bg-[#032b1d] hover:opacity-90 transition text-white py-3 rounded-xl text-xs font-semibold tracking-wide">
+        Apply Filters
+      </button>
+    </form>
+  </div>
+</div>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+  <!-- Top Bar -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4 border-b border-gray-100 pb-4 sm:pb-6">
+    <div class="text-sm text-gray-600 font-medium flex items-center gap-2">
+      <span class="text-gray-900 font-black text-lg">{{ page_obj.paginator.count }}</span> 
+      <span class="uppercase tracking-widest text-[10px] font-bold mt-1">Products Found</span>
+    </div>
+    
+    <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-3">
+      <a href="{% url 'shop' %}" class="flex items-center gap-2 px-5 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-sm hover:shadow active:scale-95">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+        </svg>
+        All
+      </a>
+      
+      <!-- Mobile Filter Button -->
+      <button onclick="openFilterDrawer()" class="lg:hidden flex items-center gap-2 bg-[#032b1d] text-white text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-xl hover:opacity-90 transition shadow-sm active:scale-95">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"/>
+        </svg>
+        Filters
+      </button>
+    </div>
+  </div>
+
+  <div class="flex gap-8 items-start">
+
+    <!-- Desktop Filter Sidebar -->
+    <aside class="hidden lg:block w-56 xl:w-64 shrink-0 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm sticky top-24 h-fit">
+
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-sm font-black text-gray-900 uppercase tracking-widest">Filters</h2>
+        <a href="{% url 'shop' %}" class="text-[10px] font-bold text-red-400 hover:text-red-600 uppercase tracking-widest transition-colors">Clear All</a>
+      </div>
+
+      <form method="GET" id="desktop-filter-form">
+        {% if request.GET.category %}
+        <input type="hidden" name="category" value="{{ request.GET.category }}">
         {% endif %}
 
-    </main>
+        <!-- Search -->
+        <div class="mb-4">
+          <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">Search</h3>
+          <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search..."
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#032b1d] transition-colors">
+        </div>
+
+        <hr class="border-gray-100 my-4">
+
+        <!-- Subcategory -->
+        <div class="mb-4">
+          <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">Subcategory</h3>
+          <div class="space-y-1.5">
+            {% for subcategory in subcategories %}
+            <label class="flex items-center text-xs font-medium text-gray-600 cursor-pointer">
+              <input type="radio" name="subcategory" value="{{ subcategory }}"
+                class="accent-brand h-3.5 w-3.5 mr-2.5" {% if request.GET.subcategory == subcategory %}checked{% endif %}>
+              {{ subcategory }}
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <hr class="border-gray-100 my-4">
+
+        <!-- Size -->
+        <div class="mb-4">
+          <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">Size</h3>
+          <div class="grid grid-cols-4 gap-1.5 text-center text-xs font-semibold">
+            {% for size in sizes %}
+            <label class="cursor-pointer">
+              <input type="radio" name="size" value="{{ size }}" class="peer sr-only" {% if request.GET.size == size %}checked{% endif %}>
+              <div class="py-1.5 rounded-lg border text-center text-[11px] font-semibold transition-colors peer-checked:bg-brand-dark peer-checked:text-white peer-checked:border-brand-dark border-gray-200 text-gray-400 hover:border-brand-dark">
+                {{ size }}
+              </div>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <hr class="border-gray-100 my-4">
+
+        <!-- Color -->
+        <div class="mb-4">
+          <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">Color</h3>
+          <div class="flex flex-wrap gap-2">
+            {% for color in colors %}
+            <label class="cursor-pointer" title="{{ color }}">
+              <input type="radio" name="color" value="{{ color }}" class="peer sr-only" {% if request.GET.color == color %}checked{% endif %}>
+              <div class="w-6 h-6 rounded-full border-2 transition-all peer-checked:border-[#032b1d] peer-checked:ring-2 peer-checked:ring-[#032b1d]/40 border-gray-300 hover:scale-110"
+                style="background-color: {{ color|lower }};"></div>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <hr class="border-gray-100 my-4">
+
+        <!-- Sort -->
+        <div class="mb-5">
+          <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2.5">Sort</h3>
+          <div class="relative">
+            <select name="sort" class="w-full appearance-none bg-white border border-gray-200 hover:border-[#032b1d]/50 text-gray-700 text-xs font-semibold rounded-xl px-3.5 py-2.5 pr-10 outline-none focus:border-[#032b1d] cursor-pointer shadow-sm">
+              <option value="-created_at" {% if request.GET.sort == '-created_at' or not request.GET.sort %}selected{% endif %}>New Arrivals</option>
+              <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+              <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+              <option value="name_az" {% if request.GET.sort == 'name_az' %}selected{% endif %}>Name: A to Z</option>
+              <option value="name_za" {% if request.GET.sort == 'name_za' %}selected{% endif %}>Name: Z to A</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-gray-400">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-brand-dark hover:opacity-90 transition text-white py-2.5 rounded-xl text-xs font-semibold tracking-wide">
+          Apply Filters
+        </button>
+      </form>
+    </aside>
+
+    <!-- Products Grid -->
+    <section class="flex-1 grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+
+      {% for product in products %}
+      {% with first_variant=product.variants.first %}
+
+      <div class="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-4 border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col justify-between group relative">
+
+        <!-- Wishlist -->
+        <a href="{% if first_variant %}{% url 'toggle_wishlist' first_variant.id %}{% else %}{% url 'wishlist' %}{% endif %}"
+           class="absolute top-2.5 right-2.5 sm:top-4 sm:right-4 z-10 w-8 h-8 sm:w-9 sm:h-9 bg-white rounded-full flex items-center justify-center shadow-md border border-gray-100 transition-all hover:scale-110
+                  {% if first_variant and first_variant.id in wishlist_variant_ids %}text-red-500{% else %}text-gray-300 hover:text-red-400{% endif %}">
+          <i class="{% if first_variant and first_variant.id in wishlist_variant_ids %}fa-solid{% else %}fa-regular{% endif %} fa-heart text-[10px] sm:text-sm"></i>
+        </a>
+
+        <a href="{% url 'product_detail' product.id %}" class="block">
+          <div class="relative bg-gray-100 rounded-xl sm:rounded-2xl overflow-hidden aspect-[4/3] mb-3 sm:mb-4">
+            {% if first_variant and first_variant.images.first %}
+            <img src="{{ first_variant.images.first.image.url }}" alt="{{ product.product_name }}"
+              class="object-cover w-full h-full group-hover:scale-105 transition duration-300">
+            {% endif %}
+          </div>
+
+          <h4 class="font-bold text-xs sm:text-base text-gray-900 leading-snug line-clamp-2">{{ product.product_name }}</h4>
+
+          <div class="flex items-center justify-between mt-1">
+            <p class="text-[9px] sm:text-xs text-gray-400">{{ product.category.name }}</p>
+          </div>
+        </a>
+
+        <div class="flex items-center justify-between mt-auto pt-2 sm:pt-3">
+          <span class="text-sm sm:text-lg font-extrabold text-gray-900 flex flex-wrap items-baseline gap-x-1 sm:gap-x-2">
+            {% if first_variant.get_discount_percentage > 0 %}
+              <span class="text-emerald-600">₹{{ first_variant.get_offer_price|floatformat:2 }}</span>
+              <span class="text-[9px] sm:text-xs text-gray-400 line-through font-medium">₹{{ first_variant.price }}</span>
+            {% else %}
+              ₹{{ first_variant.price }}
+            {% endif %}
+          </span>
+        </div>
+
+      </div>
+
+      {% endwith %}
+      {% empty %}
+      <div class="col-span-full text-center py-20">
+        <svg class="w-16 h-16 mx-auto text-gray-200 mb-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z"/>
+        </svg>
+        <p class="text-gray-500 font-semibold">No products found</p>
+        <a href="{% url 'shop' %}" class="mt-4 inline-block text-xs font-bold text-[#032b1d] hover:underline uppercase tracking-widest">Clear Filters</a>
+      </div>
+      {% endfor %}
+
+    </section>
+  </div>
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages or page_obj.paginator.count > 0 %}
+  <div class="mt-8 bg-white border border-gray-100 rounded-2xl shadow-sm">
+    <div class="flex flex-col sm:flex-row items-center justify-between px-4 py-4 gap-3 text-[11px] font-bold uppercase tracking-wider text-gray-500">
+      <div class="text-center sm:text-left">Showing {{ page_obj.start_index|default:0 }}–{{ page_obj.end_index|default:0 }} of {{ page_obj.paginator.count }}</div>
+      <div class="flex items-center gap-2">
+        {% if page_obj.has_previous %}
+        <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.subcategory %}subcategory={{ request.GET.subcategory }}&{% endif %}{% if request.GET.size %}size={{ request.GET.size }}&{% endif %}{% if request.GET.color %}color={{ request.GET.color }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}"
+           class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-700 flex items-center justify-center hover:bg-gray-100 transition-colors">&lt;</a>
+        {% else %}
+        <button class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-400 flex items-center justify-center opacity-50" disabled>&lt;</button>
+        {% endif %}
+        <span class="text-gray-900 px-1">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+        <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.subcategory %}subcategory={{ request.GET.subcategory }}&{% endif %}{% if request.GET.size %}size={{ request.GET.size }}&{% endif %}{% if request.GET.color %}color={{ request.GET.color }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.next_page_number }}"
+           class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-700 flex items-center justify-center hover:bg-gray-100 transition-colors">&gt;</a>
+        {% else %}
+        <button class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-400 flex items-center justify-center opacity-50" disabled>&gt;</button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</main>
+
+<!-- Mobile Filter Drawer Script -->
+<script>
+  function openFilterDrawer() {
+    document.getElementById('filter-drawer').style.transform = 'translateX(0)';
+    document.getElementById('filter-overlay').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeFilterDrawer() {
+    document.getElementById('filter-drawer').style.transform = 'translateX(-100%)';
+    document.getElementById('filter-overlay').classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+</script>
 
 {% endblock %}

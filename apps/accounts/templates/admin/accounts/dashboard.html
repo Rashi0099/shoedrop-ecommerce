@@ -13,11 +13,11 @@
         ::-webkit-scrollbar-thumb:hover { background: #555; }
     </style>
 </head>
-<body class="bg-[#111111] text-white font-sans flex h-screen overflow-hidden">
+<body class="bg-[#111111] text-white font-sans md:flex min-h-screen">
 
     {% include 'admin/_sidebar.html' %}
 
-    <main class="flex-1 overflow-y-auto bg-[#111111] p-6 md:p-10">
+    <main class="flex-1 overflow-y-auto bg-[#111111] p-4 pt-20 md:pt-10 md:p-10">
         <div class="max-w-[1400px] mx-auto">
             {% include 'admin/_messages.html' %}
 

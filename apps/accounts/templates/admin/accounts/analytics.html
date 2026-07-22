@@ -14,13 +14,13 @@
         ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 4px; }
     </style>
 </head>
-<body class="bg-[#0B0B0C] text-gray-400 h-screen flex overflow-hidden antialiased">
+<body class="bg-[#0B0B0C] text-gray-400 md:flex min-h-screen antialiased">
 
     <!-- ═══════════════ SIDEBAR ═══════════════ -->
     {% include 'admin/_sidebar.html' %}
 
     <!-- ═══════════════ MAIN CONTENT ═══════════════ -->
-    <main class="flex-1 h-screen overflow-y-auto p-8 lg:p-12 w-full">
+    <main class="flex-1 overflow-y-auto p-4 pt-20 md:pt-8 md:p-8 lg:p-12 w-full">
         <div class="max-w-[1400px] mx-auto space-y-8 pb-10">
             {% include 'admin/_messages.html' %}
 

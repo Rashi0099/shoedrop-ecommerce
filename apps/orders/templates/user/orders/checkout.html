@@ -39,13 +39,13 @@
 
 
 <!-- ===================== PAGE CONTENT ===================== -->
-<main class="max-w-7xl mx-auto px-6 lg:px-10 py-10">
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-10">
 {% if messages %}
     {% include 'user/_messages.html' %}
 {% endif %}
 
 
-  <h1 class="text-3xl font-bold mb-2">Checkout</h1>
+  <h1 class="text-2xl sm:text-3xl font-bold mb-4 sm:mb-2">Checkout</h1>
   
   <!-- SINGLE MAIN FORM START (Wraps both columns) -->
   <form id="place-order-form" method="POST" action="{% url 'place_order' %}">
@@ -55,7 +55,7 @@
       <input type="hidden" name="buy_now" value="{{ request.GET.buy_now }}">
     {% endif %}
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
 
       <!-- ============ LEFT COLUMN ============ -->
       <div class="lg:col-span-2 flex flex-col gap-6">
@@ -70,8 +70,8 @@
             <a href="{%url 'cart'%}" class="text-sm font-medium text-brand-dark hover:underline whitespace-nowrap">Modify Cart</a>
           </div>
 
-          <div class="mt-4">
-            <div class="grid grid-cols-12 text-xs text-gray-400 font-medium pb-3 border-b border-gray-100">
+          <div class="mt-4 overflow-x-auto">
+            <div class="grid grid-cols-12 text-xs text-gray-400 font-medium pb-3 border-b border-gray-100 min-w-[400px]">
               <span class="col-span-6">PRODUCT</span>
               <span class="col-span-2 text-right">PRICE</span>
               <span class="col-span-1 text-right">QTY</span>
