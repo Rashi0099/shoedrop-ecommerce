@@ -210,8 +210,8 @@ def analytics_dashboard(request):
 
     returned_qs = Order.objects.filter(
         order_status='returned',
-        created_at__date__gte=date_from,
-        created_at__date__lte=date_to
+        updated_at__date__gte=date_from,
+        updated_at__date__lte=date_to
     )
     total_refunds = returned_qs.aggregate(s=Sum('total_amount'))['s'] or 0
 

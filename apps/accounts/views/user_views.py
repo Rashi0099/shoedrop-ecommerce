@@ -21,6 +21,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 import random
 
@@ -125,12 +126,19 @@ def signup(request):
         request.session['otp_created_at'] = datetime.now().timestamp()
         request.session['referral_code'] = referral_code
 
+        html_message = render_to_string('user/emails/otp_email.html', {
+            'username': username,
+            'message': 'Thank you for registering at Shoedrop! Use the code below to verify your email address.',
+            'otp': otp
+        })
+
         send_mail(
-            'Shoedrop OTP Verification',
-            f'Your OTP is {otp}',
+            'Welcome to Shoedrop! Please verify your email',
+            f'Hello {username},\n\nThank you for registering at Shoedrop!\n\nYour OTP for email verification is: {otp}\nThis OTP is valid for 1 minute. Please do not share it with anyone.\n\nBest regards,\nThe Shoedrop Team',
             None,
             [email],
-            fail_silently=False
+            fail_silently=False,
+            html_message=html_message
         )
 
         return redirect('verify_otp')
@@ -270,12 +278,18 @@ def resend_otp(request):
     request.session['otp_created_at'] = datetime.now().timestamp()
 
 
+    html_message = render_to_string('user/emails/otp_email.html', {
+        'message': 'As requested, here is your new OTP for email verification.',
+        'otp': otp
+    })
+
     send_mail(
-        'Shoedrop OTP Verification',
-        f'Your OTP is {otp}',
+        'Shoedrop OTP Verification (Resend)',
+        f'Hello,\n\nAs requested, here is your new OTP for email verification: {otp}\nThis OTP is valid for 1 minute. Please do not share it with anyone.\n\nBest regards,\nThe Shoedrop Team',
         None,
         [email],
-        fail_silently=False
+        fail_silently=False,
+        html_message=html_message
     )
 
     messages.success(
@@ -357,12 +371,18 @@ def forgot_password(request):
             'reset_otp_created_at'
         ] = datetime.now().timestamp()
 
+        html_message = render_to_string('user/emails/otp_email.html', {
+            'message': 'We received a request to reset the password for your Shoedrop account. Use the code below to reset it.',
+            'otp': otp
+        })
+
         send_mail(
-            'Shoedrop Password Reset OTP',
-            f'Your OTP is {otp}',
+            'Shoedrop Password Reset Request',
+            f'Hello,\n\nWe received a request to reset the password for your Shoedrop account.\n\nYour OTP for password reset is: {otp}\nThis OTP is valid for 1 minute. If you did not request a password reset, please ignore this email.\n\nBest regards,\nThe Shoedrop Team',
             None,
             [email],
-            fail_silently=False
+            fail_silently=False,
+            html_message=html_message
         )
 
         return redirect(
@@ -425,12 +445,18 @@ def resend_reset_otp(request):
             )
     request.session['reset_otp'] = otp
     request.session['reset_otp_created_at'] = datetime.now().timestamp()
+    html_message = render_to_string('user/emails/otp_email.html', {
+        'message': 'As requested, here is your new OTP to reset your password.',
+        'otp': otp
+    })
+    
     send_mail(
-        'Shoedrop Password Reset OTP',
-        f'Your OTP is {otp}',
+        'Shoedrop Password Reset Request (Resend)',
+        f'Hello,\n\nAs requested, here is your new OTP to reset your password: {otp}\nThis OTP is valid for 1 minute. If you did not request a password reset, please ignore this email.\n\nBest regards,\nThe Shoedrop Team',
         None,
         [email],
-        fail_silently=False
+        fail_silently=False,
+        html_message=html_message
     )
     messages.success(request, 'New OTP sent successfully.')
     return redirect('forgot_password_verify_otp')
@@ -532,9 +558,11 @@ def change_password(request):
                 'Current password is incorrect'
             )
 
-            return redirect(
-                'change_password'
-            )
+            return render(request, 'user/accounts/change_password.html', {
+                'current_password': current_password,
+                'new_password': new_password,
+                'confirm_password': confirm_password
+            })
 
         if new_password != confirm_password:
 
@@ -543,9 +571,11 @@ def change_password(request):
                 'Passwords do not match'
             )
 
-            return redirect(
-                'change_password'
-            )
+            return render(request, 'user/accounts/change_password.html', {
+                'current_password': current_password,
+                'new_password': new_password,
+                'confirm_password': confirm_password
+            })
         if not re.search(
             r'[A-Z]',
             new_password
@@ -556,9 +586,11 @@ def change_password(request):
                 'Password must contain at least one uppercase letter'
             )
 
-            return redirect(
-                'change_password'
-            )
+            return render(request, 'user/accounts/change_password.html', {
+                'current_password': current_password,
+                'new_password': new_password,
+                'confirm_password': confirm_password
+            })
 
 
         if not re.search(
@@ -571,9 +603,11 @@ def change_password(request):
                 'Password must contain at least one lowercase letter'
             )
 
-            return redirect(
-                'change_password'
-            )
+            return render(request, 'user/accounts/change_password.html', {
+                'current_password': current_password,
+                'new_password': new_password,
+                'confirm_password': confirm_password
+            })
 
 
         if not re.search(
@@ -586,17 +620,27 @@ def change_password(request):
                 'Password must contain at least one number'
             )
 
-            return redirect(
-                'change_password'
-            )
+            return render(request, 'user/accounts/change_password.html', {
+                'current_password': current_password,
+                'new_password': new_password,
+                'confirm_password': confirm_password
+            })
 
 
         if current_password == new_password:
             messages.error(request,'new pass must be different from current password')
-            return redirect('change_password')
+            return render(request, 'user/accounts/change_password.html', {
+                'current_password': current_password,
+                'new_password': new_password,
+                'confirm_password': confirm_password
+            })
         if len(new_password)<8:
             messages.error(request,'new password must be at least 8 characters ')
-            return redirect('change_password')
+            return render(request, 'user/accounts/change_password.html', {
+                'current_password': current_password,
+                'new_password': new_password,
+                'confirm_password': confirm_password
+            })
         
 
         
@@ -667,14 +711,14 @@ def edit_profile(request):
                 request,
                 'Username already exists'
             )
-            return redirect('edit_profile')
+            return render(request, 'user/accounts/edit_profile.html', {'input_username': username, 'input_email': email, 'input_phone': phone_number})
         
         if not username:
             messages.error(
                 request,
                 'Username is required'
             )
-            return redirect('edit_profile')
+            return render(request, 'user/accounts/edit_profile.html', {'input_username': username, 'input_email': email, 'input_phone': phone_number})
 
         if not re.match(
             r'^[A-Za-z0-9_]+$',
@@ -684,11 +728,11 @@ def edit_profile(request):
                 request,
                 'Username can contain only letters, numbers and underscore'
             )
-            return redirect('edit_profile')
+            return render(request, 'user/accounts/edit_profile.html', {'input_username': username, 'input_email': email, 'input_phone': phone_number})
         
         if len(username)<3:
             messages.error(request,'username must contain at least 3 caractors')
-            return redirect('edit_profile')
+            return render(request, 'user/accounts/edit_profile.html', {'input_username': username, 'input_email': email, 'input_phone': phone_number})
         
         if phone_number:
 
@@ -700,7 +744,7 @@ def edit_profile(request):
                     request,
                     'Enter a valid 10 digit phone number'
                 )
-                return redirect('edit_profile')
+                return render(request, 'user/accounts/edit_profile.html', {'input_username': username, 'input_email': email, 'input_phone': phone_number})
         allowed_types = [
     'image/jpeg',
     'image/png',
@@ -715,7 +759,7 @@ def edit_profile(request):
                     request,
                     'Only JPG, PNG and WEBP allowed'
                 )
-                return redirect('edit_profile')
+                return render(request, 'user/accounts/edit_profile.html', {'input_username': username, 'input_email': email, 'input_phone': phone_number})
                 
             if profile_image.size > 2 * 1024 * 1024:
 
@@ -724,9 +768,7 @@ def edit_profile(request):
                     'Image must be less than 2MB'
                 )
 
-                return redirect(
-                    'edit_profile'
-                )
+                return render(request, 'user/accounts/edit_profile.html', {'input_username': username, 'input_email': email, 'input_phone': phone_number})
 
 
            
@@ -752,9 +794,7 @@ def edit_profile(request):
                 'Enter a valid email address'
             )
 
-            return redirect(
-                'edit_profile'
-            )
+            return render(request, 'user/accounts/edit_profile.html', {'input_username': username, 'input_email': email, 'input_phone': phone_number})
 
         request.user.save()
         
@@ -771,9 +811,7 @@ def edit_profile(request):
                     'Email already exists'
                 )
 
-                return redirect(
-                    'edit_profile'
-                )
+                return render(request, 'user/accounts/edit_profile.html', {'input_username': username, 'input_email': email, 'input_phone': phone_number})
 
             otp = str(
                 random.randint(
@@ -786,12 +824,19 @@ def edit_profile(request):
             request.session['email_otp'] = otp
             request.session['email_otp_created_at'] = datetime.now().timestamp()
 
+            html_message = render_to_string('user/emails/otp_email.html', {
+                'username': username,
+                'message': 'You requested to change your email address for your Shoedrop account. Use the code below to verify it.',
+                'otp': otp
+            })
+
             send_mail(
-                'Email Verification OTP',
-                f'Your OTP is {otp}',
+                'Shoedrop - Verify your new email address',
+                f'Hello {username},\n\nYou requested to change your email address for your Shoedrop account.\n\nYour OTP to verify this new email address is: {otp}\nThis OTP is valid for 1 minute. Please do not share it with anyone.\n\nBest regards,\nThe Shoedrop Team',
                 settings.EMAIL_HOST_USER,
                 [email],
-                fail_silently=False
+                fail_silently=False,
+                html_message=html_message
             )
             messages.success(
             request,
@@ -903,7 +948,7 @@ def verify_email_otp(request):
 def resend_email_otp(request):
     email = request.session.get('new_email')
     if not email:
-        return redirect('edit_profile')
+        return render(request, 'user/accounts/edit_profile.html', {'input_username': username, 'input_email': email, 'input_phone': phone_number})
     
     import secrets
     otp = str(secrets.randbelow(900000) + 100000)

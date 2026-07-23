@@ -60,12 +60,12 @@
         </div>
 
         <!-- Resend Code Section -->
-        <div class="space-y-1.5 py-1">
-          <a href="{% url 'resend_otp' %}"
-            class="text-[10px] font-bold text-gray-400 tracking-widest uppercase hover:text-white transition">
+        <div class="space-y-1.5 py-1 relative h-10 flex flex-col items-center justify-center">
+          <a href="{% url 'resend_otp' %}" id="resend-btn"
+            class="text-[10px] font-bold text-emerald-400 tracking-widest uppercase hover:text-emerald-300 transition hidden absolute">
             Resend Code
           </a>
-          <p id="timer" class="text-xs font-bold tracking-wider text-emerald-400/80">
+          <p id="timer" class="text-xs font-bold tracking-wider text-emerald-400/80 absolute">
             --:--
           </p>
         </div>
@@ -122,9 +122,11 @@
       `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
     if (timeLeft <= 0) {
-      timer.innerText = "Expired";
-      timer.classList.remove("text-emerald-400/80");
-      timer.classList.add("text-red-400");
+      timer.classList.add("hidden");
+      document.getElementById("resend-btn").classList.remove("hidden");
+    } else {
+      timer.classList.remove("hidden");
+      document.getElementById("resend-btn").classList.add("hidden");
     }
   }
 

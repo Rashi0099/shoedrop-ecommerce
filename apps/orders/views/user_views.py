@@ -123,11 +123,17 @@ def place_order(request):
         wallet_payment,
     )
 
+    # Check address first — before hitting any payment handler
+    address_id = request.POST.get('address_id')
+    if not address_id:
+        messages.error(request, 'Please select a delivery address before placing your order.')
+        return redirect('checkout')
+
     payment_method = request.POST.get('payment_method')
 
     if not payment_method:
         messages.error(request, 'Please select a payment method.')
-        return render(request, 'user/orders/checkout.html')
+        return redirect('checkout')
 
     if payment_method == 'cod':
         return cod_payment(request)
@@ -400,6 +406,14 @@ def order_detail(request, order_id):
     )
 
     addresses = Address.objects.filter(user=request.user)
+    
+    from decimal import Decimal
+    subtotal = sum(item.unit_price * item.quantity for item in order_items)
+    gst = subtotal * Decimal('0.18')
+
+    # Annotate each item with its per-item GST for template display
+    for item in order_items:
+        item.gst_amount = round(item.unit_price * item.quantity * Decimal('0.18'), 2)
 
     context = {
 
@@ -407,7 +421,9 @@ def order_detail(request, order_id):
 
         'order_items': order_items,
 
-        'addresses': addresses
+        'addresses': addresses,
+        'subtotal': subtotal,
+        'gst': gst
 
     }
 

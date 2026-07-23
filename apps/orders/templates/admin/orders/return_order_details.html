@@ -129,6 +129,10 @@
                                 <p class="text-sm font-bold text-[#A5D6A7]">&#8377;{{ return_request.order_item.unit_price }}</p>
                             </div>
                             <div>
+                                <p class="text-[9px] font-bold text-[#777] uppercase tracking-widest mb-1">GST (18%)</p>
+                                <p class="text-sm font-bold text-[#A5D6A7]">&#8377;{{ gst_amount }}</p>
+                            </div>
+                            <div>
                                 <p class="text-[9px] font-bold text-[#777] uppercase tracking-widest mb-1">SKU</p>
                                 <p class="text-xs font-mono text-[#aaa]">{{ return_request.order_item.product_variant.sku|default:"N/A" }}</p>
                             </div>

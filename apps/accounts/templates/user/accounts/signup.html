@@ -37,7 +37,7 @@
             Full Name
           </label>
           <div class="mt-1 relative">
-            <input id="full-name" name="username" type="text" required placeholder="John Doe"
+            <input id="full-name" name="username" type="text" required placeholder="John Doe" value="{{ username|default:'' }}"
               class="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-gray-500 text-xs transition duration-200 focus:border-emerald-400/50 focus:bg-white/[0.08] focus:outline-none focus:ring-1 focus:ring-emerald-400/30" />
           </div>
         </div>
@@ -47,7 +47,7 @@
             Email Address
           </label>
           <div class="mt-1 relative">
-            <input id="email" name="email" type="email" autocomplete="email" required placeholder="name@example.com"
+            <input id="email" name="email" type="email" autocomplete="email" required placeholder="name@example.com" value="{{ email|default:'' }}"
               class="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-gray-500 text-xs transition duration-200 focus:border-emerald-400/50 focus:bg-white/[0.08] focus:outline-none focus:ring-1 focus:ring-emerald-400/30" />
           </div>
         </div>

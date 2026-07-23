@@ -246,11 +246,14 @@ def admin_return_detail(request, return_id):
         id=return_id
     )
 
+    gst_amount = float(return_request.order_item.unit_price) * 0.18
+
     return render(
         request,
         'admin/orders/return_order_details.html',
         {
-            'return_request': return_request
+            'return_request': return_request,
+            'gst_amount': round(gst_amount, 2)
         }
     )
 

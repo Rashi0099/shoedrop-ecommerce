@@ -348,8 +348,8 @@
           {% endif %}
         </td>
         <td class="right">{{ item.quantity }}</td>
-        <td class="right">&#8377;{{ item.unit_price }}</td>
-        <td class="right">&#8377;{{ item.total }}</td>
+        <td class="right">Rs. {{ item.unit_price }}</td>
+        <td class="right">Rs. {{ item.total }}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -363,16 +363,16 @@
         <table style="width: 100%; border-collapse: collapse;">
           <tr class="totals-row">
             <td class="totals-label">Subtotal</td>
-            <td class="totals-value">&#8377;{{ subtotal }}</td>
+            <td class="totals-value">Rs. {{ subtotal }}</td>
           </tr>
           <tr class="totals-row">
             <td class="totals-label">GST (18%)</td>
-            <td class="totals-value">&#8377;{{ gst }}</td>
+            <td class="totals-value">Rs. {{ gst }}</td>
           </tr>
           {% if order.coupon_discount %}
           <tr class="totals-row">
             <td class="totals-label">Discount</td>
-            <td class="totals-value" style="color: #059669;">&minus; &#8377;{{ order.coupon_discount }}</td>
+            <td class="totals-value" style="color: #059669;">&minus; Rs. {{ order.coupon_discount }}</td>
           </tr>
           {% endif %}
           <tr class="totals-row">
@@ -381,7 +381,7 @@
           </tr>
           <tr class="totals-row">
             <td class="totals-grand-label">Grand Total</td>
-            <td class="totals-grand-value">&#8377;{{ order.total_amount }}</td>
+            <td class="totals-grand-value">Rs. {{ order.total_amount }}</td>
           </tr>
         </table>
       </td>
