@@ -34,6 +34,7 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 ALLOWED_HOSTS = [
     'shoedrop.online',
     'www.shoedrop.online',
+    '*'
 
     ]
 
