@@ -50,7 +50,7 @@
   <div class="p-5">
     <!-- Mobile Filter Form (mirrors desktop) -->
     <div class="flex items-center justify-between mb-4">
-      <a href="{% url 'shop' %}" class="text-[10px] font-bold text-red-400 hover:text-red-600 uppercase tracking-widest transition-colors">Clear All</a>
+      <a href="{% url 'shop' %}{% if request.GET.category %}?category={{ request.GET.category }}{% endif %}" class="text-[10px] font-bold text-red-400 hover:text-red-600 uppercase tracking-widest transition-colors">Clear All</a>
     </div>
     <form method="GET" id="mobile-filter-form">
       {% if request.GET.category %}
