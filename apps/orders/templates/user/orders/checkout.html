@@ -231,7 +231,7 @@
               <span class="font-medium">₹{{ subtotal|floatformat:2 }}</span>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-gray-500">GST (18%)</span>
+              <span class="text-gray-500">GST ({{ gst_percent }}%)</span>
               <span class="font-medium">₹{{ gst| floatformat:2 }}</span>
             </div>
             <div class="flex items-center justify-between">

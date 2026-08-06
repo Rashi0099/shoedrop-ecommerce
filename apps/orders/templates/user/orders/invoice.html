@@ -183,7 +183,7 @@
             <span class="font-bold text-gray-900">- ₹{{ order.coupon_discount|default:"0.00" }}</span>
           </div>
           <div class="flex justify-between items-center hidden">
-            <span>Estimated Tax (18%)</span>
+            <span>Estimated Tax ({{ gst_percent }}%)</span>
             <span class="font-bold text-gray-900">Included</span>
           </div>
         </div>

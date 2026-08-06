@@ -288,7 +288,7 @@
                                 <span class="text-[#ddd]">₹{{ subtotal|default:"0.00" }}</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span>Tax (18% GST)</span>
+                                <span>Tax ({{ gst_percent }}% GST)</span>
                                 <span class="text-[#ddd]">₹{{ tax|default:"0.00" }}</span>
                             </div>
                             <div class="flex justify-between items-center">

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal
+from django.conf import settings
 
 
 from apps.addresses.models import Address
@@ -21,7 +22,7 @@ def checkout(request):
 
     checkout_items = []
 
-    subtotal = 0
+    subtotal = Decimal('0.00')
 
     buy_now_id = request.GET.get('buy_now')
 
@@ -43,7 +44,7 @@ def checkout(request):
             'get_total_price': variant.get_offer_price()
         })
 
-        subtotal = float(variant.get_offer_price())
+        subtotal = Decimal(str(variant.get_offer_price()))
 
     else:
 
@@ -68,31 +69,31 @@ def checkout(request):
                 'get_total_price': item.get_total_price()
             })
 
-            subtotal += item.get_total_price()
+            subtotal += Decimal(str(item.get_total_price()))
 
-    gst = float(subtotal) * 0.18
+    gst = subtotal * settings.GST_RATE
 
-    delivery_fee = 0
+    delivery_fee = Decimal('0.00')
     
-    coupon_discount = 0
+    coupon_discount = Decimal('0.00')
     applied_coupon = None
     if 'applied_coupon' in request.session:
         try:
             coupon = Coupon.objects.get(coupon_code=request.session['applied_coupon'], is_active=True)
-            if coupon.is_valid() and float(subtotal) >= float(coupon.min_cart_value):
+            if coupon.is_valid() and subtotal >= Decimal(str(coupon.min_cart_value)):
                 applied_coupon = coupon
                 if coupon.discount_type == 'percentage':
-                    coupon_discount = (float(subtotal) * float(coupon.discount_value)) / 100
+                    coupon_discount = (subtotal * Decimal(str(coupon.discount_value))) / Decimal('100')
                 else:
-                    coupon_discount = float(coupon.discount_value)
+                    coupon_discount = Decimal(str(coupon.discount_value))
             else:
                 del request.session['applied_coupon']
         except Coupon.DoesNotExist:
             del request.session['applied_coupon']
 
-    grand_total = float(subtotal) + gst + delivery_fee - coupon_discount
-    if grand_total < 0:
-        grand_total = 0
+    grand_total = subtotal + gst + delivery_fee - coupon_discount
+    if grand_total < Decimal('0.00'):
+        grand_total = Decimal('0.00')
     
     coupons = Coupon.objects.filter(is_active=True)
     available_coupons = [c for c in coupons if c.is_valid()]
@@ -100,8 +101,9 @@ def checkout(request):
     context = {
         'addresses': user_addresses,
         'cart_items': checkout_items,
-        'subtotal': subtotal,
+        'subtotal': round(subtotal, 2),
         'gst': round(gst, 2),
+        'gst_percent': int(settings.GST_RATE * 100),
         'delivery_charges': delivery_fee,
         'coupon_discount': round(coupon_discount, 2),
         'applied_coupon': applied_coupon,
@@ -151,7 +153,7 @@ def place_order(request):
 
 def calculate_order_amount(request, buy_now_id=None):
 
-    subtotal = 0
+    subtotal = Decimal('0.00')
     items = []
 
     if buy_now_id:
@@ -170,7 +172,7 @@ def calculate_order_amount(request, buy_now_id=None):
             'price': float(variant.get_offer_price())
         })
 
-        subtotal = float(variant.get_offer_price())
+        subtotal = Decimal(str(variant.get_offer_price()))
 
     else:
 
@@ -193,11 +195,11 @@ def calculate_order_amount(request, buy_now_id=None):
                 'price': float(item.variant.get_offer_price())
             })
 
-            subtotal += float(item.get_total_price())
+            subtotal += Decimal(str(item.get_total_price()))
 
-    gst = subtotal * 0.18
+    gst = subtotal * settings.GST_RATE
     
-    coupon_discount = 0
+    coupon_discount = Decimal('0.00')
     applied_coupon_obj = None
     if 'applied_coupon' in request.session:
         try:
@@ -205,7 +207,7 @@ def calculate_order_amount(request, buy_now_id=None):
             from apps.orders.models import Order
             coupon = Coupon.objects.get(coupon_code=request.session['applied_coupon'], is_active=True)
             
-            if coupon.is_valid() and subtotal >= float(coupon.min_cart_value):
+            if coupon.is_valid() and subtotal >= Decimal(str(coupon.min_cart_value)):
                 # Check if user already used this coupon (exclude cancelled orders)
                 user_used_coupon = Order.objects.filter(
                     user=request.user,
@@ -216,16 +218,16 @@ def calculate_order_amount(request, buy_now_id=None):
                     del request.session['applied_coupon']
                 else:
                     if coupon.discount_type == 'percentage':
-                        coupon_discount = (subtotal * float(coupon.discount_value)) / 100
+                        coupon_discount = (subtotal * Decimal(str(coupon.discount_value))) / Decimal('100')
                     else:
-                        coupon_discount = float(coupon.discount_value)
+                        coupon_discount = Decimal(str(coupon.discount_value))
                     applied_coupon_obj = coupon
         except Coupon.DoesNotExist:
             del request.session['applied_coupon']
 
     grand_total = subtotal + gst - coupon_discount
-    if grand_total < 0:
-        grand_total = 0
+    if grand_total < Decimal('0.00'):
+        grand_total = Decimal('0.00')
 
     return {
         'subtotal': round(subtotal, 2),
@@ -358,7 +360,7 @@ def download_invoice(request, order_id):
     # we recalculate here so subtotal and GST are shown correctly per line.
     billable_items = order.items.exclude(item_status__in=['cancelled', 'returned', 'return_rejected'])
     subtotal = sum(item.total for item in billable_items)
-    gst = subtotal * Decimal('0.18')
+    gst = subtotal * settings.GST_RATE
 
     context = {
         'order': order,
@@ -367,6 +369,7 @@ def download_invoice(request, order_id):
         ).all(),
         'subtotal': round(subtotal, 2),
         'gst': round(gst, 2),
+        'gst_percent': int(settings.GST_RATE * 100),
     }
 
     pdf_bytes = render_to_pdf('user/orders/invoice_pdf.html', context)
@@ -409,11 +412,11 @@ def order_detail(request, order_id):
     
     from decimal import Decimal
     subtotal = sum(item.unit_price * item.quantity for item in order_items)
-    gst = subtotal * Decimal('0.18')
+    gst = subtotal * settings.GST_RATE
 
     # Annotate each item with its per-item GST for template display
     for item in order_items:
-        item.gst_amount = round(item.unit_price * item.quantity * Decimal('0.18'), 2)
+        item.gst_amount = round(item.unit_price * item.quantity * settings.GST_RATE, 2)
 
     context = {
 
@@ -423,7 +426,8 @@ def order_detail(request, order_id):
 
         'addresses': addresses,
         'subtotal': subtotal,
-        'gst': gst
+        'gst': gst,
+        'gst_percent': int(settings.GST_RATE * 100),
 
     }
 

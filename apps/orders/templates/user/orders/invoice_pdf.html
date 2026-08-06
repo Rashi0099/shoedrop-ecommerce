@@ -366,7 +366,7 @@
             <td class="totals-value">Rs. {{ subtotal }}</td>
           </tr>
           <tr class="totals-row">
-            <td class="totals-label">GST (18%)</td>
+            <td class="totals-label">GST ({{ gst_percent }}%)</td>
             <td class="totals-value">Rs. {{ gst }}</td>
           </tr>
           {% if order.coupon_discount %}

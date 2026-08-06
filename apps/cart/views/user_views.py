@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.conf import settings
 
 from apps.cart.models import CartItem
 from apps.products.models import ProductVariant, Product
@@ -19,7 +20,7 @@ def cart_view(request):
 
     subtotal = sum(item.get_total_price() for item in cart_items)
 
-    tax = round(subtotal * 18 / 100, 2)
+    tax = round(subtotal * settings.GST_RATE, 2)
 
     total = subtotal + tax
 
@@ -42,6 +43,7 @@ def cart_view(request):
         'cart_items': cart_items,
         'subtotal': subtotal,
         'tax': tax,
+        'gst_percent': int(settings.GST_RATE * 100),
         'total': total,
         'suggested_products': suggested_products,
         'has_out_of_stock': has_out_of_stock,

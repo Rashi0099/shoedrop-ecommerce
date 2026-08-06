@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.admin.views.decorators import staff_member_required
+from django.conf import settings
 from apps.orders.models import Order
 from apps.orders.models import Return
 
@@ -86,7 +87,7 @@ def admin_order_details(request, order_id):
     # Calculate subtotal based ONLY on active items
     active_items = order.items.filter(item_status='active')
     subtotal = sum(item.total for item in active_items)
-    tax = round(float(subtotal) * 0.18, 2)
+    tax = round(subtotal * settings.GST_RATE, 2)
 
     return render(
         request,
@@ -94,7 +95,8 @@ def admin_order_details(request, order_id):
         {
             'order': order,
             'subtotal': subtotal,
-            'tax': tax
+            'tax': tax,
+            'gst_percent': int(settings.GST_RATE * 100)
         }
     )
 
@@ -246,14 +248,15 @@ def admin_return_detail(request, return_id):
         id=return_id
     )
 
-    gst_amount = float(return_request.order_item.unit_price) * 0.18
+    gst_amount = return_request.order_item.unit_price * settings.GST_RATE
 
     return render(
         request,
         'admin/orders/return_order_details.html',
         {
             'return_request': return_request,
-            'gst_amount': round(gst_amount, 2)
+            'gst_amount': round(gst_amount, 2),
+            'gst_percent': int(settings.GST_RATE * 100)
         }
     )
 
