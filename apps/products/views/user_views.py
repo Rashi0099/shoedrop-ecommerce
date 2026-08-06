@@ -81,7 +81,7 @@ def shop(request):
 
     subcategories = subcategory_qs.values_list('name', flat=True).distinct()
 
-    paginator = Paginator(products, 9)
+    paginator = Paginator(products, 8)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
