@@ -65,26 +65,34 @@ def signup(request):
             'referral_code': referral_code,
         }
         if not username:
-            messages.error(request,'User name is required')
-            return render(request,'user/accounts/signup.html',context)
+            messages.error(request, 'Username is required')
+            return render(request, 'user/accounts/signup.html', context)
 
-        if len(username)<3:
-            messages.error(request,'username must contain al least 3 characters')
-            return render(request,'user/accounts/signup.html',context)
-        
-        if username.isdigit():
+        if len(username) < 3:
+            messages.error(request, 'Username must contain at least 3 characters')
+            return render(request, 'user/accounts/signup.html', context)
 
-            messages.error(request,'username connot contain only numbers')
-            return render(request,'user/accounts/signup.html',context)
-        
-        if not re.match(r'^[A-Za-z0-9_]+$',username):
-            messages.error(request,'User name can contain only letters,numbers and underscore')
-            return render(request,'user/accounts/signup.html',context)
-        
+        if len(username) > 30:
+            messages.error(request, 'Username must not exceed 30 characters')
+            return render(request, 'user/accounts/signup.html', context)
+
+        if not re.match(r'^[A-Za-z0-9_]+$', username):
+            messages.error(
+                request,
+                'Username can contain only letters, numbers and underscore'
+            )
+            return render(request, 'user/accounts/signup.html', context)
+
+        if not re.search(r'[A-Za-z]', username):
+            messages.error(
+                request,
+                'Username must contain at least one letter'
+            )
+            return render(request, 'user/accounts/signup.html', context)
+
         if User.objects.filter(username=username).exists():
-            messages.error(request,'user name alrdy exists')
-            return render(request,'user/accounts/signup.html',context)
-        
+            messages.error(request, 'Username already exists')
+            return render(request, 'user/accounts/signup.html', context)
         if not email:
             messages.error(request,'Email is required')
             return render(request,'user/accounts/signup.html',context)
@@ -147,6 +155,7 @@ def signup(request):
 
 
 def verify_otp(request):
+
     if not request.session.get('email'):
         return redirect('signup')
 
@@ -160,25 +169,27 @@ def verify_otp(request):
         )
 
         session_otp = request.session.get('otp')
-        otp_created_at = request.session.get(
-            'otp_created_at'
-        )
+        otp_created_at = request.session.get('otp_created_at')
+
+        # No OTP timestamp available
         if not otp_created_at:
-            messages.error(request, 'OTP expired. Please sign up again.')
-            for key in ['otp', 'username', 'email', 'password', 'otp_created_at']:
-                request.session.pop(key, None)
-            return redirect('signup')
+            messages.error(
+                request,
+                'OTP expired. Please resend OTP.'
+            )
+            return redirect('verify_otp')
 
         current_time = datetime.now().timestamp()
 
+        # OTP expired
         if current_time - otp_created_at > 60:
-            messages.error(request, 'OTP expired. Please resend OTP.')
-            request.session.pop('otp', None)
-            request.session.pop('otp_created_at', None)
+            messages.error(
+                request,
+                'OTP expired. Please resend OTP.'
+            )
             return redirect('verify_otp')
-                                            
 
-
+        # OTP is valid
         if entered_otp == session_otp:
 
             new_user = User.objects.create_user(
@@ -189,34 +200,50 @@ def verify_otp(request):
 
             # Referral reward logic
             from apps.payments.models import Wallet, WalletTransaction
+            from decimal import Decimal
 
-            referral_code = request.session.get('referral_code', '').strip().upper()
+            referral_code = request.session.get(
+                'referral_code',
+                ''
+            ).strip().upper()
 
-            # Give new user ₹300 welcome bonus if they used a referral code
             if referral_code:
-                referrer = User.objects.filter(referral_code=referral_code).exclude(id=new_user.id).first()
+
+                referrer = User.objects.filter(
+                    referral_code=referral_code
+                ).exclude(
+                    id=new_user.id
+                ).first()
 
                 if referrer:
-                    # Link the referral
+
+                    # Link referral
                     new_user.referred_by = referrer
                     new_user.save()
 
-                    from decimal import Decimal
                     # New user gets ₹300
-                    new_wallet, _ = Wallet.objects.get_or_create(user=new_user)
+                    new_wallet, _ = Wallet.objects.get_or_create(
+                        user=new_user
+                    )
+
                     new_wallet.balance += Decimal('300')
                     new_wallet.save()
+
                     WalletTransaction.objects.create(
                         wallet=new_wallet,
                         amount=Decimal('300'),
                         transaction_type='credit',
-                        description=f'Welcome bonus for joining via referral'
+                        description='Welcome bonus for joining via referral'
                     )
 
                     # Referrer gets ₹100
-                    referrer_wallet, _ = Wallet.objects.get_or_create(user=referrer)
+                    referrer_wallet, _ = Wallet.objects.get_or_create(
+                        user=referrer
+                    )
+
                     referrer_wallet.balance += Decimal('100')
                     referrer_wallet.save()
+
                     WalletTransaction.objects.create(
                         wallet=referrer_wallet,
                         amount=Decimal('100'),
@@ -224,29 +251,36 @@ def verify_otp(request):
                         description=f'Referral reward for inviting {new_user.username}'
                     )
 
-            request.session.pop('otp', None)
-            request.session.pop('username', None)
-            request.session.pop('email', None)
-            request.session.pop('password', None)
-            request.session.pop('otp_created_at', None)
-            request.session.pop('referral_code', None)
+            # Clear signup session data
+            for key in [
+                'otp',
+                'username',
+                'email',
+                'password',
+                'otp_created_at',
+                'referral_code'
+            ]:
+                request.session.pop(key, None)
 
-            messages.success(request, 'Account created successfully. Please login.')
+            messages.success(
+                request,
+                'Account created successfully. Please login.'
+            )
+
             return redirect('login')
 
+        # Wrong OTP
         messages.error(
-        request,
-        'Invalid OTP'
+            request,
+            'Invalid OTP'
         )
 
-    otp_created_at = request.session.get(
-        'otp_created_at'
-    )
+    # Calculate remaining OTP time
+    otp_created_at = request.session.get('otp_created_at')
 
-    remaining_time = 60
+    remaining_time = 0
 
     if otp_created_at:
-
         remaining_time = max(
             0,
             60 - int(
@@ -258,44 +292,41 @@ def verify_otp(request):
         request,
         'user/accounts/verify_otp.html',
         {
-            'remaining_time':remaining_time
+            'remaining_time': remaining_time
         }
     )
-        
-def resend_otp(request):
 
+def resend_otp(request):
     email = request.session.get('email')
 
     if not email:
         return redirect('signup')
 
-    
-    
-    otp = str(random.randint(1000,9999))
+    otp = str(random.randint(1000, 9999))
 
     request.session['otp'] = otp
-
     request.session['otp_created_at'] = datetime.now().timestamp()
 
-
-    html_message = render_to_string('user/emails/otp_email.html', {
-        'message': 'As requested, here is your new OTP for email verification.',
-        'otp': otp
-    })
+    html_message = render_to_string(
+        'user/emails/otp_email.html',
+        {
+            'message': 'As requested, here is your new OTP for email verification.',
+            'otp': otp
+        }
+    )
 
     send_mail(
         'Shoedrop OTP Verification (Resend)',
-        f'Hello,\n\nAs requested, here is your new OTP for email verification: {otp}\nThis OTP is valid for 1 minute. Please do not share it with anyone.\n\nBest regards,\nThe Shoedrop Team',
+        f'Hello,\n\nYour new OTP is: {otp}\n'
+        'This OTP is valid for 1 minute.\n\n'
+        'Best regards,\nThe Shoedrop Team',
         None,
         [email],
         fail_silently=False,
         html_message=html_message
     )
 
-    messages.success(
-        request,
-        'New OTP sent successfully'
-    )
+    messages.success(request, 'New OTP sent successfully.')
 
     return redirect('verify_otp')
 @never_cache
@@ -412,8 +443,6 @@ def forgot_password_verify_otp(request):
 
         if not otp_created_at or (datetime.now().timestamp() - otp_created_at) > 60:
             messages.error(request, 'OTP expired. Please request a new one.')
-            request.session.pop('reset_otp', None)
-            request.session.pop('reset_otp_created_at', None)
             return redirect('forgot_password_verify_otp')
 
         if entered_otp == session_otp:
@@ -432,35 +461,39 @@ def forgot_password_verify_otp(request):
         'user/accounts/forgot_password_verify_otp.html',
         {'remaining_time': remaining_time}
     )
-def resend_reset_otp(request):
+def resend_forgot_password_otp(request):
     email = request.session.get('reset_email')
+
     if not email:
         return redirect('forgot_password')
-    
-    otp = str(
-                random.randint(
-                    1000,
-                    9999
-                )
-            )
+
+    otp = str(random.randint(1000, 9999))
+
     request.session['reset_otp'] = otp
     request.session['reset_otp_created_at'] = datetime.now().timestamp()
-    html_message = render_to_string('user/emails/otp_email.html', {
-        'message': 'As requested, here is your new OTP to reset your password.',
-        'otp': otp
-    })
-    
+
+    html_message = render_to_string(
+        'user/emails/otp_email.html',
+        {
+            'message': 'As requested, here is your new OTP to reset your password.',
+            'otp': otp
+        }
+    )
+
     send_mail(
         'Shoedrop Password Reset Request (Resend)',
-        f'Hello,\n\nAs requested, here is your new OTP to reset your password: {otp}\nThis OTP is valid for 1 minute. If you did not request a password reset, please ignore this email.\n\nBest regards,\nThe Shoedrop Team',
+        f'Hello,\n\nYour new OTP is: {otp}\n'
+        'This OTP is valid for 1 minute.\n\n'
+        'Best regards,\nThe Shoedrop Team',
         None,
         [email],
         fail_silently=False,
         html_message=html_message
     )
-    messages.success(request, 'New OTP sent successfully.')
-    return redirect('forgot_password_verify_otp')
 
+    messages.success(request, 'New OTP sent successfully.')
+
+    return redirect('forgot_password_verify_otp')
 def reset_password(request):
 
     if not request.session.get('reset_email') or not request.session.get('otp_verified'):
@@ -729,10 +762,35 @@ def edit_profile(request):
                 'Username can contain only letters, numbers and underscore'
             )
             return render(request, 'user/accounts/edit_profile.html', {'input_username': username, 'input_email': email, 'input_phone': phone_number})
+        if username.isdigit():
+            messages.error(request, 'Username cannot contain only numbers')
+            return render(
+                request,
+                'user/accounts/edit_profile.html',
+                {
+                    'input_username': username,
+                    'input_email': email,
+                    'input_phone': phone_number
+                }
+            )
         
         if len(username)<3:
             messages.error(request,'username must contain at least 3 caractors')
             return render(request, 'user/accounts/edit_profile.html', {'input_username': username, 'input_email': email, 'input_phone': phone_number})
+        if len(username) > 30:
+            messages.error(
+                request,
+                'Username must not exceed 30 characters'
+            )
+            return render(
+                request,
+                'user/accounts/edit_profile.html',
+                {
+                    'input_username': username,
+                    'input_email': email,
+                    'input_phone': phone_number
+                }
+            )
         
         if phone_number:
 
