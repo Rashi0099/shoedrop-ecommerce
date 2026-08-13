@@ -57,7 +57,7 @@
                             <th class="py-4 px-6">Price</th>
                             <th class="py-4 px-6">Stock</th>
                             <th class="py-4 px-6">Status</th>
-                            <th class="py-4 px-6">Default</th>
+                            
                             <th class="py-4 px-6 text-right">Actions</th>
                         </tr>
                     </thead>
@@ -81,18 +81,7 @@
                                 </div>
                                 {% endif %}
                             </td>
-                            <td class="py-4 px-6">
-                                {% if variant.is_default %}
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                                    ★ Default
-                                </span>
-                                {% else %}
-                                <a href="{% url 'set_default_variant' variant.id %}"
-                                    class="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-amber-400 transition-colors">
-                                    Set Default
-                                </a>
-                                {% endif %}
-                            </td>
+                            
                             <td class="py-4 px-6 text-right">
                                 <div class="flex items-center justify-end gap-4">
                                     <a href="{% url 'edit_variant' variant.id %}"
