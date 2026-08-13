@@ -1,4 +1,5 @@
 {% extends 'user/base.html' %}
+{% load static %}
 
 {% block extra_head %}
 <title>ShoeDrop - Step Into Excellence</title>
@@ -15,7 +16,7 @@
   <section class="mx-auto max-w-7xl px-6 lg:px-12 pt-8 pb-6">
     <div class="relative w-full overflow-hidden rounded-3xl bg-white border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] group">
       <div class="w-full aspect-[16/9] sm:aspect-[16/7] md:aspect-[2.4/1] relative flex items-center justify-center overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2000&auto=format&fit=crop"
+        <img src="{% static 'images/hero-banner.jpg' %}"
           alt="Shoe Drop Showcase" class="w-full h-full object-cover object-center transition-transform duration-1000 ease-out group-hover:scale-[1.02]" />
         
         <!-- Gradient Overlay -->
@@ -31,8 +32,6 @@
         </div>
       </div>
       
-      <!-- Controls (Optional, currently just decorative since no JS slider logic is visible) -->
-    
     </div>
   </section>
 
@@ -83,36 +82,32 @@
     <div class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-3">
       <!-- Men's Card -->
       <div class="group relative h-[420px] overflow-hidden rounded-2xl bg-gray-100 shadow-sm">
-        <img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=600&auto=format&fit=crop" alt="Men's" class="h-full w-full object-cover object-center group-hover:scale-105 transition duration-700 brightness-90" />
+        <img src="{% static 'images/category-men.jpg' %}" alt="Men's" class="h-full w-full object-cover object-center group-hover:scale-105 transition duration-700 brightness-90" />
         <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
         <div class="absolute bottom-8 left-8 space-y-3">
           <h3 class="text-2xl font-black uppercase text-white tracking-wide">Men</h3>
-          <a href="{%url 'shop'%}?category=Men" class="inline-block bg-white px-6 py-2.5 text-[11px] font-bold uppercase tracking-wider text-gray-900 rounded-full shadow hover:bg-gray-100 transition">Shop Now</a>
+          <a href="{% url 'shop' %}?category=MEN" class="inline-block bg-white px-6 py-2.5 text-[11px] font-bold uppercase tracking-wider text-gray-900 rounded-full shadow hover:bg-gray-100 transition">Shop Now</a>
         </div>
       </div>
       <!-- Women's Card -->
       <div class="group relative h-[420px] overflow-hidden rounded-2xl bg-gray-100 shadow-sm">
-        <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=600&auto=format&fit=crop" alt="Women's" class="h-full w-full object-cover object-center group-hover:scale-105 transition duration-700 brightness-90" />
+        <img src="{% static 'images/category-women.jpg' %}" alt="Women's" class="h-full w-full object-cover object-center group-hover:scale-105 transition duration-700 brightness-90" />
         <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
         <div class="absolute bottom-8 left-8 space-y-3">
           <h3 class="text-2xl font-black uppercase text-white tracking-wide">Women</h3>
-          <a href="{%url 'shop'%}?category=Woman" class="inline-block bg-white px-6 py-2.5 text-[11px] font-bold uppercase tracking-wider text-gray-900 rounded-full shadow hover:bg-gray-100 transition">Shop Now</a>
+          <a href="{% url 'shop' %}?category=WOMAN" class="inline-block bg-white px-6 py-2.5 text-[11px] font-bold uppercase tracking-wider text-gray-900 rounded-full shadow hover:bg-gray-100 transition">Shop Now</a>
         </div>
       </div>
       <!-- Kids' Card -->
       <div class="group relative h-[420px] overflow-hidden rounded-2xl bg-gray-100 shadow-sm">
-        <img src="https://images.unsplash.com/photo-1607522370275-f14206abe5d3?q=80&w=600&auto=format&fit=crop" alt="Kids" class="h-full w-full object-cover object-center group-hover:scale-105 transition duration-700 brightness-90" />
+        <img src="{% static 'images/category-kids.jpg' %}" alt="Kids" class="h-full w-full object-cover object-center group-hover:scale-105 transition duration-700 brightness-90" />
         <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
         <div class="absolute bottom-8 left-8 space-y-3">
           <h3 class="text-2xl font-black uppercase text-white tracking-wide">Kids</h3>
-          <a href="{%url 'shop'%}?category=Kids" class="inline-block bg-white px-6 py-2.5 text-[11px] font-bold uppercase tracking-wider text-gray-900 rounded-full shadow hover:bg-gray-100 transition">Shop Now</a>
+          <a href="{% url 'shop' %}?category=KIDS" class="inline-block bg-white px-6 py-2.5 text-[11px] font-bold uppercase tracking-wider text-gray-900 rounded-full shadow hover:bg-gray-100 transition">Shop Now</a>
         </div>
       </div>
     </div>
   </section>
 
-
-  
-
-  <!-- 7. LIGHT GRAY PREMIUM FOOTER -->
 {% endblock %}
