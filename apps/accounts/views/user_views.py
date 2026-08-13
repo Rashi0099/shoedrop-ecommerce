@@ -1029,3 +1029,12 @@ def logout_view(request):
     return redirect('landing_page')
 
 
+def custom_page_not_found(request, exception=None):
+    return render(request, '404.html', status=404)
+
+
+def custom_server_error(request):
+    return render(request, '500.html', status=500)
+
+
+

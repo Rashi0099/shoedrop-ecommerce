@@ -52,9 +52,8 @@ path(
     name='resend_forgot_password_otp'
 ),
 path('refer-earn/', refer_earn, name='refer_earn'),
-
-    
-
+    path('404/', custom_page_not_found, name='custom_404'),
+    path('500/', custom_server_error, name='custom_500'),
 ]
 if settings.DEBUG:
     urlpatterns += static(

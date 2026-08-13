@@ -66,3 +66,7 @@ urlpatterns = [
 
 
 ]
+
+handler404 = 'apps.accounts.views.user_views.custom_page_not_found'
+handler500 = 'apps.accounts.views.user_views.custom_server_error'
+
