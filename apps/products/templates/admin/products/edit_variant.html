@@ -143,6 +143,19 @@
                     </div>
                 </div>
 
+                <!-- Default Variant Toggle -->
+                <div class="flex items-center gap-4 py-2 border-t border-white/5 pt-4">
+                    <button type="button" id="toggle_default_btn" onclick="toggleDefaultStatus()"
+                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none {% if variant.is_default %}bg-amber-500{% else %}bg-zinc-800{% endif %}">
+                        <span id="toggle_default_knob" class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {% if variant.is_default %}translate-x-5{% else %}translate-x-0{% endif %}"></span>
+                    </button>
+                    <input type="hidden" name="is_default" id="is_default_input" value="{% if variant.is_default %}True{% else %}False{% endif %}">
+                    <div>
+                        <span class="block text-xs font-bold text-white uppercase tracking-wider">Default Variant</span>
+                        <span class="text-[10px] text-gray-500 mt-0.5 block">Primary variant displayed on shop listings and product pages</span>
+                    </div>
+                </div>
+
                 <!-- Actions -->
                 <div class="flex items-center gap-3 pt-4 border-t border-white/5">
                     <button type="submit" class="px-6 py-3 bg-white text-black rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors cursor-pointer">
@@ -190,6 +203,24 @@
                 input.value = 'True';
             }
         }
+
+        function toggleDefaultStatus() {
+            const btn = document.getElementById('toggle_default_btn');
+            const knob = document.getElementById('toggle_default_knob');
+            const input = document.getElementById('is_default_input');
+            const isDefault = input.value === 'True';
+
+            if (isDefault) {
+                btn.classList.replace('bg-amber-500', 'bg-zinc-800');
+                knob.classList.replace('translate-x-5', 'translate-x-0');
+                input.value = 'False';
+            } else {
+                btn.classList.replace('bg-zinc-800', 'bg-amber-500');
+                knob.classList.replace('translate-x-0', 'translate-x-5');
+                input.value = 'True';
+            }
+        }
+
 
         // Image Cropping Logic
         let cropper = null;

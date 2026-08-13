@@ -124,7 +124,7 @@ def product_detail(request, product_id):
     selected_color = request.GET.get('color')
     selected_size = request.GET.get('size')
 
-    selected_variant = variants.first()
+    selected_variant = variants.filter(is_default=True).first() or variants.first()
 
     if selected_color and selected_size:
         v = variants.filter(color=selected_color, size=selected_size).first()
@@ -183,10 +183,21 @@ def product_detail(request, product_id):
     total_reviews = reviews.count()
     rating_counts = {i: reviews.filter(rating=i).count() for i in range(1, 6)}
 
-    # Check if logged-in user has purchased this product (for verified review badge)
+    # Wishlist & purchase checks
     user_has_purchased = False
     user_existing_review = None
+    wishlist_variant_ids = set()
+    is_wishlisted = False
+
     if request.user.is_authenticated:
+        from apps.wishlist.models import WishlistItem
+        wishlist_variant_ids = set(
+            WishlistItem.objects.filter(user=request.user)
+            .values_list('variant_id', flat=True)
+        )
+        if selected_variant:
+            is_wishlisted = selected_variant.id in wishlist_variant_ids
+
         user_has_purchased = OrderItem.objects.filter(
             order__user=request.user,
             product_variant__product=product,
@@ -209,4 +220,6 @@ def product_detail(request, product_id):
         'rating_counts': rating_counts,
         'user_has_purchased': user_has_purchased,
         'user_existing_review': user_existing_review,
+        'wishlist_variant_ids': wishlist_variant_ids,
+        'is_wishlisted': is_wishlisted,
     })

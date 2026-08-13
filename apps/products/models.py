@@ -44,7 +44,13 @@ class Product(models.Model):
 
     def __str__(self):
         return self.product_name
-    
+
+    def get_default_variant(self):
+        default = self.variants.filter(is_active=True, is_deleted=False, is_default=True).first()
+        if default:
+            return default
+        return self.variants.filter(is_active=True, is_deleted=False).first()
+
 
 class ProductVariant(models.Model):
 

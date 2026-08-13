@@ -20,12 +20,21 @@
         <div class="lg:col-span-7 space-y-4">
           <!-- Main Image — hover to zoom at cursor position -->
           <div id="image-zoom-box" class="bg-white rounded-2xl overflow-hidden aspect-[4/3] sm:aspect-[16/10] max-h-[420px] w-full flex items-center justify-center relative p-4 border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] cursor-crosshair" onmousemove="zoomAtCursor(event)" onmouseleave="resetZoom()">
+            <!-- Wishlist Floating Icon -->
+            <a href="{% if selected_variant %}{% url 'toggle_wishlist' selected_variant.id %}{% else %}{% url 'wishlist' %}{% endif %}"
+               title="{% if is_wishlisted %}Remove from Wishlist{% else %}Add to Wishlist{% endif %}"
+               class="absolute top-3.5 right-3.5 z-20 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md border transition-all duration-200 hover:scale-110
+                      {% if is_wishlisted %}border-red-200 text-red-500 bg-red-50/90{% else %}border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200{% endif %}">
+              <i class="{% if is_wishlisted %}fa-solid{% else %}fa-regular{% endif %} fa-heart text-base"></i>
+            </a>
+
             {% if selected_variant and selected_variant.images.first %}
               <img id="main-product-image" src="{{ selected_variant.images.first.image.url }}" alt="{{ product.product_name }}" class="object-contain w-full h-full" style="transition: transform 0.1s ease; transform-origin: center center;" />
             {% else %}
               <div class="text-xs text-gray-400 font-bold uppercase tracking-widest bg-gray-50 px-4 py-2 rounded-lg">No Image Available</div>
             {% endif %}
           </div>
+
 
           <!-- Thumbnail images — click to switch main image -->
           <div class="grid grid-cols-4 gap-3">
@@ -140,10 +149,13 @@
                   class="border-2 border-emerald-950 bg-white text-emerald-950 text-xs font-black uppercase tracking-widest py-2.5 px-4 rounded-xl hover:bg-emerald-50/50 transition flex items-center justify-center gap-2 shadow-sm">
                   <i class="fa-solid fa-bag-shopping"></i> Add to Cart
                 </a>
-                <a href="{% if selected_variant %}{% url 'add_to_wishlist' selected_variant.id %}{% else %}{% url 'wishlist' %}{% endif %}"
-                  class="border-2 border-gray-300 bg-white text-gray-800 hover:border-red-500 hover:text-red-600 hover:bg-red-50 text-xs font-black uppercase tracking-widest py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-sm">
-                  <i class="fa-regular fa-heart"></i> Wishlist
+                <a href="{% if selected_variant %}{% url 'toggle_wishlist' selected_variant.id %}{% else %}{% url 'wishlist' %}{% endif %}"
+                  class="border-2 text-xs font-black uppercase tracking-widest py-2.5 px-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-sm
+                         {% if is_wishlisted %}border-red-500 bg-red-50 text-red-600 hover:bg-red-100{% else %}border-gray-300 bg-white text-gray-800 hover:border-red-500 hover:text-red-600 hover:bg-red-50{% endif %}">
+                  <i class="{% if is_wishlisted %}fa-solid text-red-500{% else %}fa-regular{% endif %} fa-heart"></i>
+                  {% if is_wishlisted %}Wishlisted{% else %}Wishlist{% endif %}
                 </a>
+
               </div>
             </div>
           </div>
@@ -168,31 +180,42 @@
 
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             {% for rel_product in related_products %}
-              {% with rel_variant=rel_product.variants.first %}
-                <a href="{% url 'product_detail' rel_product.id %}" class="group cursor-pointer block">
-                  <div class="bg-white rounded-2xl overflow-hidden aspect-square flex items-center justify-center p-4 mb-2 shadow-[0_4px_15px_-3px_rgba(0,0,0,0.04)] border border-gray-100 group-hover:border-gray-200 transition-all duration-300">
-                    {% if rel_variant and rel_variant.images.first %}
-                      <img src="{{ rel_variant.images.first.image.url }}" alt="{{ rel_product.product_name }}" class="object-contain max-h-full mix-blend-multiply group-hover:scale-105 transition-transform duration-500 ease-out" />
-                    {% else %}
-                      <div class="text-gray-200 text-4xl">
-                        <i class="fa-regular fa-image"></i>
-                      </div>
+              {% with rel_variant=rel_product.get_default_variant %}
+
+                <div class="group cursor-pointer block relative">
+                  <!-- Related Product Wishlist Overlay -->
+                  <a href="{% if rel_variant %}{% url 'toggle_wishlist' rel_variant.id %}{% else %}{% url 'wishlist' %}{% endif %}"
+                     class="absolute top-2.5 right-2.5 z-10 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm border border-gray-100 transition-all hover:scale-110
+                            {% if rel_variant and rel_variant.id in wishlist_variant_ids %}text-red-500 bg-red-50/80 border-red-200{% else %}text-gray-300 hover:text-red-400{% endif %}">
+                    <i class="{% if rel_variant and rel_variant.id in wishlist_variant_ids %}fa-solid{% else %}fa-regular{% endif %} fa-heart text-[10px]"></i>
+                  </a>
+
+                  <a href="{% url 'product_detail' rel_product.id %}" class="block">
+                    <div class="bg-white rounded-2xl overflow-hidden aspect-square flex items-center justify-center p-4 mb-2 shadow-[0_4px_15px_-3px_rgba(0,0,0,0.04)] border border-gray-100 group-hover:border-gray-200 transition-all duration-300">
+                      {% if rel_variant and rel_variant.images.first %}
+                        <img src="{{ rel_variant.images.first.image.url }}" alt="{{ rel_product.product_name }}" class="object-contain max-h-full mix-blend-multiply group-hover:scale-105 transition-transform duration-500 ease-out" />
+                      {% else %}
+                        <div class="text-gray-200 text-4xl">
+                          <i class="fa-regular fa-image"></i>
+                        </div>
+                      {% endif %}
+                    </div>
+                    <h3 class="text-xs font-bold text-emerald-950 group-hover:text-emerald-800 transition tracking-wide">{{ rel_product.product_name }}</h3>
+                    {% if rel_variant %}
+                      {% if rel_variant.get_discount_percentage > 0 %}
+                        <div class="mt-0.5 flex items-baseline gap-2">
+                          <p class="text-xs text-emerald-900 font-black">₹{{ rel_variant.get_offer_price|floatformat:2 }}</p>
+                          <p class="text-[10px] text-gray-400 line-through">₹{{ rel_variant.price }}</p>
+                        </div>
+                      {% else %}
+                        <p class="text-xs text-emerald-900 font-black mt-0.5">₹{{ rel_variant.price }}</p>
+                      {% endif %}
                     {% endif %}
-                  </div>
-                  <h3 class="text-xs font-bold text-emerald-950 group-hover:text-emerald-800 transition tracking-wide">{{ rel_product.product_name }}</h3>
-                  {% if rel_variant %}
-                    {% if rel_variant.get_discount_percentage > 0 %}
-                      <div class="mt-0.5 flex items-baseline gap-2">
-                        <p class="text-xs text-emerald-900 font-black">₹{{ rel_variant.get_offer_price|floatformat:2 }}</p>
-                        <p class="text-[10px] text-gray-400 line-through">₹{{ rel_variant.price }}</p>
-                      </div>
-                    {% else %}
-                      <p class="text-xs text-emerald-900 font-black mt-0.5">₹{{ rel_variant.price }}</p>
-                    {% endif %}
-                  {% endif %}
-                </a>
+                  </a>
+                </div>
               {% endwith %}
             {% endfor %}
+
           </div>
         </section>
       {% endif %}

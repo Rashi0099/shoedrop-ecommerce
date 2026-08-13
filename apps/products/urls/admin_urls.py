@@ -7,6 +7,7 @@ from apps.products.views.admin_views import (
     variant_list,
     add_variant,
     edit_variant,
+    set_default_variant,
     delete_variant,
     delete_product,
 )
@@ -19,6 +20,7 @@ urlpatterns = [
     path('<int:product_id>/variants/', variant_list, name='variant_list'),
     path('<int:product_id>/variants/add/', add_variant, name='add_variant'),
     path('variants/<int:variant_id>/edit/', edit_variant, name='edit_variant'),
+    path('variants/<int:variant_id>/set-default/', set_default_variant, name='set_default_variant'),
     path('variants/<int:variant_id>/delete/', delete_variant, name='delete_variant'),
     path('<int:product_id>/delete/', delete_product, name='delete_product'),
 ]

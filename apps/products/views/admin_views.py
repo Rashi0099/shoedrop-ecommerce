@@ -242,6 +242,7 @@ def add_variant(request, product_id):
         # ── Create one variant per color-size combination ──
         created_count = 0
         skipped_count = 0
+        has_default = ProductVariant.objects.filter(product=product, is_default=True, is_deleted=False).exists()
 
         for color in colors:
             for size in sizes:
@@ -255,14 +256,18 @@ def add_variant(request, product_id):
                     skipped_count += 1
                     continue
 
+                make_default = not has_default and created_count == 0
                 variant = ProductVariant.objects.create(
                     product=product,
                     size=size,
                     color=color,
                     price=price,
                     stock=stock,
-                    is_active=is_active
+                    is_active=is_active,
+                    is_default=make_default
                 )
+                if make_default:
+                    has_default = True
 
                 # Attach images to each variant
                 for i, image_file in enumerate(images):
@@ -301,6 +306,7 @@ def edit_variant(request, variant_id):
         price = request.POST.get('price')
         stock = request.POST.get('stock')
         is_active = request.POST.get('is_active') == 'True'
+        is_default = request.POST.get('is_default') == 'True'
 
         if not all([size, color, price, stock]):
             messages.error(request, 'All fields are required.')
@@ -333,6 +339,12 @@ def edit_variant(request, variant_id):
         except ValueError:
             messages.error(request, 'Invalid stock format.')
             return redirect('edit_variant', variant_id=variant.id)
+
+        if is_default:
+            ProductVariant.objects.filter(product=product).update(is_default=False)
+            variant.is_default = True
+        else:
+            variant.is_default = False
 
         variant.size = size
         variant.color = color
@@ -367,16 +379,39 @@ def edit_variant(request, variant_id):
 
 
 @staff_member_required(login_url='admin_login')
+def set_default_variant(request, variant_id):
+    variant = get_object_or_404(ProductVariant, id=variant_id, is_deleted=False)
+    product_id = variant.product.id
+    
+    ProductVariant.objects.filter(product=variant.product).update(is_default=False)
+    variant.is_default = True
+    variant.save()
+    messages.success(request, f'Variant (Size {variant.size}, {variant.color}) set as default.')
+    return redirect('variant_list', product_id=product_id)
+
+
+@staff_member_required(login_url='admin_login')
 def delete_variant(request, variant_id):
     variant = get_object_or_404(ProductVariant, id=variant_id, is_deleted=False)
     product_id = variant.product.id
+    was_default = variant.is_default
     
     # Soft delete — mark as deleted and deactivate
     variant.is_deleted = True
     variant.is_active = False
+    variant.is_default = False
     variant.save()
+
+    # If it was default, assign default to next active variant
+    if was_default:
+        next_v = ProductVariant.objects.filter(product_id=product_id, is_deleted=False, is_active=True).first()
+        if next_v:
+            next_v.is_default = True
+            next_v.save()
+
     messages.success(request, 'Variant deleted successfully.')
     return redirect('variant_list', product_id=product_id)
+
 
 
 @staff_member_required(login_url='admin_login')
