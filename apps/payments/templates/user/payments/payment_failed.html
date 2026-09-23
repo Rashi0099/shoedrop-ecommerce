@@ -1,45 +1,42 @@
-{% extends 'base.html' %}
+{% extends 'user/base.html' %}
 {% load static %}
 
 {% block title %}Payment Failed - ShoeDrop{% endblock %}
 
 {% block content %}
-<!-- NAV -->
-{% include 'user/nav.html' %}
-
-<main class="min-h-screen bg-slate-50 flex items-center justify-center pt-24 pb-12 px-6">
-  <div class="max-w-md w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center">
+<div class="py-16 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+  <div class="max-w-md w-full bg-white rounded-2xl border border-slate-200 p-8 sm:p-10 shadow-sm text-center">
     
     <!-- Failure Icon -->
-    <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+    <div class="w-20 h-20 bg-red-50 border border-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
       <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
       </svg>
     </div>
 
     <!-- Details -->
-    <h1 class="text-2xl font-black text-slate-950 uppercase tracking-tight mb-2">Payment Failed</h1>
-    <p class="text-sm font-medium text-slate-500 leading-relaxed mb-8">
+    <h1 class="text-2xl font-black text-slate-950 uppercase tracking-wide mb-2">Payment Failed</h1>
+    <p class="text-xs font-medium text-slate-500 leading-relaxed mb-8">
       We couldn't process your payment. Don't worry, no money was deducted. You can try again or use a different payment method.
     </p>
 
     <!-- Actions -->
     <div class="flex flex-col gap-3">
-      <a href="{% url 'checkout' %}" class="w-full py-4 bg-slate-950 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-colors">
+      <a href="{% url 'checkout' %}" class="w-full py-3.5 bg-brand-dark hover:bg-brand-darker text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-sm transition-all duration-200">
         Retry Payment
       </a>
       
       {% if order %}
-      <a href="{% url 'order_details' order.id %}" class="w-full py-4 bg-white text-slate-950 border border-slate-200 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-50 transition-colors">
+      <a href="{% url 'order_details' order.id %}" class="w-full py-3.5 bg-white text-slate-900 border border-slate-200 hover:border-slate-300 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-50 transition-all duration-200">
         View Order Details
       </a>
       {% endif %}
       
-      <a href="{% url 'shop' %}" class="text-xs font-bold text-slate-400 hover:text-slate-950 uppercase tracking-widest mt-4 transition-colors">
+      <a href="{% url 'shop' %}" class="text-xs font-bold text-slate-400 hover:text-brand-dark uppercase tracking-wider mt-4 transition-colors">
         Return to Shop
       </a>
     </div>
     
   </div>
-</main>
+</div>
 {% endblock %}

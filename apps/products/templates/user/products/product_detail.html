@@ -4,26 +4,19 @@
 <!-- Messages -->
     {% if messages %}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        {% for message in messages %}
-        <div class="p-4 mb-2 text-sm rounded-xl font-bold {% if message.tags == 'error' %}bg-red-50 text-red-800 border-red-200{% else %}bg-emerald-50 text-emerald-800 border-emerald-200{% endif %} border shadow-sm flex items-center justify-between" role="alert">
-            <span>{{ message }}</span>
-            <button type="button" class="ml-auto text-gray-500 hover:text-gray-900 transition-colors" onclick="this.parentElement.style.display='none';">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        {% endfor %}
+        {% include 'user/_messages.html' %}
     </div>
     {% endif %}
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 mb-12">
         <div class="lg:col-span-7 space-y-4">
           <!-- Main Image — hover to zoom at cursor position -->
-          <div id="image-zoom-box" class="bg-white rounded-2xl overflow-hidden aspect-[4/3] sm:aspect-[16/10] max-h-[420px] w-full flex items-center justify-center relative p-4 border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] cursor-crosshair" onmousemove="zoomAtCursor(event)" onmouseleave="resetZoom()">
+          <div id="image-zoom-box" class="bg-white rounded-2xl overflow-hidden aspect-[4/3] sm:aspect-[16/10] max-h-[420px] w-full flex items-center justify-center relative p-6 border border-gray-100 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.05)] cursor-crosshair" onmousemove="zoomAtCursor(event)" onmouseleave="resetZoom()">
             <!-- Wishlist Floating Icon -->
             <a href="{% if selected_variant %}{% url 'toggle_wishlist' selected_variant.id %}{% else %}{% url 'wishlist' %}{% endif %}"
                title="{% if is_wishlisted %}Remove from Wishlist{% else %}Add to Wishlist{% endif %}"
-               class="absolute top-3.5 right-3.5 z-20 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md border transition-all duration-200 hover:scale-110
+               class="absolute top-4 right-4 z-20 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md border transition-all duration-200 hover:scale-110 active:scale-95
                       {% if is_wishlisted %}border-red-200 text-red-500 bg-red-50/90{% else %}border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200{% endif %}">
               <i class="{% if is_wishlisted %}fa-solid{% else %}fa-regular{% endif %} fa-heart text-base"></i>
             </a>
@@ -40,7 +33,7 @@
           <div class="grid grid-cols-4 gap-3">
             {% if selected_variant %}
               {% for img in selected_variant.images.all %}
-                <div onclick="switchImage('{{ img.image.url }}')" class="bg-white rounded-xl overflow-hidden aspect-square flex items-center justify-center p-2 cursor-pointer border border-transparent hover:border-emerald-300 transition-all duration-200 shadow-sm">
+                <div onclick="switchImage('{{ img.image.url }}')" class="bg-white rounded-xl overflow-hidden aspect-square flex items-center justify-center p-2 cursor-pointer border border-gray-100 hover:border-brand-emerald transition-all duration-200 shadow-sm hover:shadow">
                   <img src="{{ img.image.url }}" alt="{{ product.product_name }} view" class="object-contain w-full h-full" />
                 </div>
               {% endfor %}
@@ -48,10 +41,10 @@
           </div>
 
           <div class="pt-6 hidden lg:block">
-            <h3 class="text-xs font-black text-emerald-950 uppercase tracking-widest mb-3">Product Features</h3>
+            <h3 class="text-xs font-black text-brand-dark uppercase tracking-widest mb-3">Product Features</h3>
             <div class="flex flex-wrap gap-2.5">
               {% if product.product_features %}
-                <span class="bg-gray-100 text-gray-800 text-[11px] font-bold px-4 py-2.5 rounded-xl uppercase tracking-wider shadow-sm">{{ product.product_features }}</span>
+                <span class="bg-brand-50 text-brand-dark border border-brand-100 text-[11px] font-bold px-4 py-2.5 rounded-xl uppercase tracking-wider shadow-sm">{{ product.product_features }}</span>
               {% endif %}
             </div>
           </div>
@@ -59,13 +52,13 @@
 
         <div class="lg:col-span-5 flex flex-col justify-start space-y-4">
           <div class="space-y-1">
-            <h1 class="text-2xl xl:text-3xl font-black text-emerald-950 tracking-tight leading-tight">{{ product.product_name }}</h1>
-            <p class="text-xl font-black text-emerald-900 tracking-tight">
+            <h1 class="text-2xl xl:text-3xl font-black text-brand-dark tracking-tight leading-tight">{{ product.product_name }}</h1>
+            <p class="text-xl font-black text-brand-dark tracking-tight">
               {% if selected_variant %}
                 {% if selected_variant.get_discount_percentage > 0 %}
                   <span class="text-lg text-gray-400 line-through font-medium mr-2">₹{{ selected_variant.price }}</span>
-                  <span class="text-emerald-600">₹{{ selected_variant.get_offer_price|floatformat:2 }}</span>
-                  <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-1 rounded-lg ml-2 align-middle">{{ selected_variant.get_discount_percentage|floatformat:0 }}% OFF</span>
+                  <span class="text-brand-emerald">₹{{ selected_variant.get_offer_price|floatformat:2 }}</span>
+                  <span class="text-xs font-black bg-brand-50 text-brand-dark border border-brand-200/80 px-2.5 py-1 rounded-lg ml-2 align-middle">{{ selected_variant.get_discount_percentage|floatformat:0 }}% OFF</span>
                 {% else %}
                   ₹{{ selected_variant.price }}
                 {% endif %}
@@ -75,32 +68,23 @@
             </p>
           </div>
 
-          <div class="bg-gray-100/60 rounded-xl p-3 border border-gray-200/40">
+          <div class="bg-white rounded-2xl p-4 border border-gray-100/90 shadow-sm">
             <p class="text-xs text-gray-600 leading-relaxed font-medium">{{ product.description }}</p>
           </div>
 
           {% if colors %}
             <div class="space-y-2 mb-4">
-              <h4 class="text-xs font-black text-emerald-950 uppercase tracking-widest">Select Color</h4>
+              <h4 class="text-xs font-black text-brand-dark uppercase tracking-widest">Select Color</h4>
               <div class="flex flex-wrap items-center gap-3">
                 {% for color in colors %}
                   <a href="?color={{ color|urlencode }}{% if current_size %}&size={{ current_size|urlencode }}{% endif %}"
                     class="block w-8 h-8 rounded-full border-2 transition-all {% if current_color == color %}
-                      
-                      
-                      border-emerald-950 ring-2 ring-emerald-950/50
-
-
+                      border-brand-dark ring-2 ring-brand-emerald/40 scale-105
                     {% else %}
-                      
-                      
-                      border-gray-300 hover:scale-110
-
-
+                      border-gray-300 hover:scale-110 hover:border-brand-dark/40
                     {% endif %}"
                     style="background-color: {{ color|lower }};"
                     title="{{ color }}">
-
                   </a>
                 {% endfor %}
               </div>
@@ -109,23 +93,15 @@
           {% if sizes %}
             <div class="space-y-2">
               <div class="flex justify-between items-center">
-                <h4 class="text-xs font-black text-emerald-950 uppercase tracking-widest">Select Size</h4>
+                <h4 class="text-xs font-black text-brand-dark uppercase tracking-widest">Select Size</h4>
               </div>
               <div class="grid grid-cols-4 sm:grid-cols-5 gap-2">
                 {% for size in sizes %}
                   <a href="?size={{ size|urlencode }}{% if current_color %}&color={{ current_color|urlencode }}{% endif %}"
-                    class="border text-center rounded-lg py-2 text-xs font-bold tracking-wider transition-all duration-200 block shadow-sm {% if current_size == size %}
-                      
-                      
-                      bg-emerald-950 text-white border-emerald-950 shadow-sm
-
-
+                    class="border text-center rounded-xl py-2.5 text-xs font-bold tracking-wider transition-all duration-200 block shadow-sm {% if current_size == size %}
+                      bg-brand-dark text-white border-brand-dark shadow-sm
                     {% else %}
-                      
-                      
-                      bg-white border-gray-200 text-gray-700 hover:border-emerald-800 hover:text-emerald-950
-
-
+                      bg-white border-gray-200 text-gray-700 hover:border-brand-dark hover:text-brand-dark
                     {% endif %}">
                     {{ size }}
                   </a>
@@ -134,24 +110,24 @@
             </div>
           {% endif %}
 
-          <div class="space-y-3 pt-1">
-            <div class="space-y-2">
+          <div class="space-y-3 pt-2">
+            <div class="space-y-2.5">
               {% if selected_variant and selected_variant.stock > 0 %}
-                <a href="{% url 'checkout' %}?buy_now={{ selected_variant.id }}" class="w-full bg-emerald-950 text-white text-xs font-black uppercase tracking-widest py-3.5 px-6 rounded-xl hover:bg-emerald-900 transition-all duration-300 shadow-md flex items-center justify-center gap-2">
+                <a href="{% url 'checkout' %}?buy_now={{ selected_variant.id }}" class="w-full bg-brand-dark text-white text-xs font-black uppercase tracking-widest py-3.5 px-6 rounded-xl hover:bg-brand-darker transition-all duration-300 shadow-lg shadow-brand-dark/15 hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2">
                   Buy Now
                 </a>
               {% else %}
-                <button disabled class="w-full bg-gray-300 text-gray-500 text-xs font-black uppercase tracking-widest py-3.5 px-6 rounded-xl cursor-not-allowed">Out Of Stock</button>
+                <button disabled class="w-full bg-gray-200 text-gray-400 text-xs font-black uppercase tracking-widest py-3.5 px-6 rounded-xl cursor-not-allowed">Out Of Stock</button>
               {% endif %}
 
-              <div class="grid grid-cols-2 gap-2">
+              <div class="grid grid-cols-2 gap-2.5">
                 <a href="{% if selected_variant %}{% url 'add_to_cart' selected_variant.id %}{% else %}#{% endif %}"
-                  class="border-2 border-emerald-950 bg-white text-emerald-950 text-xs font-black uppercase tracking-widest py-2.5 px-4 rounded-xl hover:bg-emerald-50/50 transition flex items-center justify-center gap-2 shadow-sm">
+                  class="border-2 border-brand-dark bg-white text-brand-dark text-xs font-black uppercase tracking-widest py-3 px-4 rounded-xl hover:bg-brand-50 hover:text-brand-darker transition-all duration-200 flex items-center justify-center gap-2 shadow-sm active:scale-[0.99]">
                   <i class="fa-solid fa-bag-shopping"></i> Add to Cart
                 </a>
                 <a href="{% if selected_variant %}{% url 'toggle_wishlist' selected_variant.id %}{% else %}{% url 'wishlist' %}{% endif %}"
-                  class="border-2 text-xs font-black uppercase tracking-widest py-2.5 px-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-sm
-                         {% if is_wishlisted %}border-red-500 bg-red-50 text-red-600 hover:bg-red-100{% else %}border-gray-300 bg-white text-gray-800 hover:border-red-500 hover:text-red-600 hover:bg-red-50{% endif %}">
+                  class="border-2 text-xs font-black uppercase tracking-widest py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-sm active:scale-[0.99]
+                         {% if is_wishlisted %}border-red-500 bg-red-50 text-red-600 hover:bg-red-100{% else %}border-gray-200 bg-white text-gray-700 hover:border-red-400 hover:text-red-500 hover:bg-red-50/50{% endif %}">
                   <i class="{% if is_wishlisted %}fa-solid text-red-500{% else %}fa-regular{% endif %} fa-heart"></i>
                   {% if is_wishlisted %}Wishlisted{% else %}Wishlist{% endif %}
                 </a>
@@ -174,8 +150,8 @@
       {% if related_products %}
         <section class="border-t border-gray-200/80 pt-10 pb-12">
           <div class="flex justify-between items-end mb-6">
-            <h2 class="text-lg font-black text-emerald-950 tracking-tight uppercase">You May Also Like</h2>
-            <a href="{% url 'shop' %}" class="text-xs font-bold text-emerald-800 underline hover:text-emerald-950 transition whitespace-nowrap ml-4">View All</a>
+            <h2 class="text-lg font-black text-brand-dark tracking-tight uppercase">You May Also Like</h2>
+            <a href="{% url 'shop' %}" class="text-xs font-bold text-brand-dark hover:text-brand-emerald transition whitespace-nowrap ml-4">View All &rarr;</a>
           </div>
 
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
@@ -185,13 +161,13 @@
                 <div class="group cursor-pointer block relative">
                   <!-- Related Product Wishlist Overlay -->
                   <a href="{% if rel_variant %}{% url 'toggle_wishlist' rel_variant.id %}{% else %}{% url 'wishlist' %}{% endif %}"
-                     class="absolute top-2.5 right-2.5 z-10 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm border border-gray-100 transition-all hover:scale-110
-                            {% if rel_variant and rel_variant.id in wishlist_variant_ids %}text-red-500 bg-red-50/80 border-red-200{% else %}text-gray-300 hover:text-red-400{% endif %}">
-                    <i class="{% if rel_variant and rel_variant.id in wishlist_variant_ids %}fa-solid{% else %}fa-regular{% endif %} fa-heart text-[10px]"></i>
+                     class="absolute top-2.5 right-2.5 z-10 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm border border-gray-100 transition-all hover:scale-110 active:scale-90"
+                     title="Toggle Wishlist">
+                    <i class="{% if rel_variant and rel_variant.id in wishlist_variant_ids %}fa-solid text-red-500{% else %}fa-regular text-gray-300 hover:text-red-500{% endif %} fa-heart text-[10px]"></i>
                   </a>
 
                   <a href="{% url 'product_detail' rel_product.id %}" class="block">
-                    <div class="bg-white rounded-2xl overflow-hidden aspect-square flex items-center justify-center p-4 mb-2 shadow-[0_4px_15px_-3px_rgba(0,0,0,0.04)] border border-gray-100 group-hover:border-gray-200 transition-all duration-300">
+                    <div class="bg-white rounded-2xl overflow-hidden aspect-square flex items-center justify-center p-4 mb-2 shadow-[0_4px_15px_-3px_rgba(0,0,0,0.04)] border border-gray-100 group-hover:border-gray-200 group-hover:shadow-md transition-all duration-300">
                       {% if rel_variant and rel_variant.images.first %}
                         <img src="{{ rel_variant.images.first.image.url }}" alt="{{ rel_product.product_name }}" class="object-contain max-h-full mix-blend-multiply group-hover:scale-105 transition-transform duration-500 ease-out" />
                       {% else %}
@@ -200,15 +176,15 @@
                         </div>
                       {% endif %}
                     </div>
-                    <h3 class="text-xs font-bold text-emerald-950 group-hover:text-emerald-800 transition tracking-wide">{{ rel_product.product_name }}</h3>
+                    <h3 class="text-xs font-bold text-gray-900 group-hover:text-brand-dark transition tracking-wide line-clamp-1">{{ rel_product.product_name }}</h3>
                     {% if rel_variant %}
                       {% if rel_variant.get_discount_percentage > 0 %}
                         <div class="mt-0.5 flex items-baseline gap-2">
-                          <p class="text-xs text-emerald-900 font-black">₹{{ rel_variant.get_offer_price|floatformat:2 }}</p>
+                          <p class="text-xs text-brand-emerald font-black">₹{{ rel_variant.get_offer_price|floatformat:2 }}</p>
                           <p class="text-[10px] text-gray-400 line-through">₹{{ rel_variant.price }}</p>
                         </div>
                       {% else %}
-                        <p class="text-xs text-emerald-900 font-black mt-0.5">₹{{ rel_variant.price }}</p>
+                        <p class="text-xs text-brand-dark font-black mt-0.5">₹{{ rel_variant.price }}</p>
                       {% endif %}
                     {% endif %}
                   </a>
@@ -223,7 +199,7 @@
       <!-- =================== CUSTOMER REVIEWS SECTION =================== -->
       <section class="border-t border-gray-200/80 pt-10 pb-12" id="reviews-section">
         <div class="flex items-center justify-between mb-8">
-          <h2 class="text-lg font-black text-emerald-950 tracking-tight uppercase">
+          <h2 class="text-lg font-black text-brand-dark tracking-tight uppercase">
             Customer Reviews
             {% if total_reviews %}
               <span class="ml-2 text-sm font-bold text-gray-400">({{ total_reviews }})</span>
@@ -239,7 +215,7 @@
             {% if total_reviews > 0 %}
               <!-- Average Rating Display -->
               <div class="flex items-baseline gap-3">
-                <span class="text-5xl font-black text-emerald-950 tracking-tight">{{ avg_rating }}</span>
+                <span class="text-5xl font-black text-brand-dark tracking-tight">{{ avg_rating }}</span>
                 <div class="flex flex-col">
                   <div class="flex text-amber-400 text-sm gap-0.5">
                     {% for i in "12345" %}
@@ -248,7 +224,7 @@
                       {% elif forloop.counter|add:"-1" < avg_rating %}
                         <i class="fa-solid fa-star-half-stroke"></i>
                       {% else %}
-                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star text-gray-200"></i>
                       {% endif %}
                     {% endfor %}
                   </div>
@@ -265,18 +241,18 @@
                       <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                         {% if total_reviews > 0 %}
                           {% if star == "5" %}
-                            <div class="h-full bg-emerald-950 rounded-full" style="width: {% widthratio rating_counts.5 total_reviews 100 %}%"></div>
+                            <div class="h-full bg-brand-dark rounded-full" style="width: {% widthratio rating_counts.5 total_reviews 100 %}%"></div>
                           {% elif star == "4" %}
-                            <div class="h-full bg-emerald-950 rounded-full" style="width: {% widthratio rating_counts.4 total_reviews 100 %}%"></div>
+                            <div class="h-full bg-brand-dark rounded-full" style="width: {% widthratio rating_counts.4 total_reviews 100 %}%"></div>
                           {% elif star == "3" %}
-                            <div class="h-full bg-emerald-950 rounded-full" style="width: {% widthratio rating_counts.3 total_reviews 100 %}%"></div>
+                            <div class="h-full bg-brand-dark rounded-full" style="width: {% widthratio rating_counts.3 total_reviews 100 %}%"></div>
                           {% elif star == "2" %}
-                            <div class="h-full bg-emerald-950 rounded-full" style="width: {% widthratio rating_counts.2 total_reviews 100 %}%"></div>
+                            <div class="h-full bg-brand-dark rounded-full" style="width: {% widthratio rating_counts.2 total_reviews 100 %}%"></div>
                           {% elif star == "1" %}
-                            <div class="h-full bg-emerald-950 rounded-full" style="width: {% widthratio rating_counts.1 total_reviews 100 %}%"></div>
+                            <div class="h-full bg-brand-dark rounded-full" style="width: {% widthratio rating_counts.1 total_reviews 100 %}%"></div>
                           {% endif %}
                         {% else %}
-                          <div class="h-full bg-emerald-950 rounded-full w-0"></div>
+                          <div class="h-full bg-brand-dark rounded-full w-0"></div>
                         {% endif %}
                       </div>
                       <span class="w-6 text-right text-gray-400">
@@ -303,7 +279,7 @@
             {% if request.user.is_authenticated %}
               {% if user_has_purchased %}
                 <button id="open-review-modal"
-                  class="w-full border-2 border-emerald-950 text-emerald-950 text-xs font-black uppercase tracking-widest py-3 px-4 rounded-xl hover:bg-emerald-950 hover:text-white transition-all duration-200 text-center block">
+                  class="w-full border-2 border-brand-dark text-brand-dark text-xs font-black uppercase tracking-widest py-3 px-4 rounded-xl hover:bg-brand-dark hover:text-white transition-all duration-200 text-center block shadow-sm active:scale-95">
                   {% if user_existing_review %}
                     <i class="fa-solid fa-pen-to-square mr-1"></i> Edit Your Review
                   {% else %}
@@ -318,7 +294,7 @@
               {% endif %}
             {% else %}
               <a href="{% url 'login' %}?next={{ request.path }}"
-                class="w-full border-2 border-emerald-950 text-emerald-950 text-xs font-black uppercase tracking-widest py-3 px-4 rounded-xl hover:bg-emerald-950 hover:text-white transition-all duration-200 text-center block">
+                class="w-full border-2 border-brand-dark text-brand-dark text-xs font-black uppercase tracking-widest py-3 px-4 rounded-xl hover:bg-brand-dark hover:text-white transition-all duration-200 text-center block shadow-sm active:scale-95">
                 <i class="fa-regular fa-user mr-1"></i> Login to Review
               </a>
             {% endif %}
@@ -332,11 +308,11 @@
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2.5">
                       <!-- Avatar Circle with first letter of username -->
-                      <div class="w-8 h-8 bg-emerald-950 rounded-full text-white text-xs font-black flex items-center justify-center uppercase flex-shrink-0">
+                      <div class="w-8 h-8 bg-brand-dark rounded-full text-white text-xs font-black flex items-center justify-center uppercase flex-shrink-0">
                         {{ review.user.first_name|first|default:review.user.username|first }}
                       </div>
                       <div>
-                        <h4 class="text-xs font-black text-emerald-950">
+                        <h4 class="text-xs font-black text-brand-dark">
                           {{ review.user.get_full_name|default:review.user.username }}
                         </h4>
                         <p class="text-[9px] text-gray-400 font-bold uppercase">{{ review.created_at|timesince }} ago</p>
@@ -344,8 +320,8 @@
                     </div>
                     <!-- Verified Badge -->
                     {% if review.is_verified_purchase %}
-                      <span class="bg-emerald-50 text-emerald-800 text-[9px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider flex items-center gap-1">
-                        <i class="fa-solid fa-circle-check"></i> Verified Purchase
+                      <span class="bg-brand-50 border border-brand-200/80 text-brand-dark text-[9px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider flex items-center gap-1">
+                        <i class="fa-solid fa-circle-check text-brand-emerald"></i> Verified Purchase
                       </span>
                     {% else %}
                       <span class="bg-gray-50 text-gray-400 text-[9px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider flex items-center gap-1">
@@ -368,7 +344,7 @@
 
                   <!-- Review Title -->
                   {% if review.review_title %}
-                    <h5 class="text-sm font-bold text-emerald-950">{{ review.review_title }}</h5>
+                    <h5 class="text-sm font-bold text-gray-900">{{ review.review_title }}</h5>
                   {% endif %}
 
                   <!-- Review Text -->
@@ -377,7 +353,7 @@
                   <!-- Edit button for own review -->
                   {% if request.user == review.user %}
                     <div class="pt-1">
-                      <button onclick="openEditReview()" class="text-[10px] font-bold text-emerald-800 hover:text-emerald-950 underline transition">
+                      <button onclick="openEditReview()" class="text-[10px] font-bold text-brand-dark hover:text-brand-emerald underline transition">
                         <i class="fa-solid fa-pen-to-square text-[9px]"></i> Edit your review
                       </button>
                     </div>
@@ -405,7 +381,7 @@
             <i class="fa-solid fa-xmark"></i>
           </button>
 
-          <h3 id="modal-title" class="text-base font-black text-emerald-950 uppercase tracking-wider mb-1">
+          <h3 id="modal-title" class="text-base font-black text-brand-dark uppercase tracking-wider mb-1">
             {% if user_existing_review %}Edit Your Review{% else %}Write a Review{% endif %}
           </h3>
           <p class="text-xs text-gray-400 font-medium mb-6">{{ product.product_name }}</p>
@@ -415,7 +391,7 @@
 
             <!-- Star Rating Picker -->
             <div class="mb-6">
-              <label class="block text-xs font-black text-emerald-950 uppercase tracking-widest mb-3">Your Rating <span class="text-red-500">*</span></label>
+              <label class="block text-xs font-black text-brand-dark uppercase tracking-widest mb-3">Your Rating <span class="text-red-500">*</span></label>
               
               <style>
                 .star-rating {
@@ -461,17 +437,17 @@
 
             <!-- Review Text -->
             <div class="mb-6">
-              <label for="review_text" class="block text-xs font-black text-emerald-950 uppercase tracking-widest mb-2">Your Review <span class="text-red-500">*</span></label>
+              <label for="review_text" class="block text-xs font-black text-brand-dark uppercase tracking-widest mb-2">Your Review <span class="text-red-500">*</span></label>
               <textarea name="review_text" id="review_text" rows="4"
                 placeholder="Share your experience with this product..."
                 required
-                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition placeholder:text-gray-300 resize-none">{% if user_existing_review %}{{ user_existing_review.review_text }}{% endif %}</textarea>
-              <p class="text-[10px] text-gray-300 mt-1 font-medium">Minimum 10 characters required.</p>
+                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-brand-emerald focus:border-transparent transition placeholder:text-gray-300 resize-none">{% if user_existing_review %}{{ user_existing_review.review_text }}{% endif %}</textarea>
+              <p class="text-[10px] text-gray-400 mt-1 font-medium">Minimum 10 characters required.</p>
             </div>
 
             <!-- Submit -->
             <button type="submit"
-              class="w-full bg-emerald-950 text-white text-xs font-black uppercase tracking-widest py-3.5 px-6 rounded-xl hover:bg-emerald-800 transition-all duration-200 shadow-md flex items-center justify-center gap-2">
+              class="w-full bg-brand-dark text-white text-xs font-black uppercase tracking-widest py-3.5 px-6 rounded-xl hover:bg-brand-darker transition-all duration-200 shadow-md active:scale-95 flex items-center justify-center gap-2">
               <i class="fa-solid fa-paper-plane"></i>
               {% if user_existing_review %}Update Review{% else %}Submit Review{% endif %}
             </button>

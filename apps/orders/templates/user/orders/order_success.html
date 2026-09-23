@@ -1,72 +1,65 @@
 {% extends 'user/base.html' %}
 
 {% block content %}
-<style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-  </style>
-
-
-
-
-
   <main class="flex-1 flex flex-col items-center justify-center px-4 py-12 max-w-3xl mx-auto w-full">
     
     <div class="relative mb-8">
-      <div class="absolute inset-0 bg-[#043322]/10 rounded-full blur-2xl scale-150"></div>
-      <div class="relative w-24 h-24 bg-[#043322] rounded-full flex items-center justify-center shadow-xl shadow-emerald-950/10">
-        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+      <div class="absolute inset-0 bg-brand-dark/10 rounded-full blur-2xl scale-150"></div>
+      <div class="relative w-20 h-20 sm:w-24 sm:h-24 bg-brand-dark rounded-full flex items-center justify-center shadow-xl shadow-brand-dark/20">
+        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
         </svg>
       </div>
     </div>
 
     <div class="text-center max-w-md mx-auto mb-10">
-      <h2 class="text-lg font-bold text-[#043322] tracking-tight">Order Placed Successfully!</h2>
-      <p class="text-xs text-slate-500 mt-2 leading-relaxed font-medium">
-        Your performance gear is being prepared for shipment. We've sent a confirmation email with all the details.
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-50 border border-brand-200 text-brand-dark text-[10px] font-black uppercase tracking-wider mb-2">
+        <i class="fa-solid fa-circle-check text-brand-emerald"></i> Confirmed
+      </span>
+      <h2 class="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight">Order Placed Successfully!</h2>
+      <p class="text-xs sm:text-sm text-gray-500 mt-2 leading-relaxed font-medium">
+        Your sneaker drop is confirmed and being prepared for shipment. We've sent an invoice and tracking details to your email.
       </p>
     </div>
 
-    <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
+    <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
       
-      <div class="bg-[#f4f5f3] rounded-2xl p-5 border border-slate-200/40 flex flex-col justify-between min-h-[110px]">
+      <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex flex-col justify-between min-h-[110px]">
         <div>
-          <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold block mb-1">Order ID</span>
-          <span class="text-xs font-black text-[#043322]">#SD-{{ order.id }}</span>
+          <span class="text-[10px] uppercase tracking-wider text-gray-400 font-bold block mb-1">Order ID</span>
+          <span class="text-sm font-black text-brand-dark">#SD-{{ order.id }}</span>
         </div>
         <div class="mt-4">
-          <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold block mb-0.5">Date</span>
-          <span class="text-xs font-semibold text-slate-600">{{ order.created_at|date:"M d, Y • H:i A" }}</span>
+          <span class="text-[10px] uppercase tracking-wider text-gray-400 font-bold block mb-0.5">Date</span>
+          <span class="text-xs font-semibold text-gray-700">{{ order.created_at|date:"M d, Y • H:i A" }}</span>
         </div>
       </div>
 
-      <div class="bg-[#f4f5f3] rounded-2xl p-5 border border-slate-200/40 flex flex-col justify-between min-h-[110px]">
+      <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex flex-col justify-between min-h-[110px]">
         <div>
-          <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold block mb-1">Payment Method</span>
-          <div class="flex items-center gap-1 text-xs font-semibold text-slate-700">
-            <svg class="w-3.5 h-3.5 text-[#043322]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <span class="text-[10px] uppercase tracking-wider text-gray-400 font-bold block mb-1">Payment Method</span>
+          <div class="flex items-center gap-1.5 text-xs font-bold text-gray-800">
+            <svg class="w-4 h-4 text-brand-emerald" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
             </svg>
             {{ order.get_payment_method_display }}
           </div>
         </div>
         <div class="mt-4">
-          <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold block mb-0.5">Total Transaction</span>
-          <span class="text-sm font-black text-[#043322]">₹{{ order.total_amount }}</span>
+          <span class="text-[10px] uppercase tracking-wider text-gray-400 font-bold block mb-0.5">Total Transaction</span>
+          <span class="text-base font-black text-brand-dark">₹{{ order.total_amount }}</span>
         </div>
       </div>
 
     </div>
 
-    <div class="w-full flex flex-col sm:flex-row gap-4 justify-center items-center">
-      <a href="{%url 'shop'%}" class="w-full sm:w-56 text-center border border-[#043322] hover:bg-slate-50 active:scale-[0.98] transition-all text-[#043322] font-bold py-3.5 px-6 rounded-full text-xs tracking-wider uppercase">
+    <div class="w-full flex flex-col sm:flex-row gap-3.5 justify-center items-center">
+      <a href="{%url 'shop'%}" class="w-full sm:w-56 text-center border-2 border-brand-dark hover:bg-brand-50 active:scale-[0.98] transition-all text-brand-dark font-black py-3.5 px-6 rounded-full text-xs tracking-widest uppercase shadow-sm">
         Continue Shopping
       </a>
       
-      <a href="{%url 'order_list'%}" class="w-full sm:w-56 text-center bg-[#043322] hover:bg-[#032418] active:scale-[0.98] transition-all text-white font-bold py-3.5 px-6 rounded-full text-xs tracking-wider uppercase shadow-lg shadow-emerald-950/10">
-        Go To Orders
+      <a href="{%url 'order_list'%}" class="w-full sm:w-56 text-center bg-brand-dark hover:bg-brand-darker active:scale-[0.98] transition-all text-white font-black py-3.5 px-6 rounded-full text-xs tracking-widest uppercase shadow-lg shadow-brand-dark/15 hover:shadow-xl">
+        View Order Details
       </a>
     </div>
 

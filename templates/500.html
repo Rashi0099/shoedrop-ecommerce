@@ -13,7 +13,7 @@
     </span>
 
     <!-- Styled 500 Number -->
-    <h1 class="text-7xl sm:text-8xl font-black text-emerald-950 tracking-tighter leading-none mb-3">
+    <h1 class="text-7xl sm:text-8xl font-black text-brand-dark tracking-tighter leading-none mb-3">
       5<span class="text-red-500/30">0</span>0
     </h1>
 
@@ -29,10 +29,10 @@
 
     <!-- Action Buttons -->
     <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
-      <button onclick="window.location.reload()" class="w-full sm:w-auto bg-emerald-950 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-emerald-900 transition-all duration-200 shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+      <button onclick="window.location.reload()" class="w-full sm:w-auto bg-brand-dark text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-brand-darker transition-all duration-200 shadow-sm flex items-center justify-center gap-2 cursor-pointer">
         <i class="fa-solid fa-rotate-right text-xs"></i> Try Again
       </button>
-      <a href="{% url 'landing_page' %}" class="w-full sm:w-auto bg-white border border-gray-200 text-gray-800 px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:border-emerald-950 hover:text-emerald-950 transition-all duration-200 flex items-center justify-center gap-2">
+      <a href="{% url 'landing_page' %}" class="w-full sm:w-auto bg-white border border-gray-200 text-gray-800 px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:border-brand-dark hover:text-brand-dark transition-all duration-200 flex items-center justify-center gap-2">
         <i class="fa-solid fa-house text-xs"></i> Go to Home
       </a>
     </div>
@@ -41,13 +41,13 @@
     <div class="pt-6 border-t border-gray-100">
       <p class="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 mb-3">Explore Collections</p>
       <div class="flex flex-wrap items-center justify-center gap-2">
-        <a href="{% url 'shop' %}?category=MEN" class="px-4 py-2 bg-gray-50 hover:bg-emerald-950 hover:text-white rounded-xl text-xs font-extrabold text-gray-700 transition-all duration-200 border border-gray-100 flex items-center gap-1.5 shadow-2xs">
+        <a href="{% url 'shop' %}?category=MEN" class="px-4 py-2 bg-gray-50 hover:bg-brand-dark hover:text-white rounded-xl text-xs font-extrabold text-gray-700 transition-all duration-200 border border-gray-100 flex items-center gap-1.5 shadow-2xs">
           <i class="fa-solid fa-mars text-[10px]"></i> Men
         </a>
-        <a href="{% url 'shop' %}?category=WOMAN" class="px-4 py-2 bg-gray-50 hover:bg-emerald-950 hover:text-white rounded-xl text-xs font-extrabold text-gray-700 transition-all duration-200 border border-gray-100 flex items-center gap-1.5 shadow-2xs">
+        <a href="{% url 'shop' %}?category=WOMAN" class="px-4 py-2 bg-gray-50 hover:bg-brand-dark hover:text-white rounded-xl text-xs font-extrabold text-gray-700 transition-all duration-200 border border-gray-100 flex items-center gap-1.5 shadow-2xs">
           <i class="fa-solid fa-venus text-[10px]"></i> Women
         </a>
-        <a href="{% url 'shop' %}?category=KIDS" class="px-4 py-2 bg-gray-50 hover:bg-emerald-950 hover:text-white rounded-xl text-xs font-extrabold text-gray-700 transition-all duration-200 border border-gray-100 flex items-center gap-1.5 shadow-2xs">
+        <a href="{% url 'shop' %}?category=KIDS" class="px-4 py-2 bg-gray-50 hover:bg-brand-dark hover:text-white rounded-xl text-xs font-extrabold text-gray-700 transition-all duration-200 border border-gray-100 flex items-center gap-1.5 shadow-2xs">
           <i class="fa-solid fa-child text-[10px]"></i> Kids
         </a>
       </div>

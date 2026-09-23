@@ -1,28 +1,6 @@
 {% extends 'user/base.html' %}
 
 {% block content %}
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          brand: {
-            dark: '#0A3622',
-            bg: '#FAF9F6',
-            card: '#FFFFFF',
-            pill: '#F2F2F2',
-          }
-        },
-        fontFamily: {
-          sans: ['Inter', 'sans-serif'],
-        }
-      }
-    }
-  }
-</script>
-<style>
-  body { font-family: 'Inter', sans-serif; }
-</style>
 
 
 
@@ -30,16 +8,28 @@
 
 
 <!-- MAIN CONTENT -->
-<main class="flex-1 max-w-[1000px] mx-auto px-10 py-10 w-full mb-20 flex justify-center">
+<main class="flex-1 max-w-[1000px] mx-auto px-4 sm:px-10 py-10 w-full mb-20 flex flex-col items-center">
   
-  <div class="bg-white rounded-[20px] shadow-sm border border-gray-100 p-12 w-full max-w-[900px]">
+  <!-- Action Bar -->
+  <div class="w-full max-w-[900px] flex justify-between items-center mb-6 print:hidden">
+    <a href="{% url 'order_details' order.id %}" class="inline-flex items-center text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-brand-dark transition-colors">
+      <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      Back to Order
+    </a>
+    <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-dark hover:bg-brand-darker text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all duration-200">
+      <svg class="w-4 h-4 text-brand-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24-1.076-.672-2.18-1.282-3.17M12 18V6m0 0-3 3m3-3 3 3M3 13.5v6a1.5 1.5 0 0 0 1.5 1.5h15a1.5 1.5 0 0 0 1.5-1.5v-6"/></svg>
+      Print / Save PDF
+    </button>
+  </div>
+
+  <div class="bg-white rounded-[20px] shadow-sm border border-gray-100 p-8 sm:p-12 w-full max-w-[900px]">
     
     <!-- Invoice Header -->
     <div class="flex justify-between items-start mb-16">
       
       <!-- Company Details -->
       <div>
-        <h1 class="text-2xl font-bold text-brand-dark mb-4">ShoeDrop</h1>
+        <h1 class="text-2xl font-black text-brand-dark tracking-wide mb-3">ShoeDrop</h1>
         <div class="text-[11px] text-gray-500 leading-relaxed font-medium">
           <p>128 High Street, Fashion District</p>
           <p>Greater London, SE1 0NY</p>
@@ -49,7 +39,7 @@
 
       <!-- Invoice Details -->
       <div class="text-right">
-        <h2 class="text-3xl font-black tracking-widest text-[#1B2430] uppercase mb-4">INVOICE</h2>
+        <h2 class="text-3xl font-black tracking-widest text-slate-900 uppercase mb-4">INVOICE</h2>
         <div class="grid grid-cols-[auto_auto] gap-x-3 gap-y-1.5 text-[11px] font-medium text-gray-500 justify-end">
           <div class="text-right">Invoice No:</div>
           <div class="text-gray-900 font-bold text-right">#INV-{{ order.id|stringformat:"04d" }}-{{ order.created_at|date:"Y" }}</div>
@@ -65,7 +55,7 @@
     </div>
 
     <!-- Info Columns -->
-    <div class="grid grid-cols-2 gap-20 mb-16">
+    <div class="grid grid-cols-2 gap-10 sm:gap-20 mb-16">
       
       <!-- Shipping To -->
       <div>
@@ -89,15 +79,15 @@
           <div>Status:</div>
           <div>
             {% if order.payment_status == 'paid' %}
-              <span class="inline-flex items-center px-2 py-0.5 rounded-[4px] text-[9px] font-bold uppercase tracking-widest bg-orange-50 text-orange-600 border border-orange-100">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-emerald-50 text-emerald-800 border border-emerald-200">
                 PAID
               </span>
             {% elif order.payment_status == 'pending' %}
-              <span class="inline-flex items-center px-2 py-0.5 rounded-[4px] text-[9px] font-bold uppercase tracking-widest bg-gray-100 text-gray-600 border border-gray-200">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-gray-100 text-gray-600 border border-gray-200">
                 PENDING
               </span>
             {% else %}
-              <span class="inline-flex items-center px-2 py-0.5 rounded-[4px] text-[9px] font-bold uppercase tracking-widest bg-red-50 text-red-600 border border-red-100">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-red-50 text-red-700 border border-red-200">
                 {{ order.payment_status }}
               </span>
             {% endif %}

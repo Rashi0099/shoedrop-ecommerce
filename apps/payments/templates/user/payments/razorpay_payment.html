@@ -1,12 +1,15 @@
 {% extends 'user/base.html' %}
 
 {% block content %}
+<div class="py-24 px-4 flex flex-col items-center justify-center text-center">
+  <div class="w-16 h-16 rounded-full border-4 border-slate-100 border-t-brand-dark animate-spin mb-6"></div>
+  <h2 class="text-lg font-bold text-slate-900 mb-1">Connecting to Payment Gateway</h2>
+  <p class="text-xs text-slate-500 font-medium">Please do not refresh or close this window...</p>
+</div>
+
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-
-
 <script>
-
 document.addEventListener("DOMContentLoaded", function () {
 
     var options = {
@@ -80,9 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
         },
 
         theme: {
-
-            color: "#043322"
-
+            color: "#0a2e23"
         }
 
     };

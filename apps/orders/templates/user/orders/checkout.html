@@ -1,42 +1,19 @@
 {% extends 'user/base.html' %}
 
 {% block content %}
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          brand: {
-            dark: '#0F2E25',   // deep green (footer / CTA)
-            darker: '#0A211A',
-            ink: '#1A1A1A',
-          }
-        },
-        fontFamily: {
-          sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        }
-      }
-    }
-  }
-</script>
 <style>
-  body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
   .radio-dot:has(input:checked) {
-    border-color: #0F2E25 !important;
-    background-color: #f9fafb !important;
+    border-color: #0a2e23 !important;
+    background-color: #f2fbf7 !important;
   }
   .radio-dot input:checked ~ div .dot-outer {
-    border-color: #0F2E25 !important;
+    border-color: #0a2e23 !important;
   }
   .radio-dot input:checked ~ div .dot-outer .dot-inner {
     transform: scale(1) !important;
+    background-color: #0a2e23 !important;
   }
 </style>
-
-
-
-<!-- ===================== NAVBAR ===================== -->
-
 
 <!-- ===================== PAGE CONTENT ===================== -->
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-10">
@@ -44,8 +21,11 @@
     {% include 'user/_messages.html' %}
 {% endif %}
 
-
-  <h1 class="text-2xl sm:text-3xl font-bold mb-4 sm:mb-2">Checkout</h1>
+  <div class="mb-6 sm:mb-8">
+    <span class="text-xs font-black text-brand-emerald uppercase tracking-widest">Order Process</span>
+    <h1 class="text-2xl sm:text-3xl font-black text-brand-dark mt-1">Checkout</h1>
+    <p class="text-xs sm:text-sm text-gray-500 font-medium mt-1">Complete your shipping and payment information.</p>
+  </div>
   
   <!-- SINGLE MAIN FORM START (Wraps both columns) -->
   <form id="place-order-form" method="POST" action="{% url 'place_order' %}">
@@ -55,19 +35,19 @@
       <input type="hidden" name="buy_now" value="{{ request.GET.buy_now }}">
     {% endif %}
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
 
       <!-- ============ LEFT COLUMN ============ -->
       <div class="lg:col-span-2 flex flex-col gap-6">
 
         <!-- Order details card -->
-        <section class="bg-white border border-gray-200 rounded-2xl p-6">
+        <section class="bg-white border border-gray-100 rounded-2xl p-5 sm:p-6 shadow-sm">
           <div class="flex items-start justify-between mb-1">
             <div>
-              <h2 class="font-semibold text-base">Your Order Details</h2>
-              <p class="text-xs text-gray-400">View product details, qty, etc.</p>
+              <h2 class="font-black text-brand-dark text-base">Your Order Details</h2>
+              <p class="text-xs text-gray-400 font-medium">View product details, qty, and sizes.</p>
             </div>
-            <a href="{%url 'cart'%}" class="text-sm font-medium text-brand-dark hover:underline whitespace-nowrap">Modify Cart</a>
+            <a href="{%url 'cart'%}" class="text-xs font-bold uppercase tracking-wider text-brand-dark hover:text-brand-emerald transition-colors whitespace-nowrap">Modify Cart &rarr;</a>
           </div>
 
           <div class="mt-4 overflow-x-auto">
@@ -98,116 +78,111 @@
               <span class="col-span-2 text-right text-sm text-gray-700">
                 {% if item.variant.get_discount_percentage > 0 %}
                   <span class="text-[10px] text-gray-400 line-through block">₹{{ item.variant.price }}</span>
-                  <span class="text-emerald-600 font-bold">₹{{ item.variant.get_offer_price|floatformat:2 }}</span>
+                  <span class="text-brand-emerald font-black">₹{{ item.variant.get_offer_price|floatformat:2 }}</span>
                 {% else %}
-                  ₹{{ item.variant.price }}
+                  <span class="font-bold text-gray-900">₹{{ item.variant.price }}</span>
                 {% endif %}
               </span>
-              <span class="col-span-1 text-right text-sm text-gray-700">{{ item.quantity }}</span>
-              <span class="col-span-3 text-right text-sm font-semibold">₹{{ item.get_total_price |floatformat:2 }}</span>
+              <span class="col-span-1 text-right text-sm text-gray-700 font-semibold">{{ item.quantity }}</span>
+              <span class="col-span-3 text-right text-sm font-black text-brand-dark">₹{{ item.get_total_price|floatformat:2 }}</span>
             </div>
             {% empty %}
-            <div class="py-4 text-center text-sm text-gray-500">Your cart is empty.</div>
+            <div class="py-4 text-center text-sm text-gray-500 font-medium">Your cart is empty.</div>
             {% endfor %}
           </div>
         </section>
-        
 
         <!-- Delivery address card -->
-        <section class="bg-white border border-gray-200 rounded-2xl p-6">
+        <section class="bg-white border border-gray-100 rounded-2xl p-5 sm:p-6 shadow-sm">
           <div class="flex items-start justify-between mb-1">
             <div>
-              <h2 class="font-semibold text-base">Select Delivery Address</h2>
-              <p class="text-xs text-gray-400">Choose where you'd like this delivered.</p>
+              <h2 class="font-black text-brand-dark text-base">Select Delivery Address</h2>
+              <p class="text-xs text-gray-400 font-medium">Choose where you'd like your order delivered.</p>
             </div>
             {% if request.GET.buy_now %}
-              <a href="{% url 'add_address' %}?buy_now={{ request.GET.buy_now }}" class="text-sm font-medium text-brand-dark hover:underline whitespace-nowrap">Add Address</a>
+              <a href="{% url 'add_address' %}?buy_now={{ request.GET.buy_now }}" class="text-xs font-bold uppercase tracking-wider text-brand-dark hover:text-brand-emerald transition-colors whitespace-nowrap">+ Add Address</a>
             {% else %}
-              <a href="{% url 'add_address' %}?from_checkout=True" class="text-sm font-medium text-brand-dark hover:underline whitespace-nowrap">Add Address</a>
+              <a href="{% url 'add_address' %}?from_checkout=True" class="text-xs font-bold uppercase tracking-wider text-brand-dark hover:text-brand-emerald transition-colors whitespace-nowrap">+ Add Address</a>
             {% endif %}
           </div>
 
           {% if addresses %}
             <div class="flex flex-col gap-3 mt-4">
               {% for address in addresses %}
-              <label class="radio-dot relative flex items-start justify-between border border-gray-200 rounded-xl px-5 py-4 cursor-pointer hover:border-gray-300 {% if address.is_default %}border-brand-dark bg-gray-50{% endif %}">
+              <label class="radio-dot relative flex items-start justify-between border border-gray-200 rounded-xl px-5 py-4 cursor-pointer hover:border-brand-dark/40 transition-colors {% if address.is_default %}border-brand-dark bg-brand-50/30{% endif %}">
                 <input type="radio" name="address_id" value="{{ address.id }}" class="sr-only" {% if address.is_default %}checked{% endif %} required>
                 <div class="flex items-start gap-3">
                   <span class="dot-outer w-4 h-4 mt-1 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0">
                     <span class="dot-inner w-2 h-2 rounded-full bg-brand-dark scale-0 transition-transform"></span>
                   </span>
                   <div>
-                    <p class="text-sm font-semibold">{{ address.full_name }} <span class="bg-gray-200 text-gray-600 text-[10px] px-2 py-0.5 rounded ml-2">{{ address.get_address_type_display }}</span></p>
-                    <p class="text-xs text-gray-500 mt-1">{{ address.address }}, {{ address.city }}, {{ address.state }} - {{ address.postal_code }}</p>
-                    <p class="text-xs text-gray-500 mt-0.5">Phone: {{ address.phone_number }}</p>
+                    <p class="text-sm font-bold text-gray-900">{{ address.full_name }} <span class="bg-brand-50 border border-brand-200/80 text-brand-dark text-[10px] font-bold px-2 py-0.5 rounded ml-2 uppercase">{{ address.get_address_type_display }}</span></p>
+                    <p class="text-xs text-gray-500 font-medium mt-1">{{ address.address }}, {{ address.city }}, {{ address.state }} - {{ address.postal_code }}</p>
+                    <p class="text-xs text-gray-500 font-medium mt-0.5"><span class="text-gray-400">Phone:</span> {{ address.phone_number }}</p>
                   </div>
                 </div>
               </label>
               {% endfor %}
             </div>
           {% else %}
-            <p class="text-xs text-red-500 mt-3 mb-4">You need to add an address to continue.</p>
+            <p class="text-xs text-red-500 font-semibold mt-3 mb-4">You need to add an address to continue.</p>
             {% if request.GET.buy_now %}
               <a href="{% url 'add_address' %}?buy_now={{ request.GET.buy_now }}"
             {% else %}
               <a href="{% url 'add_address' %}?from_checkout=True"
             {% endif %}
-               class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-xl py-10 text-gray-500 hover:border-brand-dark hover:text-brand-dark transition-colors">
+               class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl py-10 text-gray-500 hover:border-brand-dark hover:text-brand-dark hover:bg-brand-50/20 transition-all">
               <span class="flex items-center justify-center w-8 h-8 rounded-full border border-gray-300 text-lg leading-none">+</span>
-              <span class="text-sm font-medium">Add New Address</span>
+              <span class="text-xs font-bold uppercase tracking-wider">Add New Address</span>
             </a>
           {% endif %}
         </section>
-        
 
         <!-- Payment method card -->
-        <section class="bg-white border border-gray-200 rounded-2xl p-6">
-          <h2 class="font-semibold text-base">Payment Method</h2>
-          <p class="text-xs text-gray-400 mb-4">How would you like to pay?</p>
-          
- 
+        <section class="bg-white border border-gray-100 rounded-2xl p-5 sm:p-6 shadow-sm">
+          <h2 class="font-black text-brand-dark text-base">Payment Method</h2>
+          <p class="text-xs text-gray-400 font-medium mb-4">Choose your preferred payment method.</p>
 
           <div class="flex flex-col gap-3">
 
             <!-- Razorpay (recommended) -->
-            <label class="radio-dot relative flex items-center justify-between border border-gray-200 rounded-xl px-5 py-4 cursor-pointer hover:border-gray-300">
+            <label class="radio-dot relative flex items-center justify-between border border-gray-200 rounded-xl px-5 py-4 cursor-pointer hover:border-brand-dark/40 transition-colors">
               <input type="radio" name="payment_method" value="razorpay" class="sr-only" checked>
               <div class="flex items-center gap-3">
                 <span class="dot-outer w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center">
                   <span class="dot-inner w-2 h-2 rounded-full bg-brand-dark scale-0 transition-transform"></span>
                 </span>
                 <div>
-                  <p class="text-sm font-semibold">Razorpay</p>
-                  <p class="text-xs text-gray-400">Cards, NetBanking, Wallet &amp; UPI</p>
+                  <p class="text-sm font-bold text-gray-900">Razorpay Secure Online</p>
+                  <p class="text-xs text-gray-400 font-medium">UPI, Cards, NetBanking, Digital Wallets</p>
                 </div>
               </div>
-              
             </label>
 
             <!-- Wallet -->
-            <label class="radio-dot relative flex items-center justify-between border border-gray-200 rounded-xl px-5 py-4 cursor-pointer hover:border-gray-300">
-              <input type="radio" name="payment_method" value="wallet" class="sr-only" >
+            <label class="radio-dot relative flex items-center justify-between border border-gray-200 rounded-xl px-5 py-4 cursor-pointer hover:border-brand-dark/40 transition-colors">
+              <input type="radio" name="payment_method" value="wallet" class="sr-only">
               <div class="flex items-center gap-3">
                 <span class="dot-outer w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center">
                   <span class="dot-inner w-2 h-2 rounded-full bg-brand-dark scale-0 transition-transform"></span>
                 </span>
                 <div>
-                  <p class="text-sm font-semibold">Wallet Payment</p>
-                  <p class="text-xs text-gray-400">Pay Using Your Digital Wallet</p>
+                  <p class="text-sm font-bold text-gray-900">ShoeDrop Digital Wallet</p>
+                  <p class="text-xs text-gray-400 font-medium">Instant payment using your account balance</p>
                 </div>
               </div>
             </label>
 
             <!-- Cash on Delivery -->
-            <label class="radio-dot relative flex items-center justify-between border border-gray-200 rounded-xl px-5 py-4 cursor-pointer hover:border-gray-300">
-              <input type="radio" name="payment_method" value="cod" class="sr-only" >
+            <label class="radio-dot relative flex items-center justify-between border border-gray-200 rounded-xl px-5 py-4 cursor-pointer hover:border-brand-dark/40 transition-colors">
+              <input type="radio" name="payment_method" value="cod" class="sr-only">
               <div class="flex items-center gap-3">
                 <span class="dot-outer w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center">
                   <span class="dot-inner w-2 h-2 rounded-full bg-brand-dark scale-0 transition-transform"></span>
                 </span>
                 <div>
-                  <p class="text-sm font-semibold">Cash on Delivery</p>
-                  <p class="text-xs text-gray-400">Pay When Your Order Arrives</p>
+                  <p class="text-sm font-bold text-gray-900">Cash on Delivery (COD)</p>
+                  <p class="text-xs text-gray-400 font-medium">Pay directly upon doorstep delivery</p>
                 </div>
               </div>
             </label>
@@ -219,29 +194,29 @@
 
       <!-- ============ RIGHT COLUMN: ORDER SUMMARY ============ -->
       <aside>
-        <div class="bg-white border border-gray-200 rounded-2xl p-6 sticky top-6">
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 sm:p-6 shadow-sm sticky top-24">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="font-semibold text-base">Order Summary</h2>
+            <h2 class="font-black text-brand-dark text-base">Order Summary</h2>
           </div>
 
           <!-- Price Breakdown -->
           <div class="flex flex-col gap-3 text-sm">
             <div class="flex items-center justify-between">
-              <span class="text-gray-500">Subtotal</span>
-              <span class="font-medium">₹{{ subtotal|floatformat:2 }}</span>
+              <span class="text-gray-500 font-medium">Subtotal</span>
+              <span class="font-bold text-gray-900">₹{{ subtotal|floatformat:2 }}</span>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-gray-500">GST ({{ gst_percent }}%)</span>
-              <span class="font-medium">₹{{ gst| floatformat:2 }}</span>
+              <span class="text-gray-500 font-medium">GST ({{ gst_percent }}%)</span>
+              <span class="font-bold text-gray-900">₹{{ gst|floatformat:2 }}</span>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-gray-500">Delivery Charges</span>
-              <span class="font-medium text-emerald-600">
+              <span class="text-gray-500 font-medium">Delivery Charges</span>
+              <span class="font-bold text-emerald-600">
                 {% if delivery_charges > 0 %}₹{{ delivery_charges }}{% else %}Free{% endif %}
               </span>
             </div>
             {% if coupon_discount > 0 %}
-            <div class="flex items-center justify-between text-emerald-700 font-semibold">
+            <div class="flex items-center justify-between text-brand-emerald font-bold">
               <span class="flex items-center gap-1">
                 <i class="fa-solid fa-tag text-xs"></i> Coupon Discount
               </span>
@@ -253,28 +228,27 @@
           <!-- Grand Total -->
           <div class="border-t border-gray-100 mt-4 pt-4 flex items-end justify-between">
             <div>
-              <p class="text-2xl font-bold">₹{{ grand_total |floatformat:2 }}</p>
-              <p class="text-xs text-gray-400 mt-0.5">Grand Total (incl. taxes)</p>
+              <p class="text-2xl font-black text-brand-dark">₹{{ grand_total|floatformat:2 }}</p>
+              <p class="text-xs text-gray-400 font-medium mt-0.5">Grand Total (incl. taxes)</p>
             </div>
             {% if coupon_discount > 0 %}
-              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-lg uppercase">You Save ₹{{ coupon_discount }}</span>
+              <span class="text-[10px] font-black text-brand-dark bg-brand-50 border border-brand-200 px-2.5 py-1 rounded-lg uppercase">You Save ₹{{ coupon_discount }}</span>
             {% endif %}
           </div>
 
-          <!-- ===== COUPON UI (no <form> tags here — forms are outside main form below) ===== -->
+          <!-- ===== COUPON UI ===== -->
           <div class="border-t border-gray-100 mt-5 pt-5">
 
             {% if applied_coupon %}
               <!-- Applied Coupon Badge -->
-              <div class="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
+              <div class="flex items-center justify-between bg-brand-50 border border-brand-200 rounded-xl px-4 py-3">
                 <div class="flex items-center gap-2">
-                  <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
+                  <i class="fa-solid fa-circle-check text-brand-emerald text-sm"></i>
                   <div>
-                    <p class="text-xs font-bold text-emerald-800 uppercase tracking-wide">{{ applied_coupon.coupon_code }}</p>
-                    <p class="text-[10px] text-emerald-600">{{ applied_coupon.coupon_name }} applied!</p>
+                    <p class="text-xs font-black text-brand-dark uppercase tracking-wide">{{ applied_coupon.coupon_code }}</p>
+                    <p class="text-[10px] text-brand-emerald font-semibold">{{ applied_coupon.coupon_name }} applied!</p>
                   </div>
                 </div>
-                <!-- Triggers remove-coupon-form (outside main form) -->
                 <button id="remove-coupon-btn" type="button"
                   class="text-[10px] font-bold text-red-500 hover:text-red-700 underline transition uppercase tracking-wide">
                   Remove
@@ -282,23 +256,22 @@
               </div>
             {% else %}
               <!-- Coupon Input Row -->
-              <p class="text-xs font-semibold text-gray-700 mb-2">Have a coupon?</p>
+              <p class="text-xs font-bold text-gray-700 mb-2">Have a coupon?</p>
               <div class="flex items-center gap-2 mb-3">
                 <input id="coupon-input-visible" type="text" placeholder="ENTER CODE" autocomplete="off"
-                  class="flex-1 text-xs border border-gray-200 rounded-lg px-3 py-2.5 font-semibold uppercase placeholder:normal-case placeholder:font-normal placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-800/30 tracking-widest">
-                <!-- Triggers apply-coupon-form (outside main form) -->
+                  class="flex-1 text-xs border border-gray-200 rounded-xl px-3.5 py-2.5 font-bold uppercase placeholder:normal-case placeholder:font-normal placeholder:text-gray-400 focus:outline-none focus:border-brand-dark focus:ring-1 focus:ring-brand-dark/20 tracking-wider">
                 <button id="apply-coupon-btn" type="button"
-                  class="text-xs font-bold tracking-wide bg-[#0F2E25] text-white rounded-lg px-4 py-2.5 hover:bg-[#0A211A] transition-colors whitespace-nowrap">
+                  class="text-xs font-bold tracking-wide bg-brand-dark text-white rounded-xl px-4 py-2.5 hover:bg-brand-darker transition-all duration-200 active:scale-95 shadow-sm whitespace-nowrap">
                   APPLY
                 </button>
               </div>
 
               {% if available_coupons %}
-                <p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-2">Available Coupons</p>
+                <p class="text-[10px] text-gray-400 uppercase tracking-wider font-bold mb-2">Available Coupons</p>
                 <div class="flex flex-col gap-2">
                   {% for coupon in available_coupons %}
                     <button type="button" onclick="applyCouponCode('{{ coupon.coupon_code }}')"
-                      class="group w-full flex items-center justify-between border border-dashed border-gray-200 hover:border-emerald-400 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-emerald-50/50">
+                      class="group w-full flex items-center justify-between border border-dashed border-gray-200 hover:border-brand-emerald rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-brand-50/50">
                       <div>
                         <p class="text-[11px] font-black text-gray-800 uppercase tracking-wider">{{ coupon.coupon_code }}</p>
                         <p class="text-[10px] text-gray-400 mt-0.5">
@@ -310,7 +283,7 @@
                           {% if coupon.min_cart_value > 0 %}&middot; Min ₹{{ coupon.min_cart_value|floatformat:0 }}{% endif %}
                         </p>
                       </div>
-                      <span class="text-[10px] font-bold text-emerald-700 group-hover:text-emerald-900 transition">Apply &rarr;</span>
+                      <span class="text-[10px] font-bold text-brand-dark group-hover:text-brand-emerald transition">Apply &rarr;</span>
                     </button>
                   {% endfor %}
                 </div>
@@ -318,9 +291,9 @@
             {% endif %}
           </div>
 
-          <!-- Place Order — linked to main form via form="place-order-form" so it works outside a nested form -->
+          <!-- Place Order Button -->
           <button type="submit" form="place-order-form"
-            class="mt-5 w-full text-center bg-[#0F2E25] text-white font-semibold rounded-xl py-3.5 hover:bg-[#0A211A] transition-colors block text-sm tracking-wide">
+            class="mt-6 w-full text-center bg-brand-dark hover:bg-brand-darker text-white font-black text-xs uppercase tracking-widest rounded-xl py-4 transition-all duration-200 shadow-lg shadow-brand-dark/15 hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] block">
             Place Order
           </button>
 

@@ -1,23 +1,15 @@
 {% extends 'user/base.html' %}
 
 {% block content %}
-<style>
-  .bg-brand { background-color: #032b1d; }
-  .text-brand { color: #032b1d; }
-  .border-brand { border-color: #032b1d; }
-  .hover\:border-brand:hover { border-color: #032b1d; }
-  .hover\:text-brand:hover { color: #032b1d; }
-</style>
-
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
 
   {% include 'user/_messages.html' %}
 
   <!-- Page Title -->
   <div class="mb-6 sm:mb-8">
-    <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Cart</span>
-    <h1 class="text-2xl sm:text-3xl font-black text-gray-900 mt-1">Review your picks</h1>
-    <p class="text-sm text-gray-400 mt-1">Make sure the sizing and delivery look good before checkout.</p>
+    <span class="text-xs font-black text-brand-emerald uppercase tracking-widest">Cart</span>
+    <h1 class="text-2xl sm:text-3xl font-black text-brand-dark mt-1">Review your picks</h1>
+    <p class="text-xs sm:text-sm text-gray-500 font-medium mt-1">Make sure the sizing and delivery look good before checkout.</p>
   </div>
 
   {% if cart_items %}
@@ -28,15 +20,15 @@
     <div class="lg:col-span-2 space-y-3 sm:space-y-4">
 
       {% for item in cart_items %}
-      <div class="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-sm">
+      <div class="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200">
         <div class="flex gap-4">
 
           <!-- Product Image -->
-          <div class="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-xl overflow-hidden shrink-0">
+          <div class="w-20 h-20 sm:w-24 sm:h-24 bg-[#f8f9f8] rounded-xl overflow-hidden shrink-0 flex items-center justify-center p-2">
             {% if item.variant.images.first %}
             <img src="{{ item.variant.images.first.image.url }}"
               alt="{{ item.variant.product.product_name }}"
-              class="w-full h-full object-cover">
+              class="w-full h-full object-contain">
             {% endif %}
           </div>
 
@@ -46,7 +38,7 @@
             <div class="flex items-start justify-between gap-2">
               <div class="min-w-0">
                 <h3 class="font-bold text-gray-900 text-sm leading-snug flex flex-wrap items-center gap-2">
-                  <span class="truncate">{{ item.variant.product.product_name }}</span>
+                  <span class="truncate hover:text-brand-dark transition-colors">{{ item.variant.product.product_name }}</span>
                   {% if not item.variant.is_active or not item.variant.product.is_active or not item.variant.product.category.is_active %}
                   <span class="bg-red-50 text-red-700 border border-red-200 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md shrink-0">Unavailable</span>
                   {% elif item.variant.stock <= 0 %}
@@ -55,38 +47,38 @@
                   <span class="bg-amber-50 text-amber-700 border border-amber-200 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md shrink-0">Only {{ item.variant.stock }} left</span>
                   {% endif %}
                 </h3>
-                <p class="text-[11px] text-gray-400 uppercase tracking-wider mt-0.5">
+                <p class="text-[11px] text-gray-400 font-medium uppercase tracking-wider mt-0.5">
                   {{ item.variant.product.category.name }} &bull; {{ item.variant.product.subcategory.name }}
                 </p>
               </div>
 
               <!-- Delete -->
               <a href="{% url 'remove_from_cart' item.id %}"
-                class="text-gray-300 hover:text-red-400 transition text-sm shrink-0 p-1">
+                class="text-gray-300 hover:text-red-500 transition-colors text-sm shrink-0 p-1.5 rounded-lg hover:bg-red-50">
                 <i class="fa-regular fa-trash-can"></i>
               </a>
             </div>
 
             <!-- Bottom row: size/qty/price -->
-            <div class="flex flex-wrap items-center justify-between gap-3 mt-3">
+            <div class="flex flex-wrap items-center justify-between gap-3 mt-3 pt-2 border-t border-gray-50">
 
               <!-- Size & Color & Qty -->
               <div class="flex flex-wrap items-center gap-2">
-                <span class="text-xs font-bold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-lg">
+                <span class="text-xs font-bold text-gray-600 bg-gray-50 border border-gray-200/80 px-2.5 py-1 rounded-lg">
                   Size {{ item.variant.size }}
                 </span>
-                <span class="text-xs font-bold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
+                <span class="text-xs font-bold text-gray-600 bg-gray-50 border border-gray-200/80 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
                   <span class="w-2.5 h-2.5 rounded-full border border-gray-300 inline-block shrink-0" style="background-color: {{ item.variant.color|lower }};"></span>
                   {{ item.variant.color }}
                 </span>
 
                 <!-- Quantity Controls -->
-                <div class="flex items-center gap-1.5">
+                <div class="flex items-center gap-1.5 ml-1">
                   <form method="POST" action="{% url 'update_cart_quantity' item.id %}">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="decrease">
                     <button type="submit"
-                      class="w-7 h-7 rounded-full border border-gray-200 text-gray-500 hover:border-[#032b1d] hover:text-[#032b1d] transition text-sm font-bold flex items-center justify-center">−</button>
+                      class="w-7 h-7 rounded-full border border-gray-200 text-gray-600 hover:border-brand-dark hover:text-brand-dark hover:bg-brand-50 transition text-sm font-bold flex items-center justify-center active:scale-95">−</button>
                   </form>
                   <span class="text-sm font-bold text-gray-900 w-5 text-center">{{ item.quantity }}</span>
                   <form method="POST" action="{% url 'update_cart_quantity' item.id %}">
@@ -96,7 +88,7 @@
                       {% if not item.variant.is_active or not item.variant.product.is_active or not item.variant.product.category.is_active or item.variant.stock <= 0 %}
                       disabled class="w-7 h-7 rounded-full border border-gray-200 text-gray-300 bg-gray-50 cursor-not-allowed text-sm font-bold flex items-center justify-center"
                       {% else %}
-                      class="w-7 h-7 rounded-full border border-gray-200 text-gray-500 hover:border-[#032b1d] hover:text-[#032b1d] transition text-sm font-bold flex items-center justify-center"
+                      class="w-7 h-7 rounded-full border border-gray-200 text-gray-600 hover:border-brand-dark hover:text-brand-dark hover:bg-brand-50 transition text-sm font-bold flex items-center justify-center active:scale-95"
                       {% endif %}>+</button>
                   </form>
                 </div>
@@ -106,9 +98,9 @@
               <div class="text-right">
                 {% if item.variant.get_discount_percentage > 0 %}
                 <span class="text-[10px] text-gray-400 line-through block">₹{{ item.variant.price|floatformat:2 }} × {{ item.quantity }}</span>
-                <span class="text-base font-extrabold text-emerald-600">₹{{ item.get_total_price|floatformat:2 }}</span>
+                <span class="text-base font-black text-brand-emerald">₹{{ item.get_total_price|floatformat:2 }}</span>
                 {% else %}
-                <span class="text-base font-extrabold text-gray-900">₹{{ item.get_total_price }}</span>
+                <span class="text-base font-black text-brand-dark">₹{{ item.get_total_price }}</span>
                 {% endif %}
               </div>
 
@@ -124,7 +116,7 @@
     <div class="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-sm lg:sticky lg:top-24">
 
       <div class="flex items-center justify-between mb-5">
-        <h2 class="font-black text-gray-900 text-base">Order Summary</h2>
+        <h2 class="font-black text-brand-dark text-base">Order Summary</h2>
         <span class="text-xs text-gray-400 font-bold">{{ cart_items|length }} item{{ cart_items|length|pluralize }}</span>
       </div>
 
@@ -139,13 +131,13 @@
         </div>
         <div class="flex justify-between text-gray-600">
           <span>Delivery</span>
-          <span class="font-bold text-green-600">Free</span>
+          <span class="font-bold text-emerald-600">Free</span>
         </div>
       </div>
 
       <div class="border-t border-gray-100 mt-4 pt-4 flex justify-between items-center">
         <span class="font-black text-gray-900 text-base">Total</span>
-        <span class="text-2xl font-black text-brand">₹{{ total|floatformat:2 }}</span>
+        <span class="text-2xl font-black text-brand-dark">₹{{ total|floatformat:2 }}</span>
       </div>
 
       {% if has_out_of_stock or has_unavailable %}
@@ -159,7 +151,7 @@
       </p>
       {% else %}
       <a href="{% url 'checkout' %}"
-        class="mt-5 w-full bg-brand text-white text-xs font-black uppercase tracking-widest py-4 rounded-xl hover:opacity-90 transition flex items-center justify-center gap-2">
+        class="mt-5 w-full bg-brand-dark text-white text-xs font-black uppercase tracking-widest py-4 rounded-xl hover:bg-brand-darker transition-all duration-200 shadow-lg shadow-brand-dark/15 hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2">
         Proceed to Checkout
         <i class="fa-solid fa-arrow-right text-[10px]"></i>
       </a>
@@ -172,13 +164,13 @@
   {% else %}
 
   <!-- Empty Cart -->
-  <div class="text-center py-20">
+  <div class="text-center py-20 bg-white rounded-3xl border border-gray-100 shadow-sm max-w-xl mx-auto">
     <i class="fa-solid fa-bag-shopping text-5xl text-gray-200 mb-4"></i>
-    <h2 class="text-xl font-black text-gray-900">Your cart is empty</h2>
-    <p class="text-sm text-gray-400 mt-2">Add some products to get started.</p>
+    <h2 class="text-xl font-black text-brand-dark">Your cart is empty</h2>
+    <p class="text-xs text-gray-400 mt-1">Add some products to get started.</p>
     <a href="{% url 'shop' %}"
-      class="mt-6 inline-block bg-brand text-white text-xs font-black uppercase tracking-widest px-8 py-3.5 rounded-xl hover:opacity-90 transition">
-      Shop Now
+      class="mt-6 inline-block bg-brand-dark text-white text-xs font-black uppercase tracking-widest px-8 py-3.5 rounded-full hover:bg-brand-darker transition-all duration-200 shadow-md active:scale-95">
+      Explore Catalog
     </a>
   </div>
 
@@ -187,25 +179,25 @@
   <!-- Suggested Products -->
   {% if suggested_products %}
   <div class="mt-14">
-    <h2 class="text-xl font-black text-gray-900 mb-6">You May Also Like</h2>
+    <h2 class="text-xl font-black text-brand-dark mb-6">You May Also Like</h2>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
       {% for product in suggested_products %}
       {% with first_variant=product.variants.first %}
       <a href="{% url 'product_detail' product.id %}"
-        class="bg-white rounded-2xl p-3 sm:p-4 border border-gray-100 shadow-sm hover:shadow-md transition group block">
-        <div class="bg-gray-100 rounded-xl overflow-hidden aspect-square mb-3">
+        class="bg-white rounded-2xl p-3.5 sm:p-4 border border-gray-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.04)] hover:shadow-lg transition-all duration-300 group block">
+        <div class="bg-[#f8f9f8] rounded-xl overflow-hidden aspect-square mb-3 flex items-center justify-center p-2">
           {% if first_variant and first_variant.images.first %}
           <img src="{{ first_variant.images.first.image.url }}"
             alt="{{ product.product_name }}"
-            class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+            class="w-full h-full object-contain group-hover:scale-105 transition duration-300">
           {% endif %}
         </div>
-        <h4 class="font-bold text-xs sm:text-sm text-gray-900 truncate">{{ product.product_name }}</h4>
-        <p class="text-[10px] text-gray-400 uppercase tracking-wider mt-0.5">{{ product.subcategory.name }}</p>
-        <p class="text-sm font-extrabold text-gray-900 mt-2 flex items-baseline gap-1.5">
+        <h4 class="font-bold text-xs sm:text-sm text-gray-900 group-hover:text-brand-dark truncate transition-colors">{{ product.product_name }}</h4>
+        <p class="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-0.5">{{ product.subcategory.name }}</p>
+        <p class="text-sm font-black text-brand-dark mt-2 flex items-baseline gap-1.5">
           {% if first_variant %}
             {% if first_variant.get_discount_percentage > 0 %}
-              <span class="text-emerald-600">₹{{ first_variant.get_offer_price|floatformat:2 }}</span>
+              <span class="text-brand-emerald">₹{{ first_variant.get_offer_price|floatformat:2 }}</span>
               <span class="text-[10px] text-gray-400 line-through">₹{{ first_variant.price }}</span>
             {% else %}
               ₹{{ first_variant.price }}

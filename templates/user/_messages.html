@@ -1,17 +1,33 @@
 {% if messages %}
+<div class="space-y-2 mb-4">
 {% for message in messages %}
-<div class="rounded-xl border px-4 py-3 text-xs font-medium mb-4
+<div class="rounded-xl border px-4 py-3 text-xs font-semibold flex items-center justify-between shadow-sm transition-all
     {% if message.tags == 'error' %}
-        border-red-500/30 bg-red-500/10 text-red-400
+        border-red-200 bg-red-50 text-red-800
     {% elif message.tags == 'success' %}
-        border-emerald-500/30 bg-emerald-500/10 text-emerald-400
+        border-emerald-200 bg-emerald-50 text-emerald-900
     {% elif message.tags == 'warning' %}
-        border-yellow-500/30 bg-yellow-500/10 text-yellow-400
+        border-amber-200 bg-amber-50 text-amber-900
     {% else %}
-        border-blue-500/30 bg-blue-500/10 text-blue-400
+        border-blue-200 bg-blue-50 text-blue-900
     {% endif %}
-">
-    {{ message }}
+" role="alert">
+    <div class="flex items-center gap-2.5">
+        {% if message.tags == 'error' %}
+            <i class="fa-solid fa-circle-exclamation text-red-500 text-sm"></i>
+        {% elif message.tags == 'success' %}
+            <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
+        {% elif message.tags == 'warning' %}
+            <i class="fa-solid fa-triangle-exclamation text-amber-500 text-sm"></i>
+        {% else %}
+            <i class="fa-solid fa-circle-info text-blue-500 text-sm"></i>
+        {% endif %}
+        <span>{{ message }}</span>
+    </div>
+    <button type="button" class="text-gray-400 hover:text-gray-700 transition-colors ml-3" onclick="this.closest('[role=alert]').remove();">
+        <i class="fa-solid fa-xmark text-xs"></i>
+    </button>
 </div>
 {% endfor %}
+</div>
 {% endif %}

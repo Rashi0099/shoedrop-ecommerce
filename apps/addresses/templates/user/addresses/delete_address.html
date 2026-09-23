@@ -75,12 +75,12 @@
         {% csrf_token %}
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <a href="{% url 'address_list' %}"
-             class="w-full inline-flex justify-center items-center rounded-xl border-2 border-gray-300 bg-white px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition shadow-sm">
+             class="w-full inline-flex justify-center items-center rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-700 hover:bg-slate-50 transition shadow-2xs">
             Cancel
           </a>
           <button type="submit"
-                  class="w-full inline-flex justify-center items-center rounded-xl border-2 border-transparent bg-[#0f342e] px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#164d44] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0f342e] transition shadow-sm">
-            Delete
+                  class="w-full inline-flex justify-center items-center rounded-xl border border-transparent bg-red-600 hover:bg-red-700 px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-md shadow-red-600/20 active:scale-[0.99] transition">
+            Delete Address
           </button>
         </div>
       </form>
