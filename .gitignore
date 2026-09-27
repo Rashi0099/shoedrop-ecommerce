@@ -22,7 +22,3 @@ staticfiles/
 .DS_Store
 Thumbs.db
 
-# Node.js
-node_modules/
-.npm
-package-lock.json
