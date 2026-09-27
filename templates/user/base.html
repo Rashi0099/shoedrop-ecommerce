@@ -1,48 +1,13 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ShoeDrop{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f2fbf7',
-                            100: '#e1f6ee',
-                            200: '#c5ecde',
-                            300: '#99dcc6',
-                            400: '#64c4a6',
-                            500: '#3ba987',
-                            600: '#2b886c',
-                            700: '#236c57',
-                            800: '#1e5647',
-                            900: '#1b473b',
-                            dark: '#0a2e23',
-                            darker: '#061d16',
-                            emerald: '#059669',
-                            mint: '#10b981',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: #0a2e23; }
-    </style>
     {% block extra_head %}{% endblock %}
 </head>
 

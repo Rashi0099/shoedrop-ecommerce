@@ -9,9 +9,9 @@
 
 - **Backend**: Python, Django 6
 - **Database**: PostgreSQL
-- **Frontend**: HTML5, CSS3, JavaScript
+- **Frontend**: HTML5, CSS3,TWC, JavaScript
 - **Payment Gateway**: Razorpay
-- **Cloud Storage**: AWS S3 (`django-storages`, `boto3`)
+- **Cloud Storage**: AWS S3 
 - **Authentication**: Django Allauth
 
 ---

@@ -1,0 +1,16 @@
+{
+  "name": "shoedrop",
+  "version": "1.0.0",
+  "description": "**Shoedrop** is a Django-based e-commerce platform designed for footwear shopping. It features a full shopping flow including user authentication, product catalogs, shopping cart, wishlist, coupon and offer management, order tracking, Razorpay payment integration, and AWS S3 media storage.",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "tailwindcss -i ./static/css/input.css -o ./static/css/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./static/css/input.css -o ./static/css/tailwind.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.4.19"
+  }
+}
